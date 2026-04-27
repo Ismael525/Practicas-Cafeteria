@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Aroma & Grano | Experiencia Única</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25d366;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body class="bg-stone-50 text-stone-800">
+
+    <nav class="flex justify-between items-center p-6 bg-white shadow-sm sticky top-0 z-50">
+        <h1 class="text-2xl font-bold text-amber-800">AROMA & GRANO</h1>
+        <div class="space-x-6">
+            <a href="#inicio" class="hover:text-amber-600 transition">Inicio</a>
+            <a href="#nosotros" class="hover:text-amber-600 transition">Nosotros</a>
+            <a href="#catalogo" class="hover:text-amber-600 transition">Catálogo</a>
+            <a href="/login" class="bg-amber-800 text-white px-4 py-2 rounded text-sm">Staff Login</a>
+        </div>
+    </nav>
+
+    <section id="inicio" class="hero-bg h-[80vh] flex items-center justify-center text-center text-white">
+        <div>
+            <h2 class="text-5xl md:text-7xl font-serif mb-4">El café que despierta tus sentidos</h2>
+            <p class="text-xl mb-8">Granos seleccionados y tostados artesanalmente cada mañana.</p>
+            <a href="#catalogo"
+                class="bg-amber-600 hover:bg-amber-700 px-8 py-3 rounded-full text-lg font-semibold transition">Ver
+                Menú</a>
+        </div>
+    </section>
+
+    <section id="nosotros" class="py-20 px-6 max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6 text-amber-900">Nuestra Historia</h2>
+        <p class="text-lg leading-relaxed text-stone-600">
+            Nacimos de la pasión por el café de especialidad. Desde 2018, trabajamos directamente con caficultores
+            locales para asegurar que cada taza en Aroma & Grano cuente una historia de calidad y respeto por la tierra.
+        </p>
+    </section>
+
+    <section id="catalogo" class="py-16 bg-stone-100 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12 text-amber-900">Nuestro Menú</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition">
+                    <img src="https://images.unsplash.com/photo-1541167760496-162955ed8a9f?auto=format&fit=crop&w=500&q=60"
+                        alt="Latte" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-bold">Café Latte</h3>
+                        <p class="text-stone-500 text-sm">Espresso suave con leche cremosa.</p>
+                        <span class="block mt-4 text-amber-800 font-bold text-lg">$3.50</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition">
+                    <img src="https://images.unsplash.com/photo-1510707577719-5d6873918697?auto=format&fit=crop&w=500&q=60"
+                        alt="Cappuccino" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-bold">Cappuccino Especial</h3>
+                        <p class="text-stone-500 text-sm">Equilibrio perfecto entre café, leche y espuma.</p>
+                        <span class="block mt-4 text-amber-800 font-bold text-lg">$4.00</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition">
+                    <img src="https://images.unsplash.com/photo-1559925393-8be0ec418dc9?auto=format&fit=crop&w=500&q=60"
+                        alt="Croissant" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-bold">Croissant de Mantequilla</h3>
+                        <p class="text-stone-500 text-sm">Recién horneado, crujiente y delicioso.</p>
+                        <span class="block mt-4 text-amber-800 font-bold text-lg">$2.75</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="https://wa.me/TUNUMERO" class="whatsapp-btn" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <footer class="bg-amber-900 text-white py-10 text-center">
+        <p>&copy; 2024 Aroma & Grano - Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+
+</html>
