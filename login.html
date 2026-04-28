@@ -78,9 +78,47 @@
             margin-top: 1rem;
             display: none;
         }
+        .back-home-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.2rem;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            z-index: 100;
+        }
+        .back-home-btn:hover {
+            transform: translateX(-5px);
+            color: var(--primary);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .back-link-footer {
+            margin-top: 2rem;
+            display: block;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .back-link-footer:hover {
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
+
+    <a href="index.html" class="back-home-btn">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+    </a>
 
     <div class="login-container">
         <div class="login-card">
@@ -104,6 +142,10 @@
             <div class="toggle-auth" style="margin-top: 2rem; font-style: italic; font-size: 0.8rem;">
                 Acceso restringido solo a personal autorizado.
             </div>
+
+            <a href="index.html" class="back-link-footer">
+                <i class="fas fa-house"></i> Ir a la página principal
+            </a>
         </div>
     </div>
 

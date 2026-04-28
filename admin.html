@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         .admin-container {
             padding: 120px 5% 60px;
@@ -217,6 +218,7 @@
                 <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
                 <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
                 <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido Web</button>
+                <button onclick="switchTab('polls')" id="tab-polls-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Cuestionarios</button>
             </div>
         </div>
 
@@ -224,7 +226,11 @@
         <div id="products-tab">
             <div class="admin-header" style="margin-top: 2rem;">
                 <h3>Lista de Productos</h3>
-                <button onclick="openModal()" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;"><i class="fas fa-plus"></i> Añadir</button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="file" id="excel-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelImport(event)">
+                    <button onclick="document.getElementById('excel-input').click()" class="btn btn-primary" style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i> Importar Excel</button>
+                    <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir</button>
+                </div>
             </div>
             <div class="products-table-container">
                 <table>
@@ -276,6 +282,10 @@
                         <textarea id="s-hero-desc" rows="2"></textarea>
                     </div>
                     <div class="form-group full">
+                        <label>Imagen de Fondo (Inicio) - URL</label>
+                        <input type="text" id="s-hero-image" placeholder="nombre_archivo.png o URL">
+                    </div>
+                    <div class="form-group full">
                         <label>Título "Sobre Nosotros"</label>
                         <input type="text" id="s-about-title">
                     </div>
@@ -287,7 +297,38 @@
                         <label>Nuestra Historia - Párrafo 2</label>
                         <textarea id="s-about-text-2" rows="3"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                        <h3>Sección de Servicios (Inicio)</h3>
+                    </div>
+                    <div class="form-group">
+                        <label>Título de la Sección</label>
+                        <input type="text" id="s-section-title">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono de Encargos</label>
+                        <input type="text" id="s-contact-phone">
+                    </div>
+
+                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                        <h3>Anuncio en el Menú</h3>
+                    </div>
+                    <div class="form-group full">
+                        <label>Texto del Anuncio</label>
+                        <input type="text" id="s-menu-announcement">
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen del Anuncio (URL)</label>
+                        <input type="text" id="s-menu-announcement-image">
+                    </div>
+                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem; padding-top: 1.5rem;">
+                        <input type="checkbox" id="s-menu-announcement-visible" style="width: auto;">
+                        <label style="margin-bottom: 0;">Mostrar anuncio en el menú</label>
+                    </div>
+                    
+                    <div class="form-group full" style="margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Todos los Cambios</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -334,6 +375,30 @@
                         <tbody id="admin-trash-list"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- Polls Tab -->
+        <div id="polls-tab" style="display: none;">
+            <div class="products-table-container" style="padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <div>
+                        <h3>Gestión de Cuestionarios</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">Interactúa con los clientes creando encuestas rápidas.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openPollModal()"><i class="fas fa-plus"></i> Nuevo Cuestionario</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th>Opciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="polls-list"></tbody>
+                </table>
             </div>
         </div>
     </main>
@@ -395,6 +460,35 @@
         </div>
     </div>
 
+    <!-- Poll Modal -->
+    <div id="poll-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" onclick="closePollModal()">&times;</span>
+            <h3 id="poll-modal-title">Configurar Cuestionario</h3>
+            <form id="poll-form" style="margin-top: 2rem;">
+                <input type="hidden" id="poll-id">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Pregunta</label>
+                    <input type="text" id="poll-question" required placeholder="¿Cuál es tu bocadillo favorito?">
+                </div>
+                <div class="form-group">
+                    <label>Opciones (Mínimo 2)</label>
+                    <div id="poll-options-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;">
+                        <!-- Options will be added here -->
+                    </div>
+                    <button type="button" onclick="addPollOption()" class="btn" style="background: #f5f5f4; color: var(--text); margin-top: 1rem; width: 100%; border-radius: 10px; padding: 0.5rem;">
+                        <i class="fas fa-plus"></i> Añadir Opción
+                    </button>
+                </div>
+                <div class="form-group" style="margin-top: 1.5rem; flex-direction: row; align-items: center; gap: 0.8rem;">
+                    <input type="checkbox" id="poll-active" checked style="width: auto;">
+                    <label style="margin-bottom: 0;">Activar inmediatamente</label>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Cuestionario</button>
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
@@ -447,7 +541,7 @@
             const tTab = document.getElementById('trash-tab');
             const pBtn = document.getElementById('tab-products-btn');
             const sBtn = document.getElementById('tab-settings-btn');
-            const tabs = ['products', 'announcements', 'settings', 'trash'];
+            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls'];
             
             tabs.forEach(t => {
                 const tabEl = document.getElementById(t + '-tab');
@@ -469,6 +563,7 @@
 
             if (tab === 'announcements') loadAnnouncements();
             if (tab === 'trash') loadTrash();
+            if (tab === 'polls') loadPolls();
         }
 
         async function saveSettings(e) {
@@ -480,9 +575,12 @@
             const settings = [
                 { key: 'hero_title', value: document.getElementById('s-hero-title').value },
                 { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
+                { key: 'hero_image', value: document.getElementById('s-hero-image').value },
                 { key: 'about_title', value: document.getElementById('s-about-title').value },
                 { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
                 { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },
+                { key: 'section_title', value: document.getElementById('s-section-title').value },
+                { key: 'contact_phone', value: document.getElementById('s-contact-phone').value },
                 { key: 'menu_announcement', value: document.getElementById('s-menu-announcement').value },
                 { key: 'menu_announcement_image', value: document.getElementById('s-menu-announcement-image').value },
                 { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
@@ -812,11 +910,6 @@
             }
         });
 
-        async function toggleAnnouncement(id, currentState) {
-            await supabaseClient.from('announcements').update({ is_active: !currentState }).eq('id', id);
-            loadAnnouncements();
-        }
-
         async function deleteAnnouncement(id) {
             if (confirm('¿Seguro que quieres eliminar este anuncio?')) {
                 await supabaseClient.from('announcements').delete().eq('id', id);
@@ -824,8 +917,328 @@
             }
         }
 
+        // --- POLLS LOGIC ---
+        let currentPolls = [];
+
+        async function loadPolls() {
+            const { data, error } = await supabaseClient
+                .from('polls')
+                .select('*, poll_options(*)')
+                .order('created_at', { ascending: false });
+            
+            if (error) return;
+            currentPolls = data;
+
+            const list = document.getElementById('polls-list');
+            list.innerHTML = currentPolls.map(p => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${p.question}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Creado el ${new Date(p.created_at).toLocaleDateString()}</div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">
+                            ${p.poll_options.length} opciones (${p.poll_options.reduce((acc, opt) => acc + (opt.votes || 0), 0)} votos totales)
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-pill status-${p.is_active ? 'active' : 'inactive'}" style="background: ${p.is_active ? '#ecfdf5' : '#fef2f2'}; color: ${p.is_active ? '#059669' : '#dc2626'}; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.75rem; font-weight: 600;">
+                            ${p.is_active ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </td>
+                    <td class="action-btns">
+                        <button class="btn-icon btn-edit" onclick="editPoll('${p.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon" style="color: ${p.is_active ? '#dc2626' : '#059669'}" onclick="togglePollStatus('${p.id}', ${p.is_active})" title="${p.is_active ? 'Desactivar' : 'Activar'}">
+                            <i class="fas fa-${p.is_active ? 'pause' : 'play'}"></i>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deletePoll('${p.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openPollModal(poll = null) {
+            const modal = document.getElementById('poll-modal');
+            const title = document.getElementById('poll-modal-title');
+            const form = document.getElementById('poll-form');
+            const container = document.getElementById('poll-options-container');
+            
+            container.innerHTML = '';
+            
+            if (poll) {
+                title.textContent = 'Editar Cuestionario';
+                document.getElementById('poll-id').value = poll.id;
+                document.getElementById('poll-question').value = poll.question;
+                document.getElementById('poll-active').checked = poll.is_active;
+                
+                poll.poll_options.forEach(opt => addPollOption(opt.option_text, opt.id));
+            } else {
+                title.textContent = 'Nuevo Cuestionario';
+                form.reset();
+                document.getElementById('poll-id').value = '';
+                // Add two initial blank options
+                addPollOption();
+                addPollOption();
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closePollModal() {
+            document.getElementById('poll-modal').style.display = 'none';
+        }
+
+        function addPollOption(text = '', id = '') {
+            const container = document.getElementById('poll-options-container');
+            const div = document.createElement('div');
+            div.className = 'poll-option-input-wrapper';
+            div.style.display = 'flex';
+            div.style.gap = '0.5rem';
+            div.innerHTML = `
+                <input type="text" class="poll-option-input" value="${text}" placeholder="Nueva opción..." style="flex: 1;">
+                <input type="hidden" class="poll-option-id" value="${id}">
+                <button type="button" onclick="this.parentElement.remove()" class="btn" style="background: #fee2e2; color: #dc2626; padding: 0.5rem 0.8rem; border-radius: 10px;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        document.getElementById('poll-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            try {
+                const id = document.getElementById('poll-id').value;
+                const question = document.getElementById('poll-question').value;
+                const isActive = document.getElementById('poll-active').checked;
+                
+                const optionElements = document.querySelectorAll('.poll-option-input-wrapper');
+                const options = Array.from(optionElements).map(el => ({
+                    id: el.querySelector('.poll-option-id').value || undefined,
+                    option_text: el.querySelector('.poll-option-input').value
+                })).filter(opt => opt.option_text.trim() !== '');
+
+                if (options.length < 2) {
+                    alert('Debes añadir al menos 2 opciones.');
+                    return;
+                }
+
+                // If this poll is being activated, deactivate others
+                if (isActive) {
+                    await supabaseClient.from('polls').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000');
+                }
+
+                let pollId = id;
+                if (id) {
+                    await supabaseClient.from('polls').update({ question, is_active: isActive }).eq('id', id);
+                } else {
+                    const { data: newPoll, error: pollErr } = await supabaseClient
+                        .from('polls')
+                        .insert([{ question, is_active: isActive }])
+                        .select()
+                        .single();
+                    if (pollErr) throw pollErr;
+                    pollId = newPoll.id;
+                }
+
+                // Handle options (This is a simplified approach: delete all and re-insert, or handle specifically)
+                // For a more robust approach, we'd compare IDs. Here, if it's an update, let's just delete old ones and insert new.
+                if (id) {
+                    // For existing polls, we'll keep it simple: keep existing options if they have IDs, delete missing ones, add new ones.
+                    // But to keep this demo code clean and fast:
+                    const { data: existingOpts } = await supabaseClient.from('poll_options').select('id').eq('poll_id', pollId);
+                    const currentOptIds = options.map(o => o.id).filter(id => id);
+                    const toDelete = existingOpts.filter(eo => !currentOptIds.includes(eo.id)).map(eo => eo.id);
+                    
+                    if (toDelete.length > 0) {
+                        await supabaseClient.from('poll_options').delete().in('id', toDelete);
+                    }
+
+                    for (const opt of options) {
+                        if (opt.id) {
+                            await supabaseClient.from('poll_options').update({ option_text: opt.option_text }).eq('id', opt.id);
+                        } else {
+                            await supabaseClient.from('poll_options').insert([{ poll_id: pollId, option_text: opt.option_text, votes: 0 }]);
+                        }
+                    }
+                } else {
+                    const optData = options.map(o => ({ poll_id: pollId, option_text: o.option_text, votes: 0 }));
+                    await supabaseClient.from('poll_options').insert(optData);
+                }
+
+                closePollModal();
+                loadPolls();
+            } catch (err) {
+                console.error(err);
+                alert('Error al guardar el cuestionario: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Cuestionario';
+            }
+        });
+
+        async function togglePollStatus(id, currentState) {
+            // If activating, deactivate others
+            if (!currentState) {
+                await supabaseClient.from('polls').update({ is_active: false }).neq('id', id);
+            }
+            await supabaseClient.from('polls').update({ is_active: !currentState }).eq('id', id);
+            loadPolls();
+        }
+
+        async function deletePoll(id) {
+            if (confirm('¿Seguro que quieres eliminar este cuestionario? Se borrarán todos los votos.')) {
+                await supabaseClient.from('polls').delete().eq('id', id);
+                loadPolls();
+            }
+        }
+
+        function editPoll(id) {
+            const p = currentPolls.find(x => x.id === id);
+            if (p) openPollModal(p);
+        }
+
         checkAuth();
         document.getElementById('settings-form').addEventListener('submit', saveSettings);
+
+        async function handleExcelImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!confirm('¿Estás seguro de que quieres actualizar el catálogo? Esta acción puede modificar o añadir múltiples productos.')) {
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                console.log('Filas detectadas en el Excel:', jsonData.length);
+                console.log('Datos de la primera fila:', jsonData[0]);
+
+                if (jsonData.length === 0) {
+                    alert('No se detectaron datos en el archivo. Asegúrate de que la primera fila contenga los nombres de las columnas.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                let successCount = 0;
+                let errorCount = 0;
+                let skipCount = 0;
+                let firstErrorDetails = '';
+
+                for (const row of jsonData) {
+                    try {
+                        // Normalizamos las claves para ignorar mayúsculas/minúsculas y espacios
+                        const rowKeys = Object.keys(row);
+                        const findVal = (possibleNames) => {
+                            // Buscamos coincidencia exacta o que el encabezado CONTENGA la palabra clave
+                            const key = rowKeys.find(k => {
+                                const cleanK = String(k).trim().toLowerCase();
+                                return possibleNames.some(p => cleanK === p || cleanK.includes(p));
+                            });
+                            return key ? row[key] : null;
+                        };
+
+                        const name = findVal(['nombre', 'producto', 'name', 'item', 'articulo', 'artículo']);
+                        const categoryName = findVal(['familia', 'categoria', 'categoría', 'category', 'tipo', 'clase']);
+                        const priceStr = findVal(['precio1', 'precio', 'price', 'coste', 'cost', 'pve', 'pvp']);
+                        const image = findVal(['imagen', 'image', 'foto', 'url', 'image_url', 'img']) || '';
+                        const desc = findVal(['descripcion', 'descripción', 'description', 'detalle', 'info']) || '';
+                        const allergensStr = findVal(['alergenos', 'alérgenos', 'allergens', 'contiene', 'alerge']);
+                        
+                        if (!name) {
+                            console.warn('Fila sin nombre detectada. Columnas disponibles:', rowKeys);
+                            skipCount++;
+                            continue;
+                        }
+
+                        const price = parseFloat(String(priceStr).replace(',', '.').replace(/[^\d.]/g, '')) || 0;
+
+                        // Find or create category ID
+                        const categoryNameClean = (String(categoryName || '')).trim();
+                        let categoryId = null;
+                        
+                        if (categoryNameClean) {
+                            let category = categories.find(c => c.name.toLowerCase() === categoryNameClean.toLowerCase());
+                            
+                            if (!category) {
+                                // Intentamos crear la categoría si no existe
+                                console.log(`Creando nueva categoría: ${categoryNameClean}`);
+                                const { data: newCat, error: catErr } = await supabaseClient
+                                    .from('categories')
+                                    .insert([{ name: categoryNameClean }])
+                                    .select()
+                                    .single();
+                                
+                                if (!catErr && newCat) {
+                                    categories.push(newCat); // Actualizamos la lista local
+                                    categoryId = newCat.id;
+                                } else {
+                                    console.error('Error creando categoría:', catErr);
+                                    categoryId = categories[0]?.id; // Fallback
+                                }
+                            } else {
+                                categoryId = category.id;
+                            }
+                        } else {
+                            categoryId = categories[0]?.id;
+                        }
+
+                        const allergens = allergensStr ? String(allergensStr).split(/[,;]/).map(a => a.trim()) : [];
+
+                        const productData = {
+                            name: String(name).trim(),
+                            category_id: categoryId,
+                            price: price,
+                            image_url: String(image).trim(),
+                            description: String(desc).trim(),
+                            allergens: allergens,
+                            is_active: true
+                        };
+
+                        const { error } = await supabaseClient
+                            .from('products')
+                            .upsert([productData], { onConflict: 'name' });
+
+                        if (error) {
+                            console.error('Error de Supabase:', error);
+                            if (errorCount === 0) {
+                                firstErrorDetails = `ERROR EN FILA 1:\nMensaje: ${error.message}\nDetalles: ${error.details}\nHint: ${error.hint}\n\nDatos enviados:\n${JSON.stringify(productData, null, 2)}`;
+                            }
+                            throw error;
+                        }
+                        successCount++;
+                    } catch (err) {
+                        console.error('Error procesando fila:', err);
+                        errorCount++;
+                        if (errorCount === 1) {
+                            alert(`🚨 ERROR CRÍTICO DETECTADO 🚨\n\n${firstErrorDetails || err.message || JSON.stringify(err)}`);
+                            break; 
+                        }
+                    }
+                }
+
+                if (successCount === 0 && skipCount > 0) {
+                    const detectedHeaders = Object.keys(jsonData[0] || {}).join(', ');
+                    alert(`AVISO: Se detectaron ${jsonData.length} filas pero no se pudo procesar ninguna.\n\nEncabezados detectados:\n[${detectedHeaders}]\n\nAsegúrate de que una columna se llame "NOMBRE".`);
+                } else {
+                    let msg = `Proceso finalizado:\n- Éxitos: ${successCount}\n- Errores: ${errorCount}\n- Filas omitidas: ${skipCount}`;
+                    if (errorCount > 0) msg += `\n\nÚltimo error: ${lastError}`;
+                    alert(msg);
+                }
+                loadProducts();
+                event.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
     </script>
 </body>
 </html>

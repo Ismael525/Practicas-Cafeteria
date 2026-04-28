@@ -46,12 +46,78 @@
         <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
     </div>
 
-    <section class="hero">
+    <section class="hero" id="hero-bg">
         <div class="hero-content">
             <h1 id="hero-title" data-aos="fade-up">Cargando...</h1>
             <p id="hero-desc" data-aos="fade-up" data-aos-delay="200"></p>
             <div data-aos="fade-up" data-aos-delay="400">
                 <a href="catalogo.html" class="btn btn-primary">Explorar Menú</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title" id="section-title" data-aos="fade-up">Servicios y Encargos</h2>
+            
+            <div class="info-grid">
+                <!-- Encargos Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Sistema de Encargos</h3>
+                    <p>Haz tu pedido cómodamente y recógelo sin esperas.</p>
+                    <div class="phone-number" id="contact-phone">604 88 52 96</div>
+                    <ul class="card-list">
+                        <li><i class="fas fa-clock"></i> Fuera de horario lectivo</li>
+                        <li><i class="fas fa-id-card"></i> Indica nombre y curso</li>
+                        <li><i class="fas fa-hamburger"></i> Recogida en el recreo</li>
+                    </ul>
+                </div>
+
+                <!-- Tarjetas Monedero Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                    <h3>Tarjetas Monedero</h3>
+                    <p>Ahorra tiempo y agiliza tus pagos con bonos de 5 bocadillos.</p>
+                    <div class="price-grid">
+                        <div class="price-item"><span>5 bocadillos (1.00€)</span> <strong>5.00€</strong></div>
+                        <div class="price-item"><span>5 bocadillos (1.50€)</span> <strong>7.50€</strong></div>
+                        <div class="price-item"><span>5 bocadillos (2.00€)</span> <strong>10.00€</strong></div>
+                    </div>
+                    <p class="card-note">* Se paga al inicio y se sella diariamente.</p>
+                </div>
+
+                <!-- Otros Servicios Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-icon"><i class="fas fa-utensils"></i></div>
+                    <h3>Información Diaria</h3>
+                    <p>Todo lo que necesitas saber para tu descanso.</p>
+                    <ul class="card-list">
+                        <li><i class="fas fa-calendar-alt"></i> Encargos desde las 7:45h</li>
+                        <li><i class="fas fa-credit-card"></i> Pago con tarjeta disponible</li>
+                        <li><i class="fas fa-bolt"></i> ¡Optimiza tu tiempo de recreo!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="poll-section">
+        <div class="container">
+            <div class="poll-container" data-aos="fade-up">
+                <div id="poll-loading">
+                    <p>Cargando cuestionario...</p>
+                </div>
+                <div id="poll-content" style="display: none;">
+                    <h2 class="poll-question" id="display-poll-question"></h2>
+                    <div class="poll-options" id="display-poll-options">
+                        <!-- Options will be loaded here -->
+                    </div>
+                    <button id="vote-btn" class="btn btn-primary poll-vote-btn" disabled onclick="submitVote()">Votar ahora</button>
+                    <div id="voted-msg" class="poll-voted-msg" style="display: none;">
+                        <i class="fas fa-check-circle"></i> ¡Gracias por tu participación!
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -100,7 +166,17 @@
             if (data) {
                 data.forEach(s => {
                     const el = document.getElementById(s.key.replace(/_/g, '-'));
-                    if (el) el.textContent = s.value;
+                    if (el) {
+                        if (el.tagName === 'IMG') el.src = s.value;
+                        else el.textContent = s.value;
+                    }
+                    
+                    if (s.key === 'hero_image') {
+                        const hero = document.getElementById('hero-bg');
+                        if (hero) {
+                            hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${s.value}')`;
+                        }
+                    }
                 });
             }
         }
@@ -118,6 +194,107 @@
                 nav.classList.remove('scrolled');
             }
         });
+
+        // --- POLL LOGIC ---
+        let activePoll = null;
+        let selectedOptionId = null;
+
+        async function loadActivePoll() {
+            const { data: poll, error } = await supabaseClient
+                .from('polls')
+                .select('*, poll_options(*)')
+                .eq('is_active', true)
+                .single();
+            
+            if (error || !poll) {
+                document.getElementById('poll-loading').innerHTML = '<p>No hay cuestionarios activos en este momento.</p>';
+                return;
+            }
+
+            activePoll = poll;
+            document.getElementById('poll-loading').style.display = 'none';
+            document.getElementById('poll-content').style.display = 'block';
+            document.getElementById('display-poll-question').textContent = poll.question;
+
+            const hasVoted = localStorage.getItem(`voted_${poll.id}`);
+            if (hasVoted) {
+                showResults();
+            } else {
+                renderOptions();
+            }
+        }
+
+        function renderOptions() {
+            const container = document.getElementById('display-poll-options');
+            container.innerHTML = activePoll.poll_options.map(opt => `
+                <div class="poll-option" onclick="selectOption('${opt.id}', this)">
+                    <span>${opt.option_text}</span>
+                    <i class="far fa-circle"></i>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(id, element) {
+            selectedOptionId = id;
+            document.querySelectorAll('.poll-option').forEach(el => {
+                el.classList.remove('selected');
+                el.querySelector('i').className = 'far fa-circle';
+            });
+            element.classList.add('selected');
+            element.querySelector('i').className = 'fas fa-check-circle';
+            document.getElementById('vote-btn').disabled = false;
+        }
+
+        async function submitVote() {
+            if (!selectedOptionId) return;
+            
+            const btn = document.getElementById('vote-btn');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            // Get current votes and increment
+            const option = activePoll.poll_options.find(o => o.id === selectedOptionId);
+            const { error } = await supabaseClient
+                .from('poll_options')
+                .update({ votes: (option.votes || 0) + 1 })
+                .eq('id', selectedOptionId);
+
+            if (!error) {
+                localStorage.setItem(`voted_${activePoll.id}`, 'true');
+                // Update local data for immediate result display
+                option.votes = (option.votes || 0) + 1;
+                showResults();
+            } else {
+                alert('Error al votar. Inténtalo de nuevo.');
+                btn.disabled = false;
+                btn.textContent = 'Votar ahora';
+            }
+        }
+
+        function showResults() {
+            const container = document.getElementById('display-poll-options');
+            const totalVotes = activePoll.poll_options.reduce((acc, opt) => acc + (opt.votes || 0), 0);
+            
+            document.getElementById('vote-btn').style.display = 'none';
+            document.getElementById('voted-msg').style.display = 'flex';
+
+            container.innerHTML = activePoll.poll_options.map(opt => {
+                const percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+                return `
+                    <div class="poll-results">
+                        <div class="poll-result-info">
+                            <span>${opt.option_text}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                        <div class="poll-result-bar">
+                            <div class="poll-result-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        loadActivePoll();
     </script>
 </body>
 </html>
