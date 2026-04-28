@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nosotros | Cafetería Antonio Machado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .about-section {
+            padding: 150px 10%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        .about-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+        }
+        .about-content h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+        .about-content p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 968px) {
+            .about-section {
+                grid-template-columns: 1fr;
+                padding: 120px 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav" class="scrolled">
+        <a href="index.html" class="logo">ANTONIO MACHADO</a>
+        <div class="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="nosotros.html" class="active">Nosotros</a>
+            <a href="catalogo.html">Menú</a>
+        </div>
+        <div class="auth-links">
+            <a href="login.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;">Staff Login</a>
+        </div>
+    </nav>
+
+    <section class="about-section">
+        <div class="about-image" data-aos="fade-right">
+            <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=800" alt="Nuestra Cafetería">
+        </div>
+        <div class="about-content" data-aos="fade-left">
+            <h2 id="about-title">Nuestra Pasión</h2>
+            <p id="about-text-1">Cafetería Antonio Machado nació de un sueño simple: servir la taza de café perfecta. Ubicados en el corazón de la ciudad, nos dedicamos a seleccionar los mejores granos de origen único, tostándolos cuidadosamente para resaltar sus notas más delicadas.</p>
+            <p id="about-text-2">Para nosotros, el café no es solo una bebida, es una pausa necesaria, un catalizador de ideas y un puente entre personas. Nuestro espacio está diseñado para que te sientas como en casa, ya sea para trabajar, leer o compartir un momento especial.</p>
+            <div style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">¿Por qué elegirnos?</h3>
+                <ul style="list-style: none; color: var(--text-muted);">
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Granos 100% Arábica de especialidad</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Tostado artesanal semanal</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Baristas apasionados y certificados</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section style="padding: 5rem 2rem; text-align: center; background: #fdfcfb;">
+        <div style="max-width: 600px; margin: 0 auto;" data-aos="fade-up">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1.5rem;">¿Te apetece algo?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Estamos listos para preparar tu pedido favorito. Solo tienes que escribirnos por WhatsApp y lo tendremos listo para ti.</p>
+            <button onclick="openWhatsAppChat()" class="btn btn-primary" style="background: #25d366; border: none; padding: 1rem 2.5rem; font-size: 1.1rem;">
+                <i class="fab fa-whatsapp"></i> Haz tu pedido ahora
+            </button>
+        </div>
+    </section>
+
+    <div class="wa-widget">
+        <div id="wa-chat-window" class="wa-chat-window">
+            <div class="wa-chat-header">
+                <div style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700;">Cafetería Antonio Machado</div>
+                    <div class="wa-chat-status">● En línea</div>
+                </div>
+            </div>
+            <div class="wa-chat-body">
+                <div class="wa-message">
+                    ¡Hola! ☕ ¿En qué podemos ayudarte hoy? Cuéntanos qué te gustaría pedir.
+                </div>
+            </div>
+            <div class="wa-chat-footer">
+                <input type="text" id="wa-chat-input" class="wa-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendWhatsAppMessage()">
+                <button class="wa-send-btn" onclick="sendWhatsAppMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <div class="wa-btn" onclick="toggleWhatsApp()">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadSettings() {
+            const { data } = await supabaseClient.from('site_settings').select('key, value');
+            if (data) {
+                data.forEach(s => {
+                    const el = document.getElementById(s.key.replace(/_/g, '-'));
+                    if (el) el.textContent = s.value;
+                });
+            }
+        }
+        loadSettings();
+    </script>
+</body>
+</html>

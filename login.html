@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Empleados | Cafetería Antonio Machado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .login-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fdfcfb;
+            padding: 20px;
+        }
+        .login-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .login-card h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .login-card p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e7e5e4;
+            outline: none;
+            transition: var(--transition);
+        }
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(120, 53, 15, 0.1);
+        }
+        .login-btn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .toggle-auth {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .toggle-auth span {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+        #error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <a href="index.html" class="logo" style="display: inline-block; margin-bottom: 2rem;">ANTONIO MACHADO</a>
+            <h2 id="auth-title">Acceso Staff</h2>
+            <p id="auth-desc">Solo para empleados autorizados.</p>
+            
+            <form id="auth-form">
+                <div class="form-group">
+                    <label>Email Corporativo</label>
+                    <input type="email" id="email" required placeholder="empleado@iesamachado.org">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary login-btn" id="submit-btn">Entrar</button>
+                <p id="error-msg"></p>
+            </form>
+
+            <div class="toggle-auth" style="margin-top: 2rem; font-style: italic; font-size: 0.8rem;">
+                Acceso restringido solo a personal autorizado.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (email !== 'ismaelsanchez05@iesamachado.org') {
+                errorMsg.textContent = 'Acceso denegado. Este usuario no está autorizado.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            errorMsg.style.display = 'none';
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verificando...';
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+                if (error) {
+                    errorMsg.textContent = 'Error: ' + error.message;
+                    errorMsg.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                } else if (data.user) {
+                    window.location.href = 'admin.html';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Error de conexión. Si estás abriendo el archivo directamente (file://), por favor usa un servidor local (Live Server).';
+                errorMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Entrar';
+            }
+        });
+    </script>
+</body>
+</html>

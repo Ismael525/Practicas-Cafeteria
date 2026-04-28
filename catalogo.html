@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú | Cafetería Antonio Machado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .catalog-container {
+            padding: 120px 5% 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .catalog-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        .catalog-header h2 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        /* Filters */
+        .filters-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .filter-chip {
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid #e7e5e4;
+            background: #fdfcfb;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .filter-chip:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .filter-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(120, 53, 15, 0.1);
+        }
+        .product-image {
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .product-card:hover .product-image img {
+            transform: scale(1.1);
+        }
+        .product-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-light);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .product-name {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        .product-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f5f5f4;
+        }
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .allergens {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .allergen-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fef2f2;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: help;
+        }
+        .order-btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+        }
+        .order-btn:hover {
+            background: #128c7e;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav" class="scrolled">
+        <a href="index.html" class="logo">ANTONIO MACHADO</a>
+        <div class="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="catalogo.html" class="active">Menú</a>
+        </div>
+        <div class="auth-links">
+            <a href="login.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;">Staff Login</a>
+        </div>
+    </nav>
+
+    <main class="catalog-container">
+        <div class="catalog-header">
+            <h2 data-aos="fade-up">Nuestra Carta</h2>
+            <p data-aos="fade-up" data-aos-delay="100">Selección artesanal de cafés, repostería y bocados salados.</p>
+        </div>
+
+        <section class="filters-section" data-aos="fade-up">
+            <div class="filter-group">
+                <label>Categoría</label>
+                <div class="filter-options" id="category-filters">
+                    <div class="filter-chip active" onclick="filterByCategory('all')">Todos</div>
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
+            <div class="filter-group">
+                <label>Sin Alérgenos</label>
+                <div class="filter-options" id="allergen-filters">
+                    <div class="filter-chip" data-allergen="gluten" onclick="toggleAllergenFilter('gluten')">Sin Gluten</div>
+                    <div class="filter-chip" data-allergen="lactosa" onclick="toggleAllergenFilter('lactosa')">Sin Lactosa</div>
+                    <div class="filter-chip" data-allergen="huevos" onclick="toggleAllergenFilter('huevos')">Sin Huevo</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="products-grid" id="products-grid">
+            <!-- Products will be loaded here -->
+            <div style="text-align: center; grid-column: 1/-1; padding: 3rem;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+            </div>
+        </div>
+    </main>
+
+    <div class="wa-widget">
+        <div id="wa-chat-window" class="wa-chat-window">
+            <div class="wa-chat-header">
+                <div style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <i class="fas fa-coffee"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700;">Cafetería Antonio Machado</div>
+                    <div class="wa-chat-status">● En línea</div>
+                </div>
+            </div>
+            <div class="wa-chat-body">
+                <div class="wa-message">
+                    ¡Hola! ☕ ¿En qué podemos ayudarte hoy? Cuéntanos qué te gustaría pedir.
+                </div>
+            </div>
+            <div class="wa-chat-footer">
+                <input type="text" id="wa-chat-input" class="wa-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendWhatsAppMessage()">
+                <button class="wa-send-btn" onclick="sendWhatsAppMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <div class="wa-btn" onclick="toggleWhatsApp()">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/whatsapp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let products = [];
+        let categories = [];
+        let activeCategory = 'all';
+        let excludedAllergens = [];
+
+        async function initCatalog() {
+            await loadCategories();
+            await loadProducts();
+            AOS.init({ duration: 1000, once: true });
+        }
+
+        async function loadCategories() {
+            const { data } = await supabaseClient.from('categories').select('*');
+            categories = data || [];
+            const container = document.getElementById('category-filters');
+            
+            // Add "Todos" button if not present
+            container.innerHTML = '<div class="filter-chip active" onclick="filterByCategory(\'all\', this)">Todos</div>';
+            
+            categories.forEach(cat => {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                chip.textContent = cat.name;
+                chip.onclick = () => filterByCategory(cat.id, chip);
+                container.appendChild(chip);
+            });
+        }
+
+        async function loadProducts() {
+            try {
+                // Try to load with category name join
+                const { data, error } = await supabaseClient
+                    .from('products')
+                    .select('*, categories(name)')
+                    .is('deleted_at', null);
+
+                if (error) {
+                    console.warn("Join failed, trying simple load", error);
+                    const { data: simpleData, error: simpleError } = await supabaseClient
+                        .from('products')
+                        .select('*')
+                        .is('deleted_at', null);
+                    
+                    if (simpleError) throw simpleError;
+                    products = simpleData;
+                } else {
+                    products = data;
+                }
+                
+                renderProducts();
+            } catch (err) {
+                console.error("Error loading products:", err);
+                const grid = document.getElementById('products-grid');
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: #ef4444;">Error al cargar el menú. Por favor, recarga la página.</div>';
+            }
+        }
+
+        function filterByCategory(catId, element) {
+            activeCategory = catId;
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            if (element) element.classList.add('active');
+            renderProducts();
+        }
+
+        function toggleAllergenFilter(allergen) {
+            const chip = document.querySelector(`[data-allergen="${allergen}"]`);
+            if (excludedAllergens.includes(allergen)) {
+                excludedAllergens = excludedAllergens.filter(a => a !== allergen);
+                chip.classList.remove('active');
+            } else {
+                excludedAllergens.push(allergen);
+                chip.classList.add('active');
+            }
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+
+            const filtered = products.filter(p => {
+                const matchCategory = activeCategory === 'all' || p.category_id === activeCategory;
+                // Case-insensitive check for allergens
+                const pAllergens = (p.allergens || []).map(a => a.toLowerCase());
+                const matchAllergens = !excludedAllergens.some(a => pAllergens.includes(a.toLowerCase()));
+                return matchCategory && matchAllergens;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos con estos filtros.</div>';
+                return;
+            }
+
+            filtered.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.setAttribute('data-aos', 'fade-up');
+                
+                const allergenIcons = (p.allergens || []).map(a => {
+                    let icon = 'info-circle';
+                    const lowerA = a.toLowerCase();
+                    if (lowerA.includes('gluten')) icon = 'wheat-awn';
+                    if (lowerA.includes('lactosa')) icon = 'cow';
+                    if (lowerA.includes('huevo')) icon = 'egg';
+                    if (lowerA.includes('frutos')) icon = 'seedling';
+                    if (lowerA.includes('pescado')) icon = 'fish';
+
+                    return `
+                        <div class="allergen-icon" title="Contiene ${a}">
+                            <i class="fas fa-${icon}"></i>
+                        </div>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="product-image">
+                        <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800'}" alt="${p.name}">
+                    </div>
+                    <div class="product-info">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <span class="product-category">${p.categories?.name || 'Menú'}</span>
+                            <div class="allergens">${allergenIcons}</div>
+                        </div>
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-desc">${p.description || ''}</p>
+                        <div class="product-footer">
+                            <span class="product-price">${parseFloat(p.price).toFixed(2)}€</span>
+                            <button class="order-btn" onclick="openWhatsAppChat()">
+                                <i class="fab fa-whatsapp"></i> Pedir ahora
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        initCatalog();
+    </script>
+</body>
+</html>

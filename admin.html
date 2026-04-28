@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Cafetería Antonio Machado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .admin-container {
+            padding: 120px 5% 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+        .admin-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        /* Table Styles */
+        .products-table-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th, td {
+            padding: 1.5rem;
+            border-bottom: 1px solid #f5f5f4;
+        }
+        th {
+            background: #fafaf9;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .price-input {
+            width: 80px;
+            padding: 0.5rem;
+            border: 1px solid #e7e5e4;
+            border-radius: 8px;
+            outline: none;
+        }
+        .action-btns {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+        .btn-edit { color: var(--primary-light); }
+        .btn-delete { color: #ef4444; }
+        .btn-save { color: var(--accent); display: none; }
+
+        /* Modal / Form */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid #e7e5e4;
+            outline: none;
+        }
+        /* Confirmation Modal */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .confirm-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        .confirm-icon {
+            font-size: 3rem;
+            color: #ef4444;
+            margin-bottom: 1.5rem;
+        }
+        .confirm-btns {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn-cancel {
+            background: #f5f5f4;
+            color: var(--text);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Allergen Chips */
+        .allergen-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .allergen-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background: #f5f5f4;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        .allergen-chip:hover {
+            background: #e7e5e4;
+        }
+        .allergen-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-light);
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav" class="scrolled">
+        <a href="index.html" class="logo">ANTONIO MACHADO</a>
+        <div class="nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="catalogo.html">Ir al Menú</a>
+        </div>
+        <div class="auth-links">
+            <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar Sesión</button>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h2>Panel de Control</h2>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary">Menú Activo</button>
+                <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
+                <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido Web</button>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="products-tab">
+            <div class="admin-header" style="margin-top: 2rem;">
+                <h3>Lista de Productos</h3>
+                <button onclick="openModal()" class="btn btn-primary" style="padding: 0.5rem 1.2rem; font-size: 0.9rem;"><i class="fas fa-plus"></i> Añadir</button>
+            </div>
+            <div class="products-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio (€)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" style="display: none;">
+            <div class="products-table-container" style="padding: 2rem;">
+                <h3>Ajustes de la Página</h3>
+                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Cambia los textos principales de la web aquí.</p>
+                
+                <form id="settings-form" class="form-grid" style="display: grid; gap: 2rem; margin-top: 0;">
+                    <div class="form-group full">
+                        <label>Título de Bienvenida (Inicio)</label>
+                        <input type="text" id="s-hero-title">
+                    </div>
+                    <div class="form-group full">
+                        <label>Subtítulo de Bienvenida (Inicio)</label>
+                        <textarea id="s-hero-desc" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full">
+                        <label>Título "Sobre Nosotros"</label>
+                        <input type="text" id="s-about-title">
+                    </div>
+                    <div class="form-group full">
+                        <label>Nuestra Historia - Párrafo 1</label>
+                        <textarea id="s-about-text-1" rows="3"></textarea>
+                    </div>
+                    <div class="form-group full">
+                        <label>Nuestra Historia - Párrafo 2</label>
+                        <textarea id="s-about-text-2" rows="3"></textarea>
+                    <button type="submit" class="btn btn-primary full">Guardar Cambios de la Web</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Trash Tab -->
+        <div id="trash-tab" style="display: none;">
+            <div class="products-table-container" style="padding: 2rem;">
+                <h3>Papelera de Reciclaje</h3>
+                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Productos borrados temporalmente. Puedes restaurarlos o eliminarlos para siempre.</p>
+                <div class="products-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-trash-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for New/Edit Product -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3 id="modal-title">Añadir Producto</h3>
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Nombre del Producto</label>
+                        <input type="text" id="p-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="p-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio (€)</label>
+                        <input type="number" step="0.01" id="p-price" required>
+                    </div>
+                    <div class="form-group full">
+                        <label>Imagen URL</label>
+                        <input type="url" id="p-image" placeholder="https://images.unsplash.com/...">
+                    </div>
+                    <div class="form-group full">
+                        <label>Alérgenos (Selecciona los que contenga)</label>
+                        <div id="allergen-selector" class="allergen-selector">
+                            <div class="allergen-chip" data-val="Gluten">Gluten</div>
+                            <div class="allergen-chip" data-val="Lactosa">Lactosa</div>
+                            <div class="allergen-chip" data-val="Huevo">Huevo</div>
+                            <div class="allergen-chip" data-val="Frutos Secos">Frutos Secos</div>
+                            <div class="allergen-chip" data-val="Pescado">Pescado</div>
+                        </div>
+                    </div>
+                    <div class="form-group full">
+                        <label>Descripción</label>
+                        <textarea id="p-desc" rows="3"></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="confirm-modal">
+        <div class="confirm-content">
+            <div class="confirm-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <h3 style="margin-bottom: 1rem;">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción moverá el producto a la papelera.</p>
+            <div class="confirm-btns">
+                <button onclick="closeConfirm()" class="btn btn-primary btn-cancel full">Cancelar</button>
+                <button id="confirm-yes-btn" class="btn btn-danger full">Sí, borrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let activeProducts = [];
+        let trashProducts = [];
+        let categories = [];
+
+        async function checkAuth() {
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                if (error || !session) {
+                    window.location.href = 'login.html';
+                } else {
+                    initAdmin();
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                alert('No se pudo conectar con Supabase. Asegúrate de usar un servidor local (Live Server).');
+            }
+        }
+
+        async function initAdmin() {
+            await loadCategories();
+            await loadProducts();
+            await loadSiteSettings();
+        }
+
+        async function loadSiteSettings() {
+            const { data } = await supabaseClient.from('site_settings').select('*');
+            if (data) {
+                data.forEach(s => {
+                    const el = document.getElementById('s-' + s.key.replace(/_/g, '-'));
+                    if (el) el.value = s.value;
+                });
+            }
+        }
+
+        function switchTab(tab) {
+            const pTab = document.getElementById('products-tab');
+            const sTab = document.getElementById('settings-tab');
+            const tTab = document.getElementById('trash-tab');
+            const pBtn = document.getElementById('tab-products-btn');
+            const sBtn = document.getElementById('tab-settings-btn');
+            const tBtn = document.getElementById('tab-trash-btn');
+
+            [pTab, sTab, tTab].forEach(t => t.style.display = 'none');
+            [pBtn, sBtn, tBtn].forEach(b => {
+                b.style.background = 'var(--white)';
+                b.style.color = 'var(--primary)';
+            });
+
+            if (tab === 'products') {
+                pTab.style.display = 'block';
+                pBtn.style.background = 'var(--primary)';
+                pBtn.style.color = 'var(--white)';
+            } else if (tab === 'settings') {
+                sTab.style.display = 'block';
+                sBtn.style.background = 'var(--primary)';
+                sBtn.style.color = 'var(--white)';
+            } else if (tab === 'trash') {
+                tTab.style.display = 'block';
+                tBtn.style.background = 'var(--primary)';
+                tBtn.style.color = 'var(--white)';
+                loadTrash();
+            }
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const settings = [
+                { key: 'hero_title', value: document.getElementById('s-hero-title').value },
+                { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
+                { key: 'about_title', value: document.getElementById('s-about-title').value },
+                { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
+                { key: 'about_text_2', value: document.getElementById('s-about-text-2').value }
+            ];
+
+            for (const s of settings) {
+                await supabaseClient.from('site_settings').update({ value: s.value }).eq('key', s.key);
+            }
+
+            alert('¡Web actualizada con éxito!');
+            btn.disabled = false;
+            btn.textContent = 'Guardar Cambios de la Web';
+        });
+
+        async function loadCategories() {
+            const { data } = await supabaseClient.from('categories').select('*');
+            categories = data || [];
+            const select = document.getElementById('p-category');
+            select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        async function loadProducts() {
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*, categories(name)')
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false });
+                
+            if (error) return;
+            activeProducts = data;
+
+            const list = document.getElementById('admin-products-list');
+            list.innerHTML = activeProducts.map(p => `
+                <tr id="row-${p.id}">
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <img src="${p.image_url}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover;">
+                            <div style="font-weight: 600;">${p.name}</div>
+                        </div>
+                    </td>
+                    <td><span style="font-size: 0.8rem; background: #f5f5f4; padding: 0.3rem 0.6rem; border-radius: 5px;">${p.categories?.name || 'Varios'}</span></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="number" step="0.01" class="price-input" value="${p.price}" onchange="updatePrice('${p.id}', this.value, this)">
+                            <i class="fas fa-check-circle" style="color: var(--accent); opacity: 0; transition: 0.3s;" id="check-${p.id}"></i>
+                        </div>
+                    </td>
+                    <td class="action-btns">
+                        <button class="btn-icon btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                        <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadTrash() {
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*, categories(name)')
+                .not('deleted_at', 'is', null)
+                .order('deleted_at', { ascending: false });
+                
+            if (error) return;
+            trashProducts = data;
+
+            const list = document.getElementById('admin-trash-list');
+            list.innerHTML = trashProducts.map(p => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${p.name}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Eliminado el ${new Date(p.deleted_at).toLocaleDateString()}</div>
+                    </td>
+                    <td>${p.price}€</td>
+                    <td class="action-btns">
+                        <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: var(--accent);" onclick="restoreProduct('${p.id}')">Restaurar</button>
+                        <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="askPermanentDelete('${p.id}')">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function updatePrice(id, newPrice, input) {
+            const { error } = await supabaseClient.from('products').update({ price: parseFloat(newPrice) }).eq('id', id);
+            if (!error) {
+                const check = document.getElementById('check-' + id);
+                check.style.opacity = '1';
+                setTimeout(() => check.style.opacity = '0', 2000);
+            } else {
+                alert('Error al guardar: ' + error.message);
+            }
+        }
+
+        function openModal(product = null) {
+            const modal = document.getElementById('product-modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('product-form');
+            
+            // Reset chips
+            document.querySelectorAll('.allergen-chip').forEach(c => c.classList.remove('active'));
+
+            if (product) {
+                title.textContent = 'Editar Producto';
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('p-name').value = product.name;
+                document.getElementById('p-category').value = product.category_id;
+                document.getElementById('p-price').value = product.price;
+                document.getElementById('p-image').value = product.image_url;
+                document.getElementById('p-desc').value = product.description;
+                
+                // Set active chips
+                if (product.allergens) {
+                    product.allergens.forEach(a => {
+                        const chip = document.querySelector(`.allergen-chip[data-val="${a}"]`);
+                        if (chip) chip.classList.add('active');
+                    });
+                }
+            } else {
+                title.textContent = 'Añadir Producto';
+                form.reset();
+                document.getElementById('product-id').value = '';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').style.display = 'none';
+        }
+
+        // Chip toggling
+        document.querySelectorAll('.allergen-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('active');
+            });
+        });
+
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+            
+            try {
+                const id = document.getElementById('product-id').value;
+                const activeChips = document.querySelectorAll('.allergen-chip.active');
+                const allergens = Array.from(activeChips).map(c => c.getAttribute('data-val'));
+                
+                const productData = {
+                    name: document.getElementById('p-name').value,
+                    category_id: document.getElementById('p-category').value,
+                    price: parseFloat(document.getElementById('p-price').value),
+                    image_url: document.getElementById('p-image').value,
+                    allergens: allergens,
+                    description: document.getElementById('p-desc').value
+                };
+
+                if (id) {
+                    const { error } = await supabaseClient.from('products').update(productData).eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient.from('products').insert([productData]);
+                    if (error) throw error;
+                }
+
+                closeModal();
+                loadProducts();
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Producto';
+            }
+        });
+
+        // Confirmation Modal Logic
+        let currentDeleteId = null;
+        let isPermanent = false;
+
+        function askDelete(id) {
+            const p = activeProducts.find(x => x.id === id);
+            if (!p) return;
+            currentDeleteId = id;
+            isPermanent = false;
+            document.getElementById('confirm-msg').textContent = `¿Quieres mover "${p.name}" a la papelera? Podrás recuperarlo después.`;
+            document.getElementById('confirm-yes-btn').className = 'btn btn-danger full';
+            document.getElementById('confirm-yes-btn').textContent = 'Mover a Papelera';
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
+
+        function askPermanentDelete(id) {
+            const p = trashProducts.find(x => x.id === id);
+            if (!p) return;
+            currentDeleteId = id;
+            isPermanent = true;
+            document.getElementById('confirm-msg').textContent = `¿Estás seguro de eliminar "${p.name}" permanentemente? No hay vuelta atrás.`;
+            document.getElementById('confirm-yes-btn').className = 'btn btn-danger full';
+            document.getElementById('confirm-yes-btn').textContent = 'Eliminar para siempre';
+            document.getElementById('confirm-modal').style.display = 'flex';
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirm-modal').style.display = 'none';
+        }
+
+        document.getElementById('confirm-yes-btn').onclick = async () => {
+            if (isPermanent) {
+                await supabaseClient.from('products').delete().eq('id', currentDeleteId);
+            } else {
+                await supabaseClient.from('products').update({ deleted_at: new Date().toISOString() }).eq('id', currentDeleteId);
+            }
+            closeConfirm();
+            loadProducts();
+            loadTrash();
+        };
+
+        async function restoreProduct(id) {
+            await supabaseClient.from('products').update({ deleted_at: null }).eq('id', id);
+            loadProducts();
+            loadTrash();
+        }
+
+        async function deleteProduct(id) {
+            // Deprecated, using askDelete now
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'login.html';
+        }
+
+        function editProduct(id) {
+            const p = activeProducts.find(x => x.id === id);
+            if (p) openModal(p);
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html>
