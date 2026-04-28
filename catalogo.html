@@ -157,31 +157,70 @@
             font-size: 0.7rem;
             cursor: help;
         }
-        .order-btn {
-            background: #25d366;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
+        .order-reminder {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+            color: #128c7e;
+            font-size: 0.85rem;
+            font-weight: 600;
         }
-        .order-btn:hover {
-            background: #128c7e;
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+        .order-reminder i {
+            font-size: 1.1rem;
+        }
+        
+        /* Announcement Container */
+        #announcement-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .announcement-banner {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 25px rgba(120, 53, 15, 0.15);
+            animation: fadeInDown 0.6s ease-out;
+            overflow: hidden;
+        }
+        .announcement-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none;
+        }
+        .announcement-banner i {
+            font-size: 2rem;
+            opacity: 0.9;
+        }
+        .announcement-content h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .announcement-content p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <nav id="main-nav" class="scrolled">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <a href="index.html" class="logo">ANTONIO MACHADO</a>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
@@ -193,7 +232,18 @@
         </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-nav-overlay">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
+        <a href="nosotros.html" onclick="toggleMobileMenu()">Nosotros</a>
+        <a href="catalogo.html" class="active" onclick="toggleMobileMenu()">Menú</a>
+        <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
+    </div>
+
     <main class="catalog-container">
+        <div id="announcement-container"></div>
+
         <div class="catalog-header">
             <h2 data-aos="fade-up">Nuestra Carta</h2>
             <p data-aos="fade-up" data-aos-delay="100">Selección artesanal de cafés, repostería y bocados salados.</p>
@@ -267,7 +317,34 @@
         let activeCategory = 'all';
         let excludedAllergens = [];
 
+        async function loadAnnouncements() {
+            const { data } = await supabaseClient
+                .from('announcements')
+                .select('*')
+                .eq('is_active', true)
+                .order('created_at', { ascending: false });
+                
+            const container = document.getElementById('announcement-container');
+            if (data && data.length > 0) {
+                container.innerHTML = data.map(ann => `
+                    <div class="announcement-banner">
+                        ${ann.image_url ? 
+                            `<img class="announcement-img" src="${ann.image_url}" alt="Anuncio" style="display:block;">` : 
+                            `<i class="fas fa-bullhorn"></i>`
+                        }
+                        <div class="announcement-content">
+                            <h4>Aviso Importante</h4>
+                            <p>${ann.text}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '';
+            }
+        }
+
         async function initCatalog() {
+            await loadAnnouncements();
             await loadCategories();
             await loadProducts();
             AOS.init({ duration: 1000, once: true });
@@ -389,14 +466,18 @@
                         <p class="product-desc">${p.description || ''}</p>
                         <div class="product-footer">
                             <span class="product-price">${parseFloat(p.price).toFixed(2)}€</span>
-                            <button class="order-btn" onclick="openWhatsAppChat()">
-                                <i class="fab fa-whatsapp"></i> Pedir ahora
-                            </button>
+                            <div class="order-reminder">
+                                <i class="fab fa-whatsapp"></i> Pídelo por WhatsApp
+                            </div>
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
         }
 
         initCatalog();

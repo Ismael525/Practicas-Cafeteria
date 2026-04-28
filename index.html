@@ -23,6 +23,9 @@
 <body>
 
     <nav id="main-nav">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <a href="index.html" class="logo">ANTONIO MACHADO</a>
         <div class="nav-links">
             <a href="index.html" class="active">Inicio</a>
@@ -34,15 +37,21 @@
         </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-nav-overlay">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html" class="active" onclick="toggleMobileMenu()">Inicio</a>
+        <a href="nosotros.html" onclick="toggleMobileMenu()">Nosotros</a>
+        <a href="catalogo.html" onclick="toggleMobileMenu()">Menú</a>
+        <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
+    </div>
+
     <section class="hero">
         <div class="hero-content">
             <h1 id="hero-title" data-aos="fade-up">Cargando...</h1>
             <p id="hero-desc" data-aos="fade-up" data-aos-delay="200"></p>
-            <div class="hero-btns" data-aos="fade-up" data-aos-delay="400">
+            <div data-aos="fade-up" data-aos-delay="400">
                 <a href="catalogo.html" class="btn btn-primary">Explorar Menú</a>
-                <a href="#" onclick="openWhatsAppChat(); return false;" class="btn btn-secondary" style="margin-left: 1rem; background: #25d366; color: white; border: none;">
-                    <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
-                </a>
             </div>
         </div>
     </section>
@@ -96,6 +105,10 @@
             }
         }
         loadSettings();
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
 
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('main-nav');

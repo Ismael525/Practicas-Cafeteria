@@ -44,6 +44,9 @@
 <body>
 
     <nav id="main-nav" class="scrolled">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <a href="index.html" class="logo">ANTONIO MACHADO</a>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
@@ -55,32 +58,31 @@
         </div>
     </nav>
 
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-nav-overlay">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
+        <a href="nosotros.html" class="active" onclick="toggleMobileMenu()">Nosotros</a>
+        <a href="catalogo.html" onclick="toggleMobileMenu()">Menú</a>
+        <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
+    </div>
+
     <section class="about-section">
         <div class="about-image" data-aos="fade-right">
-            <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=800" alt="Nuestra Cafetería">
+            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800" alt="Cafetería del Instituto">
         </div>
         <div class="about-content" data-aos="fade-left">
-            <h2 id="about-title">Nuestra Pasión</h2>
-            <p id="about-text-1">Cafetería Antonio Machado nació de un sueño simple: servir la taza de café perfecta. Ubicados en el corazón de la ciudad, nos dedicamos a seleccionar los mejores granos de origen único, tostándolos cuidadosamente para resaltar sus notas más delicadas.</p>
-            <p id="about-text-2">Para nosotros, el café no es solo una bebida, es una pausa necesaria, un catalizador de ideas y un puente entre personas. Nuestro espacio está diseñado para que te sientas como en casa, ya sea para trabajar, leer o compartir un momento especial.</p>
+            <h2 id="about-title">El Corazón del Instituto</h2>
+            <p id="about-text-1">Cargando información sobre nosotros...</p>
+            <p id="about-text-2"></p>
             <div style="margin-top: 2rem;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">¿Por qué elegirnos?</h3>
+                <h3 style="margin-bottom: 1rem; color: var(--text);">¿Por qué venir aquí?</h3>
                 <ul style="list-style: none; color: var(--text-muted);">
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Granos 100% Arábica de especialidad</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Tostado artesanal semanal</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: var(--primary); margin-right: 10px;"></i> Baristas apasionados y certificados</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-bread-slice" style="color: var(--primary); margin-right: 10px;"></i> Bocadillos recién hechos cada mañana</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-coins" style="color: var(--primary); margin-right: 10px;"></i> Precios pensados para el estudiante</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-bolt" style="color: var(--primary); margin-right: 10px;"></i> Rapidez: ¡No pierdas ni un minuto de tu recreo!</li>
                 </ul>
             </div>
-        </div>
-    </section>
-
-    <section style="padding: 5rem 2rem; text-align: center; background: #fdfcfb;">
-        <div style="max-width: 600px; margin: 0 auto;" data-aos="fade-up">
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1.5rem;">¿Te apetece algo?</h2>
-            <p style="color: var(--text-muted); margin-bottom: 2.5rem;">Estamos listos para preparar tu pedido favorito. Solo tienes que escribirnos por WhatsApp y lo tendremos listo para ti.</p>
-            <button onclick="openWhatsAppChat()" class="btn btn-primary" style="background: #25d366; border: none; padding: 1rem 2.5rem; font-size: 1.1rem;">
-                <i class="fab fa-whatsapp"></i> Haz tu pedido ahora
-            </button>
         </div>
     </section>
 
@@ -132,6 +134,10 @@
             }
         }
         loadSettings();
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
     </script>
 </body>
 </html>

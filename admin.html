@@ -213,7 +213,8 @@
         <div class="admin-header">
             <h2>Panel de Control</h2>
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary">Menú Activo</button>
+                <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary" style="border: 1px solid var(--primary);">Menú Activo</button>
+                <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
                 <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
                 <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido Web</button>
             </div>
@@ -240,7 +241,26 @@
             </div>
         </div>
 
-        <!-- Settings Tab -->
+        <!-- Announcements Tab -->
+        <div id="announcements-tab" style="display: none;">
+            <div class="products-table-container" style="padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3>Gestión de Anuncios</h3>
+                    <button class="btn btn-primary" onclick="openAnnModal()">+ Nuevo Anuncio</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Texto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="announcements-list"></tbody>
+                </table>
+            </div>
+        </div>
         <div id="settings-tab" style="display: none;">
             <div class="products-table-container" style="padding: 2rem;">
                 <h3>Ajustes de la Página</h3>
@@ -266,7 +286,33 @@
                     <div class="form-group full">
                         <label>Nuestra Historia - Párrafo 2</label>
                         <textarea id="s-about-text-2" rows="3"></textarea>
-                    <button type="submit" class="btn btn-primary full">Guardar Cambios de la Web</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Announcement Modal -->
+        <div id="ann-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAnnModal()">&times;</span>
+                <h3 id="ann-modal-title">Nuevo Anuncio</h3>
+                <form id="ann-form">
+                    <div class="form-group">
+                        <label>Texto del Anuncio</label>
+                        <textarea id="ann-text" rows="3" required placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen (Archivo o URL)</label>
+                        <input type="file" id="ann-file" accept="image/*" style="margin-bottom: 10px;">
+                        <input type="text" id="ann-url" placeholder="O pega una URL de imagen">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="ann-active" checked> Activo
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar Anuncio</button>
                 </form>
             </div>
         </div>
@@ -376,15 +422,21 @@
         async function initAdmin() {
             await loadCategories();
             await loadProducts();
-            await loadSiteSettings();
+            await loadSettings();
         }
 
-        async function loadSiteSettings() {
+        async function loadSettings() {
             const { data } = await supabaseClient.from('site_settings').select('*');
             if (data) {
                 data.forEach(s => {
                     const el = document.getElementById('s-' + s.key.replace(/_/g, '-'));
-                    if (el) el.value = s.value;
+                    if (el) {
+                        if (el.type === 'checkbox') {
+                            el.checked = s.value === 'true';
+                        } else {
+                            el.value = s.value;
+                        }
+                    }
                 });
             }
         }
@@ -395,34 +447,34 @@
             const tTab = document.getElementById('trash-tab');
             const pBtn = document.getElementById('tab-products-btn');
             const sBtn = document.getElementById('tab-settings-btn');
-            const tBtn = document.getElementById('tab-trash-btn');
-
-            [pTab, sTab, tTab].forEach(t => t.style.display = 'none');
-            [pBtn, sBtn, tBtn].forEach(b => {
-                b.style.background = 'var(--white)';
-                b.style.color = 'var(--primary)';
+            const tabs = ['products', 'announcements', 'settings', 'trash'];
+            
+            tabs.forEach(t => {
+                const tabEl = document.getElementById(t + '-tab');
+                const btnEl = document.getElementById('tab-' + t + '-btn');
+                
+                if (tabEl) tabEl.style.display = t === tab ? 'block' : 'none';
+                if (btnEl) {
+                    if (t === tab) {
+                        btnEl.style.background = 'var(--primary)';
+                        btnEl.style.color = 'var(--white)';
+                        btnEl.style.border = '1px solid var(--primary)';
+                    } else {
+                        btnEl.style.background = 'var(--white)';
+                        btnEl.style.color = 'var(--primary)';
+                        btnEl.style.border = '1px solid var(--primary)';
+                    }
+                }
             });
 
-            if (tab === 'products') {
-                pTab.style.display = 'block';
-                pBtn.style.background = 'var(--primary)';
-                pBtn.style.color = 'var(--white)';
-            } else if (tab === 'settings') {
-                sTab.style.display = 'block';
-                sBtn.style.background = 'var(--primary)';
-                sBtn.style.color = 'var(--white)';
-            } else if (tab === 'trash') {
-                tTab.style.display = 'block';
-                tBtn.style.background = 'var(--primary)';
-                tBtn.style.color = 'var(--white)';
-                loadTrash();
-            }
+            if (tab === 'announcements') loadAnnouncements();
+            if (tab === 'trash') loadTrash();
         }
 
-        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+        async function saveSettings(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button');
-            btn.disabled = true;
+            const originalText = btn.textContent;
             btn.textContent = 'Guardando...';
 
             const settings = [
@@ -430,17 +482,34 @@
                 { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
                 { key: 'about_title', value: document.getElementById('s-about-title').value },
                 { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
-                { key: 'about_text_2', value: document.getElementById('s-about-text-2').value }
+                { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },
+                { key: 'menu_announcement', value: document.getElementById('s-menu-announcement').value },
+                { key: 'menu_announcement_image', value: document.getElementById('s-menu-announcement-image').value },
+                { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
             ];
 
-            for (const s of settings) {
-                await supabaseClient.from('site_settings').update({ value: s.value }).eq('key', s.key);
-            }
+            btn.disabled = true;
 
-            alert('¡Web actualizada con éxito!');
-            btn.disabled = false;
-            btn.textContent = 'Guardar Cambios de la Web';
-        });
+            try {
+                const promises = settings.map(s => 
+                    supabaseClient.from('site_settings').update({ value: s.value }).eq('key', s.key)
+                );
+                
+                const results = await Promise.all(promises);
+                const firstError = results.find(r => r.error);
+                
+                if (firstError) throw firstError.error;
+
+                btn.textContent = '¡Guardado!';
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error al guardar: ' + error.message);
+                btn.textContent = 'Error';
+            } finally {
+                btn.disabled = false;
+                setTimeout(() => btn.textContent = originalText, 2000);
+            }
+        }
 
         async function loadCategories() {
             const { data } = await supabaseClient.from('categories').select('*');
@@ -663,7 +732,100 @@
             if (p) openModal(p);
         }
 
+        async function loadAnnouncements() {
+            const { data } = await supabaseClient
+                .from('announcements')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            const list = document.getElementById('announcements-list');
+            list.innerHTML = (data || []).map(ann => `
+                <tr>
+                    <td>
+                        ${ann.image_url ? `<img src="${ann.image_url}" style="width:50px; height:50px; border-radius:5px; object-fit:cover;">` : '<i class="fas fa-bullhorn" style="font-size:24px;"></i>'}
+                    </td>
+                    <td>${ann.text}</td>
+                    <td>
+                        <span class="status-pill status-${ann.is_active ? 'active' : 'inactive'}">
+                            ${ann.is_active ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="toggleAnnouncement('${ann.id}', ${ann.is_active})" class="btn" style="padding: 5px 10px;">
+                            ${ann.is_active ? 'Desactivar' : 'Activar'}
+                        </button>
+                        <button onclick="deleteAnnouncement('${ann.id}')" class="btn btn-danger" style="padding: 5px 10px;">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAnnModal() {
+            document.getElementById('ann-modal').style.display = 'block';
+            document.getElementById('ann-form').reset();
+        }
+
+        function closeAnnModal() {
+            document.getElementById('ann-modal').style.display = 'none';
+        }
+
+        document.getElementById('ann-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Guardando...';
+
+            const text = document.getElementById('ann-text').value;
+            const file = document.getElementById('ann-file').files[0];
+            const urlInput = document.getElementById('ann-url').value;
+            const active = document.getElementById('ann-active').checked;
+            
+            let finalImageUrl = urlInput;
+
+            if (file) {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`;
+                const filePath = `announcements/${fileName}`;
+                
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('announcements')
+                    .upload(filePath, file);
+                
+                if (!uploadError) {
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from('announcements')
+                        .getPublicUrl(filePath);
+                    finalImageUrl = publicUrl;
+                }
+            }
+
+            const { error } = await supabaseClient
+                .from('announcements')
+                .insert([{ text, image_url: finalImageUrl, is_active: active }]);
+            
+            btn.disabled = false;
+            btn.textContent = 'Guardar Anuncio';
+
+            if (!error) {
+                closeAnnModal();
+                loadAnnouncements();
+            }
+        });
+
+        async function toggleAnnouncement(id, currentState) {
+            await supabaseClient.from('announcements').update({ is_active: !currentState }).eq('id', id);
+            loadAnnouncements();
+        }
+
+        async function deleteAnnouncement(id) {
+            if (confirm('¿Seguro que quieres eliminar este anuncio?')) {
+                await supabaseClient.from('announcements').delete().eq('id', id);
+                loadAnnouncements();
+            }
+        }
+
         checkAuth();
+        document.getElementById('settings-form').addEventListener('submit', saveSettings);
     </script>
 </body>
 </html>

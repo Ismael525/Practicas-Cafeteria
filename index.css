@@ -80,8 +80,67 @@ nav.scrolled {
     width: 100%;
 }
 
+.nav-links a.active {
+    color: var(--primary);
+    font-weight: 700;
+}
+
 .nav-links a:hover {
     color: var(--primary);
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 2001;
+}
+
+/* Mobile Menu Overlay */
+.mobile-nav-overlay {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    transition: var(--transition);
+}
+
+.mobile-nav-overlay.active {
+    left: 0;
+}
+
+.mobile-nav-overlay a {
+    text-decoration: none;
+    color: var(--text);
+    font-size: 1.8rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.mobile-nav-overlay a:hover, .mobile-nav-overlay a.active {
+    color: var(--primary);
+}
+
+.mobile-nav-overlay .close-menu {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2rem;
+    color: var(--text-muted);
+    cursor: pointer;
 }
 
 .logo {
@@ -99,9 +158,10 @@ nav.scrolled {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('cafeteria_hero.png');
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('simple_school_cafeteria.png');
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     color: var(--white);
     padding: 0 5%;
 }
@@ -187,7 +247,7 @@ nav.scrolled {
 }
 
 .wa-chat-window.active {
-    display: flex;
+    display: flex !important;
 }
 
 .wa-chat-header {
@@ -274,6 +334,13 @@ nav.scrolled {
 @media (max-width: 768px) {
     .nav-links {
         display: none;
+    }
+    .mobile-menu-btn {
+        display: block;
+        order: -1; /* Move to the left */
+    }
+    .auth-links {
+        display: none; /* Hide login on mobile to save space, or keep it in the mobile menu */
     }
     .hero-content h1 {
         font-size: 2.5rem;

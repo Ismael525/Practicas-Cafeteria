@@ -1,16 +1,22 @@
 function toggleWhatsApp() {
-    const window = document.getElementById('wa-chat-window');
-    window.classList.toggle('active');
+    const chatWindow = document.getElementById('wa-chat-window');
+    chatWindow.classList.toggle('active');
 }
 
-function openWhatsAppChat() {
-    const window = document.getElementById('wa-chat-window');
-    if (!window.classList.contains('active')) {
-        window.classList.add('active');
+function openWhatsAppChat(message = '') {
+    const chatWindow = document.getElementById('wa-chat-window');
+    if (chatWindow) {
+        chatWindow.classList.add('active');
+        console.log('Chat window opened via button');
     }
-    // Optional: focus the input
+    
     const input = document.getElementById('wa-chat-input');
-    if (input) input.focus();
+    if (input) {
+        if (message) {
+            input.value = message;
+        }
+        input.focus();
+    }
 }
 
 function sendWhatsAppMessage() {
@@ -27,9 +33,9 @@ function sendWhatsAppMessage() {
 
 // Close chat if clicked outside
 document.addEventListener('click', (e) => {
-    const window = document.getElementById('wa-chat-window');
+    const chatWindow = document.getElementById('wa-chat-window');
     const btn = document.querySelector('.wa-btn');
-    if (window.classList.contains('active') && !window.contains(e.target) && !btn.contains(e.target)) {
-        window.classList.remove('active');
+    if (chatWindow && chatWindow.classList.contains('active') && !chatWindow.contains(e.target) && !btn.contains(e.target)) {
+        chatWindow.classList.remove('active');
     }
 });
