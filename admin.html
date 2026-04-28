@@ -122,6 +122,12 @@
             border-radius: 10px;
             border: 1px solid #e7e5e4;
             outline: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(120, 53, 15, 0.05);
         }
         /* Confirmation Modal */
         .confirm-modal {
@@ -195,11 +201,98 @@
             color: white;
             border-color: var(--primary-light);
         }
+
+        /* Responsive Admin */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 100px 5% 40px;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            .admin-header h2 {
+                font-size: 2rem;
+            }
+            .tabs-container {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+                width: 100%;
+            }
+            .tabs-container button {
+                padding: 0.8rem 0.5rem !important;
+                font-size: 0.85rem !important;
+                width: 100%;
+                justify-content: center;
+            }
+            .tabs-container button:last-child:nth-child(odd) {
+                grid-column: span 2;
+            }
+            .products-table-container {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+            th, td {
+                padding: 1rem;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .modal-content {
+                padding: 2rem 1.5rem;
+                width: 95%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .form-group.full {
+                grid-column: span 1;
+            }
+        }
+
+        /* Aesthetic Refinements */
+        .btn-primary {
+            box-shadow: 0 4px 15px rgba(120, 53, 15, 0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(120, 53, 15, 0.2);
+        }
+        .tabs-container button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 12px !important;
+            font-weight: 500;
+        }
+
+        .products-table-container {
+            border: 1px solid #f5f5f4;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--secondary);
+        }
+
+        .btn-primary i {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
 
-    <nav id="main-nav" class="scrolled">
+    <nav id="main-nav">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
         <a href="index.html" class="logo">ANTONIO MACHADO</a>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
@@ -209,11 +302,23 @@
             <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar Sesión</button>
         </div>
     </nav>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-nav-overlay">
+        <button class="close-menu" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="mobile-nav-links">
+            <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
+            <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
+            <a href="#" onclick="handleLogout()">Cerrar Sesión</a>
+        </div>
+    </div>
 
     <main class="admin-container">
-        <div class="admin-header">
+        <div class="admin-header" style="margin-bottom: 4rem;">
             <h2>Panel de Control</h2>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div class="tabs-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
                 <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary" style="border: 1px solid var(--primary);">Menú Activo</button>
                 <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
                 <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
@@ -244,13 +349,20 @@
                     </thead>
                     <tbody id="admin-products-list"></tbody>
                 </table>
+                <div id="products-pagination" class="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
+                    <div style="font-size: 0.85rem; color: var(--text-muted);" id="pagination-info">Mostrando 0 de 0 productos</div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button onclick="prevPage()" id="prev-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
+                        <button onclick="nextPage()" id="next-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- Announcements Tab -->
         <div id="announcements-tab" style="display: none;">
             <div class="products-table-container" style="padding: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div class="admin-header" style="margin-bottom: 2rem;">
                     <h3>Gestión de Anuncios</h3>
                     <button class="btn btn-primary" onclick="openAnnModal()">+ Nuevo Anuncio</button>
                 </div>
@@ -276,6 +388,19 @@
                     <div class="form-group full">
                         <label>Título de Bienvenida (Inicio)</label>
                         <input type="text" id="s-hero-title">
+                    </div>
+                    <div class="form-group full">
+                        <label>Imagen del Banner (Archivo o URL)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="s-hero-image-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                            <div class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Subir imagen del banner</span>
+                                <small>JPG, PNG o WEBP (Máx. 5MB)</small>
+                            </div>
+                            <div class="file-selected-name" id="s-hero-image-file-name"></div>
+                        </div>
+                        <input type="text" id="s-hero-image" placeholder="O pega una URL">
                     </div>
                     <div class="form-group full">
                         <label>Subtítulo de Bienvenida (Inicio)</label>
@@ -318,8 +443,17 @@
                         <input type="text" id="s-menu-announcement">
                     </div>
                     <div class="form-group">
-                        <label>Imagen del Anuncio (URL)</label>
-                        <input type="text" id="s-menu-announcement-image">
+                        <label>Imagen del Anuncio (Archivo o URL)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="s-menu-announcement-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                            <div class="file-upload-label">
+                                <i class="fas fa-bullhorn"></i>
+                                <span>Subir imagen del anuncio</span>
+                                <small>Formato horizontal recomendado</small>
+                            </div>
+                            <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
+                        </div>
+                        <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL">
                     </div>
                     <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem; padding-top: 1.5rem;">
                         <input type="checkbox" id="s-menu-announcement-visible" style="width: auto;">
@@ -336,24 +470,33 @@
         <!-- Announcement Modal -->
         <div id="ann-modal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeAnnModal()">&times;</span>
+                <span class="close-modal" onclick="closeAnnModal()">&times;</span>
                 <h3 id="ann-modal-title">Nuevo Anuncio</h3>
                 <form id="ann-form">
-                    <div class="form-group">
-                        <label>Texto del Anuncio</label>
-                        <textarea id="ann-text" rows="3" required placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
+                    <input type="hidden" id="ann-id">
+                    <div class="form-grid" style="margin-top: 2rem;">
+                        <div class="form-group full">
+                            <label>Texto del Anuncio</label>
+                            <textarea id="ann-text" rows="3" required placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Imagen (Archivo o URL)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="ann-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fas fa-image"></i>
+                                    <span>Seleccionar imagen</span>
+                                </div>
+                                <div class="file-selected-name" id="ann-file-name"></div>
+                            </div>
+                            <input type="text" id="ann-url" placeholder="O pega una URL de imagen">
+                        </div>
+                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                            <input type="checkbox" id="ann-active" checked style="width: auto;">
+                            <label style="margin-bottom: 0;">Activar inmediatamente</label>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Imagen (Archivo o URL)</label>
-                        <input type="file" id="ann-file" accept="image/*" style="margin-bottom: 10px;">
-                        <input type="text" id="ann-url" placeholder="O pega una URL de imagen">
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="ann-active" checked> Activo
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Anuncio</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Anuncio</button>
                 </form>
             </div>
         </div>
@@ -381,7 +524,7 @@
         <!-- Polls Tab -->
         <div id="polls-tab" style="display: none;">
             <div class="products-table-container" style="padding: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div class="admin-header" style="margin-bottom: 2rem;">
                     <div>
                         <h3>Gestión de Cuestionarios</h3>
                         <p style="color: var(--text-muted); font-size: 0.85rem;">Interactúa con los clientes creando encuestas rápidas.</p>
@@ -424,8 +567,16 @@
                         <input type="number" step="0.01" id="p-price" required>
                     </div>
                     <div class="form-group full">
-                        <label>Imagen URL</label>
-                        <input type="url" id="p-image" placeholder="https://images.unsplash.com/...">
+                        <label>Imagen del Producto (Archivo o URL)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="p-image-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                            <div class="file-upload-label">
+                                <i class="fas fa-utensils"></i>
+                                <span>Subir foto del producto</span>
+                            </div>
+                            <div class="file-selected-name" id="p-image-file-name"></div>
+                        </div>
+                        <input type="url" id="p-image" placeholder="O pega una URL: https://images.unsplash.com/...">
                     </div>
                     <div class="form-group full">
                         <label>Alérgenos (Selecciona los que contenga)</label>
@@ -498,6 +649,48 @@
         let activeProducts = [];
         let trashProducts = [];
         let categories = [];
+        let currentAnnouncements = [];
+        
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        async function uploadImage(file, bucket = 'images') {
+            if (!file) return null;
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `${fileName}`;
+            
+            const { error: uploadError } = await supabaseClient.storage
+                .from(bucket)
+                .upload(filePath, file);
+            
+            if (uploadError) throw uploadError;
+            
+            const { data: { publicUrl } } = supabaseClient.storage
+                .from(bucket)
+                .getPublicUrl(filePath);
+            
+            return publicUrl;
+        }
+
+        function updateFileName(input) {
+            const display = document.getElementById(input.id + '-name');
+            if (display) {
+                if (input.files && input.files[0]) {
+                    display.textContent = 'Archivo seleccionado: ' + input.files[0].name;
+                    display.style.display = 'block';
+                } else {
+                    display.style.display = 'none';
+                }
+            }
+        }
+
+        function clearFileNames() {
+            document.querySelectorAll('.file-selected-name').forEach(el => {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+        }
 
         async function checkAuth() {
             try {
@@ -571,24 +764,39 @@
             const btn = e.target.querySelector('button');
             const originalText = btn.textContent;
             btn.textContent = 'Guardando...';
-
-            const settings = [
-                { key: 'hero_title', value: document.getElementById('s-hero-title').value },
-                { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
-                { key: 'hero_image', value: document.getElementById('s-hero-image').value },
-                { key: 'about_title', value: document.getElementById('s-about-title').value },
-                { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
-                { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },
-                { key: 'section_title', value: document.getElementById('s-section-title').value },
-                { key: 'contact_phone', value: document.getElementById('s-contact-phone').value },
-                { key: 'menu_announcement', value: document.getElementById('s-menu-announcement').value },
-                { key: 'menu_announcement_image', value: document.getElementById('s-menu-announcement-image').value },
-                { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
-            ];
-
             btn.disabled = true;
 
             try {
+                // Handle file uploads first
+                const heroFile = document.getElementById('s-hero-image-file').files[0];
+                const menuFile = document.getElementById('s-menu-announcement-file').files[0];
+                
+                let heroUrl = document.getElementById('s-hero-image').value;
+                let menuUrl = document.getElementById('s-menu-announcement-image').value;
+
+                if (heroFile) {
+                    heroUrl = await uploadImage(heroFile);
+                    document.getElementById('s-hero-image').value = heroUrl;
+                }
+                if (menuFile) {
+                    menuUrl = await uploadImage(menuFile);
+                    document.getElementById('s-menu-announcement-image').value = menuUrl;
+                }
+
+                const settings = [
+                    { key: 'hero_title', value: document.getElementById('s-hero-title').value },
+                    { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
+                    { key: 'hero_image', value: heroUrl },
+                    { key: 'about_title', value: document.getElementById('s-about-title').value },
+                    { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
+                    { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },
+                    { key: 'section_title', value: document.getElementById('s-section-title').value },
+                    { key: 'contact_phone', value: document.getElementById('s-contact-phone').value },
+                    { key: 'menu_announcement', value: document.getElementById('s-menu-announcement').value },
+                    { key: 'menu_announcement_image', value: menuUrl },
+                    { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
+                ];
+
                 const promises = settings.map(s => 
                     supabaseClient.from('site_settings').update({ value: s.value }).eq('key', s.key)
                 );
@@ -599,6 +807,10 @@
                 if (firstError) throw firstError.error;
 
                 btn.textContent = '¡Guardado!';
+                // Clear file inputs
+                document.getElementById('s-hero-image-file').value = '';
+                document.getElementById('s-menu-announcement-file').value = '';
+                clearFileNames();
             } catch (error) {
                 console.error('Error saving settings:', error);
                 alert('Error al guardar: ' + error.message);
@@ -625,9 +837,22 @@
                 
             if (error) return;
             activeProducts = data;
+            renderProducts();
+        }
 
+        function renderProducts() {
             const list = document.getElementById('admin-products-list');
-            list.innerHTML = activeProducts.map(p => `
+            const totalProducts = activeProducts.length;
+            const totalPages = Math.ceil(totalProducts / itemsPerPage);
+            
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = activeProducts.slice(start, end);
+
+            list.innerHTML = pageItems.map(p => `
                 <tr id="row-${p.id}">
                     <td>
                         <div style="display: flex; align-items: center; gap: 1rem;">
@@ -648,6 +873,30 @@
                     </td>
                 </tr>
             `).join('');
+
+            // Update pagination UI
+            document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages || 1} (${totalProducts} productos)`;
+            document.getElementById('prev-btn').disabled = currentPage <= 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+            document.getElementById('prev-btn').style.opacity = currentPage <= 1 ? '0.5' : '1';
+            document.getElementById('next-btn').style.opacity = currentPage >= totalPages ? '0.5' : '1';
+            document.getElementById('products-pagination').style.display = totalProducts > itemsPerPage ? 'flex' : 'none';
+        }
+
+        function nextPage() {
+            if (currentPage * itemsPerPage < activeProducts.length) {
+                currentPage++;
+                renderProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         async function loadTrash() {
@@ -692,8 +941,10 @@
             const title = document.getElementById('modal-title');
             const form = document.getElementById('product-form');
             
-            // Reset chips
+            // Reset chips and file input
             document.querySelectorAll('.allergen-chip').forEach(c => c.classList.remove('active'));
+            document.getElementById('p-image-file').value = '';
+            clearFileNames();
 
             if (product) {
                 title.textContent = 'Editar Producto';
@@ -742,11 +993,20 @@
                 const activeChips = document.querySelectorAll('.allergen-chip.active');
                 const allergens = Array.from(activeChips).map(c => c.getAttribute('data-val'));
                 
+                // Handle file upload
+                const imageFile = document.getElementById('p-image-file').files[0];
+                let imageUrl = document.getElementById('p-image').value;
+                
+                if (imageFile) {
+                    imageUrl = await uploadImage(imageFile);
+                    document.getElementById('p-image').value = imageUrl;
+                }
+
                 const productData = {
                     name: document.getElementById('p-name').value,
                     category_id: document.getElementById('p-category').value,
                     price: parseFloat(document.getElementById('p-price').value),
-                    image_url: document.getElementById('p-image').value,
+                    image_url: imageUrl,
                     allergens: allergens,
                     description: document.getElementById('p-desc').value
                 };
@@ -836,6 +1096,7 @@
                 .select('*')
                 .order('created_at', { ascending: false });
             
+            currentAnnouncements = data || [];
             const list = document.getElementById('announcements-list');
             list.innerHTML = (data || []).map(ann => `
                 <tr>
@@ -849,22 +1110,46 @@
                         </span>
                     </td>
                     <td>
-                        <button onclick="toggleAnnouncement('${ann.id}', ${ann.is_active})" class="btn" style="padding: 5px 10px;">
-                            ${ann.is_active ? 'Desactivar' : 'Activar'}
-                        </button>
-                        <button onclick="deleteAnnouncement('${ann.id}')" class="btn btn-danger" style="padding: 5px 10px;">Eliminar</button>
+                        <div class="action-btns">
+                            <button onclick="editAnnouncement('${ann.id}')" class="btn-icon btn-edit" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button onclick="toggleAnnouncement('${ann.id}', ${ann.is_active})" class="btn-icon" style="color: ${ann.is_active ? '#dc2626' : '#059669'}" title="${ann.is_active ? 'Desactivar' : 'Activar'}">
+                                <i class="fas fa-${ann.is_active ? 'pause' : 'play'}"></i>
+                            </button>
+                            <button onclick="deleteAnnouncement('${ann.id}')" class="btn-icon btn-delete" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function openAnnModal() {
-            document.getElementById('ann-modal').style.display = 'block';
-            document.getElementById('ann-form').reset();
+        function openAnnModal(ann = null) {
+            const modal = document.getElementById('ann-modal');
+            const title = document.getElementById('ann-modal-title');
+            const form = document.getElementById('ann-form');
+            
+            modal.style.display = 'flex';
+            form.reset();
+            clearFileNames();
+
+            if (ann) {
+                title.textContent = 'Editar Anuncio';
+                document.getElementById('ann-id').value = ann.id;
+                document.getElementById('ann-text').value = ann.text;
+                document.getElementById('ann-url').value = ann.image_url || '';
+                document.getElementById('ann-active').checked = ann.is_active;
+            } else {
+                title.textContent = 'Nuevo Anuncio';
+                document.getElementById('ann-id').value = '';
+            }
         }
 
         function closeAnnModal() {
             document.getElementById('ann-modal').style.display = 'none';
+        }
+
+        function editAnnouncement(id) {
+            const ann = currentAnnouncements.find(x => x.id === id);
+            if (ann) openAnnModal(ann);
         }
 
         document.getElementById('ann-form').addEventListener('submit', async (e) => {
@@ -877,38 +1162,44 @@
             const file = document.getElementById('ann-file').files[0];
             const urlInput = document.getElementById('ann-url').value;
             const active = document.getElementById('ann-active').checked;
+            const id = document.getElementById('ann-id').value;
             
             let finalImageUrl = urlInput;
 
-            if (file) {
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
-                const filePath = `announcements/${fileName}`;
-                
-                const { error: uploadError } = await supabaseClient.storage
-                    .from('announcements')
-                    .upload(filePath, file);
-                
-                if (!uploadError) {
-                    const { data: { publicUrl } } = supabaseClient.storage
-                        .from('announcements')
-                        .getPublicUrl(filePath);
-                    finalImageUrl = publicUrl;
+            try {
+                if (file) {
+                    finalImageUrl = await uploadImage(file);
                 }
-            }
 
-            const { error } = await supabaseClient
-                .from('announcements')
-                .insert([{ text, image_url: finalImageUrl, is_active: active }]);
-            
-            btn.disabled = false;
-            btn.textContent = 'Guardar Anuncio';
+                const annData = { text, image_url: finalImageUrl, is_active: active };
 
-            if (!error) {
+                if (id) {
+                    const { error } = await supabaseClient
+                        .from('announcements')
+                        .update(annData)
+                        .eq('id', id);
+                    if (error) throw error;
+                } else {
+                    const { error } = await supabaseClient
+                        .from('announcements')
+                        .insert([annData]);
+                    if (error) throw error;
+                }
+                
                 closeAnnModal();
                 loadAnnouncements();
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Guardar Anuncio';
             }
         });
+
+        async function toggleAnnouncement(id, currentState) {
+            await supabaseClient.from('announcements').update({ is_active: !currentState }).eq('id', id);
+            loadAnnouncements();
+        }
 
         async function deleteAnnouncement(id) {
             if (confirm('¿Seguro que quieres eliminar este anuncio?')) {
@@ -1238,6 +1529,11 @@
                 event.target.value = '';
             };
             reader.readAsArrayBuffer(file);
+        }
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
         }
     </script>
 </body>
