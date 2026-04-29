@@ -130,6 +130,16 @@
                 data.forEach(s => {
                     const el = document.getElementById(s.key.replace(/_/g, '-'));
                     if (el) el.textContent = s.value;
+
+                    if (s.key === 'site_favicon') {
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.getElementsByTagName('head')[0].appendChild(link);
+                        }
+                        link.href = s.value;
+                    }
                 });
             }
         }

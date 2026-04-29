@@ -424,6 +424,23 @@
                     </div>
 
                     <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                        <h3>Identidad Visual</h3>
+                    </div>
+                    <div class="form-group full">
+                        <label>Favicon (Icono de la pestaña)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="s-site-favicon-file" class="file-upload-input" accept="image/x-icon,image/png,image/jpeg" onchange="updateFileName(this)">
+                            <div class="file-upload-label">
+                                <i class="fas fa-icons"></i>
+                                <span>Subir Favicon (.ico o .png)</span>
+                                <small>Se recomienda un tamaño de 32x32 o 64x64</small>
+                            </div>
+                            <div class="file-selected-name" id="s-site-favicon-file-name"></div>
+                        </div>
+                        <input type="text" id="s-site-favicon" placeholder="O pega una URL de icono">
+                    </div>
+
+                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
                         <h3>Sección de Servicios (Inicio)</h3>
                     </div>
                     <div class="form-group">
@@ -724,6 +741,16 @@
                             el.value = s.value;
                         }
                     }
+
+                    if (s.key === 'site_favicon') {
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.getElementsByTagName('head')[0].appendChild(link);
+                        }
+                        link.href = s.value;
+                    }
                 });
             }
         }
@@ -770,9 +797,11 @@
                 // Handle file uploads first
                 const heroFile = document.getElementById('s-hero-image-file').files[0];
                 const menuFile = document.getElementById('s-menu-announcement-file').files[0];
+                const faviconFile = document.getElementById('s-site-favicon-file').files[0];
                 
                 let heroUrl = document.getElementById('s-hero-image').value;
                 let menuUrl = document.getElementById('s-menu-announcement-image').value;
+                let faviconUrl = document.getElementById('s-site-favicon').value;
 
                 if (heroFile) {
                     heroUrl = await uploadImage(heroFile);
@@ -782,11 +811,16 @@
                     menuUrl = await uploadImage(menuFile);
                     document.getElementById('s-menu-announcement-image').value = menuUrl;
                 }
+                if (faviconFile) {
+                    faviconUrl = await uploadImage(faviconFile);
+                    document.getElementById('s-site-favicon').value = faviconUrl;
+                }
 
                 const settings = [
                     { key: 'hero_title', value: document.getElementById('s-hero-title').value },
                     { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
                     { key: 'hero_image', value: heroUrl },
+                    { key: 'site_favicon', value: faviconUrl },
                     { key: 'about_title', value: document.getElementById('s-about-title').value },
                     { key: 'about_text_1', value: document.getElementById('s-about-text-1').value },
                     { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },

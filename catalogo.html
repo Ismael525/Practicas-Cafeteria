@@ -169,46 +169,6 @@
             font-size: 1.1rem;
         }
         
-        /* Announcement Container */
-        #announcement-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-        .announcement-banner {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            box-shadow: 0 10px 25px rgba(120, 53, 15, 0.15);
-            animation: fadeInDown 0.6s ease-out;
-            overflow: hidden;
-        }
-        .announcement-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 10px;
-            display: none;
-        }
-        .announcement-banner i {
-            font-size: 2rem;
-            opacity: 0.9;
-        }
-        .announcement-content h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.25rem;
-            margin-bottom: 0.25rem;
-        }
-        .announcement-content p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-        
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -317,6 +277,9 @@
         let activeCategory = 'all';
         let excludedAllergens = [];
 
+        let currentSlide = 0;
+        let slideInterval;
+
         async function loadAnnouncements() {
             const { data } = await supabaseClient
                 .from('announcements')
@@ -326,24 +289,101 @@
                 
             const container = document.getElementById('announcement-container');
             if (data && data.length > 0) {
-                container.innerHTML = data.map(ann => `
-                    <div class="announcement-banner">
-                        ${ann.image_url ? 
-                            `<img class="announcement-img" src="${ann.image_url}" alt="Anuncio" style="display:block;">` : 
-                            `<i class="fas fa-bullhorn"></i>`
-                        }
-                        <div class="announcement-content">
-                            <h4>Aviso Importante</h4>
-                            <p>${ann.text}</p>
+                const slidesHTML = data.map((ann, index) => `
+                    <div class="carousel-slide">
+                        <div class="announcement-banner">
+                            ${ann.image_url ? 
+                                `<img class="announcement-img" src="${ann.image_url}" alt="Anuncio">` : 
+                                `<div class="announcement-img" style="display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.1);"><i class="fas fa-bullhorn" style="font-size:2rem;"></i></div>`
+                            }
+                            <div class="announcement-content">
+                                <h4>Aviso Importante</h4>
+                                <p>${ann.text}</p>
+                            </div>
                         </div>
                     </div>
                 `).join('');
+
+                const dotsHTML = data.length > 1 ? `
+                    <div class="carousel-dots">
+                        ${data.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`).join('')}
+                    </div>
+                ` : '';
+
+                container.innerHTML = `
+                    <div class="announcement-carousel" onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
+                        <div class="carousel-track" id="carousel-track">
+                            ${slidesHTML}
+                        </div>
+                        ${dotsHTML}
+                    </div>
+                `;
+
+                if (data.length > 1) {
+                    startCarousel(data.length);
+                }
             } else {
                 container.innerHTML = '';
             }
         }
 
+        function startCarousel(count) {
+            clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                currentSlide = (currentSlide + 1) % count;
+                updateCarousel();
+            }, 5000);
+        }
+
+        function pauseCarousel() {
+            clearInterval(slideInterval);
+        }
+
+        function resumeCarousel() {
+            const slides = document.querySelectorAll('.carousel-slide');
+            if (slides.length > 1) {
+                startCarousel(slides.length);
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+            pauseCarousel();
+            resumeCarousel();
+        }
+
+        function updateCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dots = document.querySelectorAll('.dot');
+            if (!track) return;
+
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        async function loadSettings() {
+            const { data } = await supabaseClient.from('site_settings').select('key, value');
+            if (data) {
+                data.forEach(s => {
+                    if (s.key === 'site_favicon') {
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.getElementsByTagName('head')[0].appendChild(link);
+                        }
+                        link.href = s.value;
+                    }
+                });
+            }
+        }
+
         async function initCatalog() {
+            await loadSettings();
             await loadAnnouncements();
             await loadCategories();
             await loadProducts();
