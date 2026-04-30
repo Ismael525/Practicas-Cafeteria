@@ -233,6 +233,17 @@
                 <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
             </div>
         </div>
+
+        <!-- Pagination Controls -->
+        <div id="catalog-pagination" style="display: none; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 4rem; padding: 2rem 0;">
+            <button id="catalog-prev" onclick="changeCatalogPage(-1)" class="btn" style="background: white; color: var(--primary); border: 1px solid var(--primary); padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 600; transition: all 0.3s; cursor: pointer;">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            <span id="catalog-page-info" style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Página 1 de 1</span>
+            <button id="catalog-next" onclick="changeCatalogPage(1)" class="btn" style="background: white; color: var(--primary); border: 1px solid var(--primary); padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 600; transition: all 0.3s; cursor: pointer;">
+                Siguiente <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     </main>
 
     <div class="wa-widget">
@@ -276,6 +287,8 @@
         let categories = [];
         let activeCategory = 'all';
         let excludedAllergens = [];
+        let catalogCurrentPage = 1;
+        const catalogItemsPerPage = 12;
 
         let currentSlide = 0;
         let slideInterval;
@@ -438,7 +451,8 @@
 
         function filterByCategory(catId, element) {
             activeCategory = catId;
-            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            catalogCurrentPage = 1;
+            document.querySelectorAll('#category-filters .filter-chip').forEach(c => c.classList.remove('active'));
             if (element) element.classList.add('active');
             renderProducts();
         }
@@ -452,17 +466,26 @@
                 excludedAllergens.push(allergen);
                 chip.classList.add('active');
             }
+            catalogCurrentPage = 1;
             renderProducts();
+        }
+
+        function changeCatalogPage(delta) {
+            catalogCurrentPage += delta;
+            renderProducts();
+            window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 100, behavior: 'smooth' });
         }
 
         function renderProducts() {
             const gridContainer = document.getElementById('products-grid');
+            const paginationContainer = document.getElementById('catalog-pagination');
             if (!gridContainer) return;
             
             gridContainer.innerHTML = '';
             
             if (!products || products.length === 0) {
                 gridContainer.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">Cargando productos o catálogo vacío...</div>';
+                paginationContainer.style.display = 'none';
                 return;
             }
 
@@ -474,13 +497,31 @@
             });
 
             if (filtered.length === 0) {
-                gridContainer.innerHTML = `<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos en la categoría seleccionada.</div>`;
+                gridContainer.innerHTML = `<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos con los filtros seleccionados.</div>`;
+                paginationContainer.style.display = 'none';
                 return;
             }
 
-            // Agrupar por categoría
+            // Pagination logic
+            const totalPages = Math.ceil(filtered.length / catalogItemsPerPage);
+            if (catalogCurrentPage > totalPages) catalogCurrentPage = totalPages;
+            if (catalogCurrentPage < 1) catalogCurrentPage = 1;
+
+            const start = (catalogCurrentPage - 1) * catalogItemsPerPage;
+            const end = start + catalogItemsPerPage;
+            const paginatedItems = filtered.slice(start, end);
+
+            // Update pagination UI
+            paginationContainer.style.display = filtered.length > catalogItemsPerPage ? 'flex' : 'none';
+            document.getElementById('catalog-page-info').textContent = `Página ${catalogCurrentPage} de ${totalPages}`;
+            document.getElementById('catalog-prev').disabled = catalogCurrentPage === 1;
+            document.getElementById('catalog-next').disabled = catalogCurrentPage === totalPages;
+            document.getElementById('catalog-prev').style.opacity = catalogCurrentPage === 1 ? '0.5' : '1';
+            document.getElementById('catalog-next').style.opacity = catalogCurrentPage === totalPages ? '0.5' : '1';
+
+            // Agrupar por categoría (solo los de esta página)
             const grouped = {};
-            filtered.forEach(p => {
+            paginatedItems.forEach(p => {
                 let catName = 'Otros';
                 if (p.categories) {
                     catName = Array.isArray(p.categories) ? (p.categories[0]?.name || 'Otros') : (p.categories.name || 'Otros');
@@ -535,7 +576,7 @@
                 gridContainer.insertAdjacentHTML('beforeend', sectionHtml);
             });
 
-            if (typeof AOS !== 'undefined') AOS.refresh();
+            // Removed AOS.refresh() as it can cause issues with dynamic content visibility
         }
 
         function toggleMobileMenu() {

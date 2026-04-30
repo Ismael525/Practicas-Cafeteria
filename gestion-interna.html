@@ -1644,6 +1644,13 @@
                 console.log('Filas detectadas en el Excel:', jsonData.length);
                 if (jsonData.length > 0) console.log('Datos de la primera fila:', jsonData[0]);
 
+                // Obtenemos los productos actuales para comparar y preservar imágenes
+                const { data: existingProducts } = await supabaseClient.from('products').select('*').is('deleted_at', null);
+                const productsMap = new Map();
+                if (existingProducts) {
+                    existingProducts.forEach(p => productsMap.set(p.name.toUpperCase(), p));
+                }
+
                 let successCount = 0;
                 let errorCount = 0;
                 let skipCount = 0;
@@ -1738,11 +1745,18 @@
                         const allergens = allergensStr ? String(allergensStr).split(/[,;]/).map(a => a.trim()) : [];
 
                         const cleanName = String(name).trim().replace(/\s*\d+([,.]\d+)?\s*€/gi, '').toUpperCase();
+                        
+                        // Si el producto ya existe y el Excel no trae imagen, preservamos la existente
+                        let finalImageUrl = String(image || '').trim();
+                        if (!finalImageUrl && productsMap.has(cleanName)) {
+                            finalImageUrl = productsMap.get(cleanName).image_url || '';
+                        }
+
                         const productData = {
                             name: cleanName,
                             category_id: categoryId,
                             price: price,
-                            image_url: String(image).trim(),
+                            image_url: finalImageUrl,
                             description: String(desc).trim(),
                             allergens: allergens
                         };
@@ -1771,48 +1785,11 @@
                     }
                 }
 
-                // Eliminar productos que no están en el Excel
-                if (processedProductNames.length > 0) {
-                    try {
-                        const { data: allProds } = await supabaseClient.from('products').select('id, name').is('deleted_at', null);
-                        if (allProds) {
-                            const toDelete = allProds.filter(p => !processedProductNames.includes(p.name)).map(p => p.id);
-                            if (toDelete.length > 0) {
-                                // Supabase .in() limits to 1000 items usually, which is fine here
-                                await supabaseClient.from('products').update({ deleted_at: new Date().toISOString() }).in('id', toDelete);
-                                console.log(`Se eliminaron ${toDelete.length} productos obsoletos.`);
-                            }
-                        }
-                    } catch (delErr) {
-                        console.error("Error eliminando productos antiguos:", delErr);
-                    }
-                }
-
-                // Eliminar categorías que no se están utilizando
-                try {
-                    const { data: activeProds } = await supabaseClient.from('products').select('category_id').is('deleted_at', null);
-                    if (activeProds) {
-                        const usedCategoryIds = [...new Set(activeProds.map(p => p.category_id).filter(id => id != null))];
-                        const { data: allCats } = await supabaseClient.from('categories').select('id');
-                        if (allCats) {
-                            const unusedCats = allCats.filter(c => !usedCategoryIds.includes(c.id)).map(c => c.id);
-                            if (unusedCats.length > 0) {
-                                await supabaseClient.from('categories').delete().in('id', unusedCats);
-                                console.log(`Se eliminaron ${unusedCats.length} categorías no utilizadas.`);
-                            }
-                        }
-                    }
-                    await loadCategories(); // Refrescar las categorías locales
-                } catch (catErr) {
-                    console.error("Error eliminando categorías no utilizadas:", catErr);
-                }
-
                 if (successCount === 0 && skipCount > 0) {
                     const detectedHeaders = Object.keys(jsonData[0] || {}).join(', ');
                     alert(`AVISO: Se detectaron ${jsonData.length} filas pero no se pudo procesar ninguna.\n\nEncabezados detectados:\n[${detectedHeaders}]\n\nAsegúrate de que una columna se llame "NOMBRE".`);
                 } else {
                     let msg = `Proceso finalizado:\n- Éxitos: ${successCount}\n- Errores: ${errorCount}\n- Filas omitidas: ${skipCount}`;
-                    if (errorCount > 0) msg += `\n\nÚltimo error: ${lastError}`;
                     alert(msg);
                 }
                 loadProducts();
