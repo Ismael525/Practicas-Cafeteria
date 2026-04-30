@@ -1758,7 +1758,8 @@
                             price: price,
                             image_url: finalImageUrl,
                             description: String(desc).trim(),
-                            allergens: allergens
+                            allergens: allergens,
+                            deleted_at: null // Aseguramos que el producto sea visible si se importa de nuevo
                         };
 
                         const { error } = await supabaseClient
