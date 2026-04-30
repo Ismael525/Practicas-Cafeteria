@@ -285,9 +285,34 @@
         .btn-primary i {
             font-size: 0.9rem;
         }
+        /* Security: hide admin content until auth is verified */
+        #admin-content { display: none; }
+        #auth-loading {
+            position: fixed; inset: 0;
+            background: var(--bg, #fafaf9);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            z-index: 9999; gap: 1rem;
+        }
+        #auth-loading p { color: var(--text-muted, #888); font-size: 0.9rem; }
+        .auth-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid #f5f5f4;
+            border-top-color: var(--primary, #78350f);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+    <!-- Auth loading overlay -->
+    <div id="auth-loading">
+        <div class="auth-spinner"></div>
+        <p>Verificando acceso...</p>
+    </div>
+
+    <div id="admin-content">
 
     <nav id="main-nav">
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
@@ -575,6 +600,7 @@
             </div>
         </div>
     </main>
+    </div><!-- end #admin-content -->
 
     <!-- Modal for New/Edit Product -->
     <div id="product-modal" class="modal">
@@ -733,15 +759,21 @@
                 }
             } catch (err) {
                 console.error('Connection error:', err);
-                alert('No se pudo conectar con Supabase. Asegúrate de usar un servidor local (Live Server).');
+                window.location.href = 'login.html';
             }
         }
 
         async function initAdmin() {
+            // Reveal admin UI only after successful auth
+            document.getElementById('auth-loading').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
             await loadCategories();
             await loadProducts();
             await loadSettings();
         }
+
+        // Start auth check immediately on page load
+        document.addEventListener('DOMContentLoaded', checkAuth);
 
         async function loadSettings() {
             const { data } = await supabaseClient.from('site_settings').select('*');
