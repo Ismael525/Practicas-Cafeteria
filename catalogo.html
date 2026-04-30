@@ -391,7 +391,7 @@
         }
 
         async function loadCategories() {
-            const { data } = await supabaseClient.from('categories').select('*');
+            const { data } = await supabaseClient.from('categories').select('*').order('name', { ascending: true });
             categories = data || [];
             const container = document.getElementById('category-filters');
             
@@ -456,64 +456,86 @@
         }
 
         function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = '';
+            const gridContainer = document.getElementById('products-grid');
+            if (!gridContainer) return;
+            
+            gridContainer.innerHTML = '';
+            
+            if (!products || products.length === 0) {
+                gridContainer.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">Cargando productos o catálogo vacío...</div>';
+                return;
+            }
 
             const filtered = products.filter(p => {
-                const matchCategory = activeCategory === 'all' || p.category_id === activeCategory;
-                // Case-insensitive check for allergens
+                const matchCategory = activeCategory === 'all' || String(p.category_id) === String(activeCategory);
                 const pAllergens = (p.allergens || []).map(a => a.toLowerCase());
                 const matchAllergens = !excludedAllergens.some(a => pAllergens.includes(a.toLowerCase()));
                 return matchCategory && matchAllergens;
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos con estos filtros.</div>';
+                gridContainer.innerHTML = `<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos en la categoría seleccionada.</div>`;
                 return;
             }
 
+            // Agrupar por categoría
+            const grouped = {};
             filtered.forEach(p => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.setAttribute('data-aos', 'fade-up');
-                
-                const allergenIcons = (p.allergens || []).map(a => {
-                    let icon = 'info-circle';
-                    const lowerA = a.toLowerCase();
-                    if (lowerA.includes('gluten')) icon = 'wheat-awn';
-                    if (lowerA.includes('lactosa')) icon = 'cow';
-                    if (lowerA.includes('huevo')) icon = 'egg';
-                    if (lowerA.includes('frutos')) icon = 'seedling';
-                    if (lowerA.includes('pescado')) icon = 'fish';
+                let catName = 'Otros';
+                if (p.categories) {
+                    catName = Array.isArray(p.categories) ? (p.categories[0]?.name || 'Otros') : (p.categories.name || 'Otros');
+                } else if (p.category_id) {
+                    const foundCat = categories.find(c => String(c.id) === String(p.category_id));
+                    if (foundCat) catName = foundCat.name;
+                }
+                if (!grouped[catName]) grouped[catName] = [];
+                grouped[catName].push(p);
+            });
 
-                    return `
-                        <div class="allergen-icon" title="Contiene ${a}">
-                            <i class="fas fa-${icon}"></i>
+            // Renderizar
+            gridContainer.style.display = 'block';
+            Object.keys(grouped).sort().forEach(catName => {
+                const productsHtml = grouped[catName].map(p => `
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800'}" alt="${p.name}">
                         </div>
-                    `;
-                }).join('');
-
-                card.innerHTML = `
-                    <div class="product-image">
-                        <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800'}" alt="${p.name}">
-                    </div>
-                    <div class="product-info">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <span class="product-category">${p.categories?.name || 'Menú'}</span>
-                            <div class="allergens">${allergenIcons}</div>
-                        </div>
-                        <h3 class="product-name">${p.name}</h3>
-                        <p class="product-desc">${p.description || ''}</p>
-                        <div class="product-footer">
-                            <span class="product-price">${parseFloat(p.price).toFixed(2)}€</span>
-                            <div class="order-reminder">
-                                <i class="fab fa-whatsapp"></i> Pídelo por WhatsApp
+                        <div class="product-info">
+                            <div class="product-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; gap: 1rem;">
+                                <h3 class="product-title" style="margin: 0; font-size: 1.25rem; color: var(--secondary); font-weight: 700;">${p.name}</h3>
+                                <span class="product-price" style="font-weight: 700; color: var(--primary); white-space: nowrap;">${parseFloat(p.price || 0).toFixed(2)}€</span>
+                            </div>
+                            ${p.description ? `<p class="product-description" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">${p.description}</p>` : ''}
+                            <div class="product-meta" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+                                <div class="allergens-list" style="display: flex; gap: 0.4rem;">
+                                    ${(p.allergens || []).map(a => {
+                                        let icon = 'info-circle';
+                                        if (a.toLowerCase().includes('gluten')) icon = 'wheat-awn';
+                                        if (a.toLowerCase().includes('lactosa')) icon = 'cow';
+                                        if (a.toLowerCase().includes('huevo')) icon = 'egg';
+                                        return `<div class="allergen-icon" title="${a}" style="width: 22px; height: 22px; border-radius: 50%; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;"><i class="fas fa-${icon}"></i></div>`;
+                                    }).join('')}
+                                </div>
+                                <div class="order-reminder" style="color: #128c7e; font-size: 0.8rem; font-weight: 700; cursor: pointer;">
+                                    <i class="fab fa-whatsapp"></i> PEDIR
+                                </div>
                             </div>
                         </div>
                     </div>
+                `).join('');
+
+                const sectionHtml = `
+                    <div style="margin-bottom: 3.5rem;">
+                        <h3 style="font-size: 1.7rem; font-family: 'Playfair Display', serif; font-weight: 700; margin-bottom: 1.5rem; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.5rem; display: inline-block;">${catName}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
+                            ${productsHtml}
+                        </div>
+                    </div>
                 `;
-                grid.appendChild(card);
+                gridContainer.insertAdjacentHTML('beforeend', sectionHtml);
             });
+
+            if (typeof AOS !== 'undefined') AOS.refresh();
         }
 
         function toggleMobileMenu() {

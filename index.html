@@ -117,6 +117,9 @@
                     <div id="voted-msg" class="poll-voted-msg" style="display: none;">
                         <i class="fas fa-check-circle"></i> ¡Gracias por tu participación!
                     </div>
+                    <button id="change-vote-btn" class="btn" style="display: none; margin-top: 1rem; width: 100%; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 0.6rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;" onclick="retractVote()">
+                        <i class="fas fa-undo"></i> Cambiar mi voto
+                    </button>
                 </div>
             </div>
         </div>
@@ -209,6 +212,7 @@
         // --- POLL LOGIC ---
         let activePoll = null;
         let selectedOptionId = null;
+        let votedOptionId = null;
 
         async function loadActivePoll() {
             const { data: poll, error } = await supabaseClient
@@ -228,6 +232,7 @@
             document.getElementById('display-poll-question').textContent = poll.question;
 
             const hasVoted = localStorage.getItem(`voted_${poll.id}`);
+            votedOptionId = localStorage.getItem(`voted_option_${poll.id}`) || null;
             if (hasVoted) {
                 showResults();
             } else {
@@ -263,17 +268,16 @@
             btn.disabled = true;
             btn.textContent = 'Enviando...';
 
-            // Get current votes and increment
-            const option = activePoll.poll_options.find(o => o.id === selectedOptionId);
-            const { error } = await supabaseClient
-                .from('poll_options')
-                .update({ votes: (option.votes || 0) + 1 })
-                .eq('id', selectedOptionId);
+            // Use secure server-side function to increment vote (prevents manipulation)
+            const { error } = await supabaseClient.rpc('vote_for_option', { option_id: selectedOptionId });
 
             if (!error) {
+                votedOptionId = selectedOptionId;
                 localStorage.setItem(`voted_${activePoll.id}`, 'true');
+                localStorage.setItem(`voted_option_${activePoll.id}`, selectedOptionId);
                 // Update local data for immediate result display
-                option.votes = (option.votes || 0) + 1;
+                const option = activePoll.poll_options.find(o => o.id === selectedOptionId);
+                if (option) option.votes = (option.votes || 0) + 1;
                 showResults();
             } else {
                 alert('Error al votar. Inténtalo de nuevo.');
@@ -288,13 +292,15 @@
             
             document.getElementById('vote-btn').style.display = 'none';
             document.getElementById('voted-msg').style.display = 'flex';
+            document.getElementById('change-vote-btn').style.display = 'block';
 
             container.innerHTML = activePoll.poll_options.map(opt => {
                 const percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+                const isVoted = opt.id === votedOptionId;
                 return `
-                    <div class="poll-results">
+                    <div class="poll-results" style="${isVoted ? 'border-left: 3px solid var(--primary); padding-left: 0.75rem;' : ''}">
                         <div class="poll-result-info">
-                            <span>${opt.option_text}</span>
+                            <span>${opt.option_text}${isVoted ? ' <i class="fas fa-check" style="color: var(--primary); font-size: 0.75rem;"></i>' : ''}</span>
                             <span>${percentage}%</span>
                         </div>
                         <div class="poll-result-bar">
@@ -303,6 +309,55 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        async function retractVote() {
+            if (!votedOptionId) {
+                console.error('No votedOptionId found to retract');
+                return;
+            }
+
+            const changeBtn = document.getElementById('change-vote-btn');
+            const originalContent = changeBtn.innerHTML;
+            changeBtn.disabled = true;
+            changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Retirando voto...';
+
+            try {
+                const { error } = await supabaseClient.rpc('unvote_option', { option_id: votedOptionId });
+
+                if (!error) {
+                    // Update local data
+                    const option = activePoll.poll_options.find(o => o.id === votedOptionId);
+                    if (option) option.votes = Math.max(0, (option.votes || 0) - 1);
+
+                    // Reset state
+                    localStorage.removeItem(`voted_${activePoll.id}`);
+                    localStorage.removeItem(`voted_option_${activePoll.id}`);
+                    votedOptionId = null;
+                    selectedOptionId = null;
+
+                    // Hide change vote button and msg
+                    changeBtn.style.display = 'none';
+                    document.getElementById('voted-msg').style.display = 'none';
+                    
+                    // Restore original content for next time
+                    changeBtn.innerHTML = originalContent;
+                    changeBtn.disabled = false;
+
+                    // Restore vote UI
+                    document.getElementById('vote-btn').style.display = 'block';
+                    document.getElementById('vote-btn').disabled = true;
+                    document.getElementById('vote-btn').textContent = 'Votar ahora';
+                    renderOptions();
+                } else {
+                    console.error('Supabase RPC error:', error);
+                    throw error;
+                }
+            } catch (err) {
+                changeBtn.disabled = false;
+                changeBtn.innerHTML = originalContent;
+                alert('Error al retirar el voto: ' + (err.message || 'Error desconocido'));
+            }
         }
 
         loadActivePoll();

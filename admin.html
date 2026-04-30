@@ -521,19 +521,32 @@
         <!-- Trash Tab -->
         <div id="trash-tab" style="display: none;">
             <div class="products-table-container" style="padding: 2rem;">
-                <h3>Papelera de Reciclaje</h3>
-                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Productos borrados temporalmente. Puedes restaurarlos o eliminarlos para siempre.</p>
+                <div class="admin-header" style="margin-bottom: 1rem;">
+                    <div>
+                        <h3>Papelera de Reciclaje</h3>
+                        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Productos borrados temporalmente. Puedes restaurarlos o eliminarlos para siempre.</p>
+                    </div>
+                    <button class="btn" onclick="emptyTrash()" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; background: #ef4444; color: white; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-fire-alt"></i> Vaciar Todo</button>
+                </div>
                 <div class="products-table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Producto</th>
                                 <th>Precio</th>
+                                <th>Eliminado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="admin-trash-list"></tbody>
                     </table>
+                    <div id="trash-pagination" class="pagination-controls" style="display: none; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);" id="trash-pagination-info">Mostrando 0 de 0 productos</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button onclick="trashPrevPage()" id="trash-prev-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
+                            <button onclick="trashNextPage()" id="trash-next-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -669,6 +682,7 @@
         let currentAnnouncements = [];
         
         let currentPage = 1;
+        let trashCurrentPage = 1;
         const itemsPerPage = 10;
 
         async function uploadImage(file, bucket = 'images') {
@@ -856,7 +870,7 @@
         }
 
         async function loadCategories() {
-            const { data } = await supabaseClient.from('categories').select('*');
+            const { data } = await supabaseClient.from('categories').select('*').order('name', { ascending: true });
             categories = data || [];
             const select = document.getElementById('p-category');
             select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
@@ -886,12 +900,27 @@
             const end = start + itemsPerPage;
             const pageItems = activeProducts.slice(start, end);
 
-            list.innerHTML = pageItems.map(p => `
+            list.innerHTML = pageItems.map(p => {
+                const allergenIcons = (p.allergens || []).map(a => {
+                    let icon = 'info-circle';
+                    const lowerA = a.toLowerCase();
+                    if (lowerA.includes('gluten')) icon = 'wheat-awn';
+                    if (lowerA.includes('lactosa')) icon = 'cow';
+                    if (lowerA.includes('huevo')) icon = 'egg';
+                    if (lowerA.includes('frutos')) icon = 'seedling';
+                    if (lowerA.includes('pescado')) icon = 'fish';
+                    return `<i class="fas fa-${icon}" title="${a}" style="margin-right: 4px; color: var(--primary);"></i>`;
+                }).join('');
+
+                return `
                 <tr id="row-${p.id}">
                     <td>
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <img src="${p.image_url}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover;">
-                            <div style="font-weight: 600;">${p.name}</div>
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover;">
+                            <div>
+                                <div style="font-weight: 600;">${p.name}</div>
+                                <div style="margin-top: 4px; font-size: 0.8rem;">${allergenIcons}</div>
+                            </div>
                         </div>
                     </td>
                     <td><span style="font-size: 0.8rem; background: #f5f5f4; padding: 0.3rem 0.6rem; border-radius: 5px;">${p.categories?.name || 'Varios'}</span></td>
@@ -906,7 +935,7 @@
                         <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
-            `).join('');
+            `}).join('');
 
             // Update pagination UI
             document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages || 1} (${totalProducts} productos)`;
@@ -942,21 +971,80 @@
                 
             if (error) return;
             trashProducts = data;
+            trashCurrentPage = 1;
+            renderTrash();
+        }
 
+        function renderTrash() {
             const list = document.getElementById('admin-trash-list');
-            list.innerHTML = trashProducts.map(p => `
+            const total = trashProducts.length;
+            const totalPages = Math.ceil(total / itemsPerPage);
+
+            if (trashCurrentPage > totalPages && totalPages > 0) trashCurrentPage = totalPages;
+            if (trashCurrentPage < 1) trashCurrentPage = 1;
+
+            const start = (trashCurrentPage - 1) * itemsPerPage;
+            const pageItems = trashProducts.slice(start, start + itemsPerPage);
+
+            if (total === 0) {
+                list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 3rem; color: var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>La papelera está vacía</td></tr>`;
+                document.getElementById('trash-pagination').style.display = 'none';
+                return;
+            }
+
+            list.innerHTML = pageItems.map(p => `
                 <tr>
                     <td>
-                        <div style="font-weight: 600;">${p.name}</div>
-                        <div style="font-size: 0.7rem; color: var(--text-muted);">Eliminado el ${new Date(p.deleted_at).toLocaleDateString()}</div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; opacity: 0.6;">
+                            <div>
+                                <div style="font-weight: 600; color: var(--text-muted);">${p.name}</div>
+                                <div style="font-size: 0.75rem; color: var(--primary); background: #fef2f2; padding: 0.1rem 0.4rem; border-radius: 4px; display: inline-block; margin-top: 2px;">${p.categories?.name || 'Sin categoría'}</div>
+                            </div>
+                        </div>
                     </td>
-                    <td>${p.price}€</td>
+                    <td>${parseFloat(p.price || 0).toFixed(2)}€</td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">${new Date(p.deleted_at).toLocaleDateString('es-ES')}</td>
                     <td class="action-btns">
-                        <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: var(--accent);" onclick="restoreProduct('${p.id}')">Restaurar</button>
-                        <button class="btn btn-danger" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="askPermanentDelete('${p.id}')">Eliminar</button>
+                        <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: var(--accent);" onclick="restoreProduct('${p.id}')"><i class="fas fa-undo"></i> Restaurar</button>
+                        <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;" onclick="askPermanentDelete('${p.id}')"><i class="fas fa-times"></i> Eliminar</button>
                     </td>
                 </tr>
             `).join('');
+
+            // Paginación
+            const pag = document.getElementById('trash-pagination');
+            pag.style.display = total > itemsPerPage ? 'flex' : 'none';
+            document.getElementById('trash-pagination-info').textContent = `Página ${trashCurrentPage} de ${totalPages} (${total} productos)`;
+            document.getElementById('trash-prev-btn').disabled = trashCurrentPage <= 1;
+            document.getElementById('trash-next-btn').disabled = trashCurrentPage >= totalPages;
+            document.getElementById('trash-prev-btn').style.opacity = trashCurrentPage <= 1 ? '0.5' : '1';
+            document.getElementById('trash-next-btn').style.opacity = trashCurrentPage >= totalPages ? '0.5' : '1';
+        }
+
+        function trashNextPage() {
+            if (trashCurrentPage * itemsPerPage < trashProducts.length) {
+                trashCurrentPage++;
+                renderTrash();
+            }
+        }
+
+        function trashPrevPage() {
+            if (trashCurrentPage > 1) {
+                trashCurrentPage--;
+                renderTrash();
+            }
+        }
+
+        async function emptyTrash() {
+            if (trashProducts.length === 0) { alert('La papelera ya está vacía.'); return; }
+            if (!confirm(`¿Eliminar DEFINITIVAMENTE los ${trashProducts.length} productos de la papelera? Esta acción no se puede deshacer.`)) return;
+            const ids = trashProducts.map(p => p.id);
+            const { error } = await supabaseClient.from('products').delete().in('id', ids);
+            if (error) { alert('Error al vaciar la papelera: ' + error.message); return; }
+            trashProducts = [];
+            trashCurrentPage = 1;
+            renderTrash();
         }
 
         async function updatePrice(id, newPrice, input) {
@@ -1444,48 +1532,110 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                console.log('Filas detectadas en el Excel:', jsonData.length);
-                console.log('Datos de la primera fila:', jsonData[0]);
+                
+                // Leemos los datos como array de arrays para encontrar la cabecera real
+                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                let headerRowIndex = -1;
+                let headers = [];
+                for (let i = 0; i < rawData.length; i++) {
+                    const row = rawData[i];
+                    if (!row || !Array.isArray(row)) continue;
+                    
+                    const rowStr = row.map(c => String(c || '').toLowerCase().trim());
+                    // Asumimos que la cabecera es la primera fila que contenga algo parecido a "nombre"
+                    if (rowStr.some(c => c === 'nombre' || c === 'producto' || c === 'artículo' || c === 'articulo')) {
+                        headerRowIndex = i;
+                        // Guardamos los headers originales pero aseguramos que no haya vacíos para usarlos de keys
+                        headers = row.map((c, idx) => c ? String(c).trim() : `__EMPTY_${idx}`);
+                        break;
+                    }
+                }
 
-                if (jsonData.length === 0) {
-                    alert('No se detectaron datos en el archivo. Asegúrate de que la primera fila contenga los nombres de las columnas.');
+                if (headerRowIndex === -1) {
+                    alert('No se pudo detectar la fila de encabezados. Asegúrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".');
                     event.target.value = '';
                     return;
                 }
-                
+
+                const jsonData = [];
+                for (let i = headerRowIndex + 1; i < rawData.length; i++) {
+                    const rowArr = rawData[i];
+                    if (!rowArr || rowArr.length === 0) continue;
+                    
+                    // Si la fila está completamente vacía, saltar
+                    if (rowArr.every(c => c === undefined || c === null || String(c).trim() === '')) continue;
+
+                    const rowObj = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        rowObj[headers[j]] = rowArr[j] !== undefined ? rowArr[j] : null;
+                    }
+                    jsonData.push(rowObj);
+                }
+
+                console.log('Filas detectadas en el Excel:', jsonData.length);
+                if (jsonData.length > 0) console.log('Datos de la primera fila:', jsonData[0]);
+
                 let successCount = 0;
                 let errorCount = 0;
                 let skipCount = 0;
                 let firstErrorDetails = '';
+                let processedProductNames = [];
 
                 for (const row of jsonData) {
                     try {
                         // Normalizamos las claves para ignorar mayúsculas/minúsculas y espacios
                         const rowKeys = Object.keys(row);
                         const findVal = (possibleNames) => {
-                            // Buscamos coincidencia exacta o que el encabezado CONTENGA la palabra clave
-                            const key = rowKeys.find(k => {
+                            // Primero buscamos coincidencia EXACTA
+                            let key = rowKeys.find(k => {
                                 const cleanK = String(k).trim().toLowerCase();
-                                return possibleNames.some(p => cleanK === p || cleanK.includes(p));
+                                return possibleNames.some(p => cleanK === p);
                             });
+                            // Si no hay exacta, buscamos que contenga la palabra, PERO que NO empiece por "id"
+                            if (!key) {
+                                key = rowKeys.find(k => {
+                                    const cleanK = String(k).trim().toLowerCase();
+                                    return possibleNames.some(p => cleanK.includes(p) && !cleanK.startsWith('id'));
+                                });
+                            }
                             return key ? row[key] : null;
                         };
 
-                        const name = findVal(['nombre', 'producto', 'name', 'item', 'articulo', 'artículo']);
+                        const name = findVal(['nombre', 'producto', 'name', 'item', 'articulo', 'artículo', 'descripción', 'descripcion']);
                         const categoryName = findVal(['familia', 'categoria', 'categoría', 'category', 'tipo', 'clase']);
-                        const priceStr = findVal(['precio1', 'precio', 'price', 'coste', 'cost', 'pve', 'pvp']);
                         const image = findVal(['imagen', 'image', 'foto', 'url', 'image_url', 'img']) || '';
-                        const desc = findVal(['descripcion', 'descripción', 'description', 'detalle', 'info']) || '';
+                        const desc = findVal(['detalle', 'info', 'notas', 'observaciones']) || '';
                         const allergensStr = findVal(['alergenos', 'alérgenos', 'allergens', 'contiene', 'alerge']);
                         
-                        if (!name) {
-                            console.warn('Fila sin nombre detectada. Columnas disponibles:', rowKeys);
+                        if (!name || String(name).trim().toLowerCase() === 'nombre' || String(name).trim().toLowerCase() === 'producto') {
+                            console.warn('Fila sin nombre válido detectada o es cabecera. Saltando...');
                             skipCount++;
                             continue;
                         }
 
-                        const price = parseFloat(String(priceStr).replace(',', '.').replace(/[^\d.]/g, '')) || 0;
+                        // Extraer precio robusto buscando en todas las columnas de precio
+                        let price = 0;
+                        const priceKeys = rowKeys.filter(k => {
+                            const cleanK = String(k).trim().toLowerCase();
+                            return ['precio', 'price', 'tarifa', 'coste', 'cost', 'pve', 'pvp'].some(p => cleanK.includes(p));
+                        });
+
+                        for (const pk of priceKeys) {
+                            const pStr = row[pk];
+                            if (pStr !== undefined && pStr !== null && String(pStr).trim() !== '') {
+                                let pVal = String(pStr).replace(',', '.').replace(/[^\d.]/g, '');
+                                const parts = pVal.split('.');
+                                if (parts.length > 2) {
+                                    pVal = parts.slice(0, -1).join('') + '.' + parts[parts.length - 1]; // Fix 1.200.50 -> 1200.50
+                                }
+                                const parsed = parseFloat(pVal);
+                                if (!isNaN(parsed) && parsed > 0) {
+                                    price = parsed;
+                                    break; // Encontramos un precio válido
+                                }
+                            }
+                        }
 
                         // Find or create category ID
                         const categoryNameClean = (String(categoryName || '')).trim();
@@ -1519,14 +1669,14 @@
 
                         const allergens = allergensStr ? String(allergensStr).split(/[,;]/).map(a => a.trim()) : [];
 
+                        const cleanName = String(name).trim().replace(/\s*\d+([,.]\d+)?\s*€/gi, '').toUpperCase();
                         const productData = {
-                            name: String(name).trim(),
+                            name: cleanName,
                             category_id: categoryId,
                             price: price,
                             image_url: String(image).trim(),
                             description: String(desc).trim(),
-                            allergens: allergens,
-                            is_active: true
+                            allergens: allergens
                         };
 
                         const { error } = await supabaseClient
@@ -1540,6 +1690,8 @@
                             }
                             throw error;
                         }
+                        
+                        processedProductNames.push(productData.name);
                         successCount++;
                     } catch (err) {
                         console.error('Error procesando fila:', err);
@@ -1549,6 +1701,42 @@
                             break; 
                         }
                     }
+                }
+
+                // Eliminar productos que no están en el Excel
+                if (processedProductNames.length > 0) {
+                    try {
+                        const { data: allProds } = await supabaseClient.from('products').select('id, name').is('deleted_at', null);
+                        if (allProds) {
+                            const toDelete = allProds.filter(p => !processedProductNames.includes(p.name)).map(p => p.id);
+                            if (toDelete.length > 0) {
+                                // Supabase .in() limits to 1000 items usually, which is fine here
+                                await supabaseClient.from('products').update({ deleted_at: new Date().toISOString() }).in('id', toDelete);
+                                console.log(`Se eliminaron ${toDelete.length} productos obsoletos.`);
+                            }
+                        }
+                    } catch (delErr) {
+                        console.error("Error eliminando productos antiguos:", delErr);
+                    }
+                }
+
+                // Eliminar categorías que no se están utilizando
+                try {
+                    const { data: activeProds } = await supabaseClient.from('products').select('category_id').is('deleted_at', null);
+                    if (activeProds) {
+                        const usedCategoryIds = [...new Set(activeProds.map(p => p.category_id).filter(id => id != null))];
+                        const { data: allCats } = await supabaseClient.from('categories').select('id');
+                        if (allCats) {
+                            const unusedCats = allCats.filter(c => !usedCategoryIds.includes(c.id)).map(c => c.id);
+                            if (unusedCats.length > 0) {
+                                await supabaseClient.from('categories').delete().in('id', unusedCats);
+                                console.log(`Se eliminaron ${unusedCats.length} categorías no utilizadas.`);
+                            }
+                        }
+                    }
+                    await loadCategories(); // Refrescar las categorías locales
+                } catch (catErr) {
+                    console.error("Error eliminando categorías no utilizadas:", catErr);
                 }
 
                 if (successCount === 0 && skipCount > 0) {

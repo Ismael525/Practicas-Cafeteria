@@ -23,7 +23,7 @@ function sendWhatsAppMessage() {
     const input = document.getElementById('wa-chat-input');
     const message = input.value.trim();
     if (message) {
-        const phoneNumber = '34600000000'; // Número de la cafetería
+        const phoneNumber = '34604885296'; // Número de la cafetería
         const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
         input.value = '';
