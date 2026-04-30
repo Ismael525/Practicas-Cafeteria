@@ -356,10 +356,18 @@
         <div id="products-tab">
             <div class="admin-header" style="margin-top: 2rem;">
                 <h3>Lista de Productos</h3>
-                <div style="display: flex; gap: 0.5rem;">
-                    <input type="file" id="excel-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelImport(event)">
-                    <button onclick="document.getElementById('excel-input').click()" class="btn btn-primary" style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i> Importar Excel</button>
-                    <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir</button>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                    <div style="position: relative; flex: 1; min-width: 250px;">
+                        <input type="text" id="product-search" placeholder="Buscar por nombre o categoría..." oninput="handleSearch(this.value)" 
+                            style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1px solid #e7e5e4; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e7e5e4'">
+                        <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #a8a29e;"></i>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="file" id="excel-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelImport(event)">
+                        <button onclick="document.getElementById('excel-input').click()" class="btn btn-primary" style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i> Importar Excel</button>
+                        <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir</button>
+                    </div>
                 </div>
             </div>
             <div class="products-table-container">
@@ -706,6 +714,7 @@
         let trashProducts = [];
         let categories = [];
         let currentAnnouncements = [];
+        let productSearch = '';
         
         let currentPage = 1;
         let trashCurrentPage = 1;
@@ -920,9 +929,23 @@
             renderProducts();
         }
 
+        function handleSearch(query) {
+            productSearch = query.toLowerCase().trim();
+            currentPage = 1;
+            renderProducts();
+        }
+
         function renderProducts() {
             const list = document.getElementById('admin-products-list');
-            const totalProducts = activeProducts.length;
+            
+            // Apply filtering
+            const filteredProducts = activeProducts.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(productSearch);
+                const categoryMatch = (p.categories?.name || '').toLowerCase().includes(productSearch);
+                return nameMatch || categoryMatch;
+            });
+
+            const totalProducts = filteredProducts.length;
             const totalPages = Math.ceil(totalProducts / itemsPerPage);
             
             if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
@@ -930,7 +953,14 @@
 
             const start = (currentPage - 1) * itemsPerPage;
             const end = start + itemsPerPage;
-            const pageItems = activeProducts.slice(start, end);
+            const pageItems = filteredProducts.slice(start, end);
+
+            if (totalProducts === 0) {
+                list.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 3rem; color: #a8a29e;">No se encontraron productos que coincidan con "${productSearch}"</td></tr>`;
+                document.getElementById('pagination-info').textContent = 'Mostrando 0 productos';
+                document.getElementById('products-pagination').style.display = 'none';
+                return;
+            }
 
             list.innerHTML = pageItems.map(p => {
                 const allergenIcons = (p.allergens || []).map(a => {
@@ -979,7 +1009,13 @@
         }
 
         function nextPage() {
-            if (currentPage * itemsPerPage < activeProducts.length) {
+            const filteredProducts = activeProducts.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(productSearch);
+                const categoryMatch = (p.categories?.name || '').toLowerCase().includes(productSearch);
+                return nameMatch || categoryMatch;
+            });
+
+            if (currentPage * itemsPerPage < filteredProducts.length) {
                 currentPage++;
                 renderProducts();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
