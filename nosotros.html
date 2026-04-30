@@ -82,42 +82,11 @@
                     <li style="margin-bottom: 0.5rem;"><i class="fas fa-coins" style="color: var(--primary); margin-right: 10px;"></i> Precios pensados para el estudiante</li>
                     <li style="margin-bottom: 0.5rem;"><i class="fas fa-bolt" style="color: var(--primary); margin-right: 10px;"></i> Rapidez: ¡No pierdas ni un minuto de tu recreo!</li>
                 </ul>
-                <div style="margin-top: 2.5rem;">
-                    <button class="btn btn-primary" onclick="openWhatsAppChat()" style="display: flex; align-items: center; gap: 10px; background: #25d366; border-color: #25d366;">
-                        <i class="fab fa-whatsapp"></i> Habla con nosotros
-                    </button>
-                </div>
+
             </div>
         </div>
     </section>
 
-    <div class="wa-widget">
-        <div id="wa-chat-window" class="wa-chat-window">
-            <div class="wa-chat-header">
-                <div style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                    <i class="fas fa-bread-slice"></i>
-                </div>
-                <div>
-                    <div style="font-weight: 700;">Cafetería Antonio Machado</div>
-                    <div class="wa-chat-status">● En línea</div>
-                </div>
-            </div>
-            <div class="wa-chat-body">
-                <div class="wa-message">
-                    ¡Hola! 🥖 ¿En qué podemos ayudarte hoy? Cuéntanos qué te gustaría pedir.
-                </div>
-            </div>
-            <div class="wa-chat-footer">
-                <input type="text" id="wa-chat-input" class="wa-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendWhatsAppMessage()">
-                <button class="wa-send-btn" onclick="sendWhatsAppMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-        <div class="wa-btn" onclick="toggleWhatsApp()">
-            <i class="fab fa-whatsapp"></i>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/whatsapp.js"></script>

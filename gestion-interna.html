@@ -285,6 +285,54 @@
         .btn-primary i {
             font-size: 0.9rem;
         }
+
+        /* Toggle Switch Styles */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e7e5e4;
+            transition: .4s;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--accent);
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
         /* Security: hide admin content until auth is verified */
         #admin-content { display: none; }
         #auth-loading {
@@ -345,6 +393,7 @@
             <h2>Panel de Control</h2>
             <div class="tabs-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
                 <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary" style="border: 1px solid var(--primary);">Menú Activo</button>
+                <button onclick="switchTab('analytics')" id="tab-analytics-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-chart-line"></i> Estadísticas</button>
                 <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
                 <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
                 <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido Web</button>
@@ -377,6 +426,7 @@
                             <th>Producto</th>
                             <th>Categoría</th>
                             <th>Precio (€)</th>
+                            <th>Disponibilidad</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -392,7 +442,38 @@
             </div>
         </div>
 
-        <!-- Announcements Tab -->
+        <!-- Analytics Tab -->
+        <div id="analytics-tab" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+                <div class="products-table-container" style="padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Visitas al Menú</div>
+                    <div id="total-menu-visits" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0</div>
+                    <div id="last-menu-visit" style="font-size: 0.75rem; color: #a8a29e; margin-top: 0.5rem;">Cargando...</div>
+                </div>
+                <div class="products-table-container" style="padding: 1.5rem; text-align: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Productos en Menú</div>
+                    <div id="total-products-count" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0</div>
+                    <div style="font-size: 0.75rem; color: #a8a29e; margin-top: 0.5rem;">Listos para pedir</div>
+                </div>
+            </div>
+
+            <div class="products-table-container" style="padding: 2rem;">
+                <h3>Productos más Populares</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Basado en clics de estudiantes.</p>
+                <table style="margin-top: 1rem;">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Vistas</th>
+                            <th>% del Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="popular-products-list">
+                        <tr><td colspan="3" style="text-align: center; padding: 2rem;">Cargando estadísticas...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div id="announcements-tab" style="display: none;">
             <div class="products-table-container" style="padding: 2rem;">
                 <div class="admin-header" style="margin-bottom: 2rem;">
@@ -630,6 +711,10 @@
                         <label>Precio (€)</label>
                         <input type="number" step="0.01" id="p-price" required>
                     </div>
+                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.8rem; padding-top: 1rem;">
+                        <input type="checkbox" id="p-available" checked style="width: auto;">
+                        <label style="margin-bottom: 0;">Producto Disponible</label>
+                    </div>
                     <div class="form-group full">
                         <label>Imagen del Producto (Archivo o URL)</label>
                         <div class="file-upload-wrapper">
@@ -816,7 +901,7 @@
             const tTab = document.getElementById('trash-tab');
             const pBtn = document.getElementById('tab-products-btn');
             const sBtn = document.getElementById('tab-settings-btn');
-            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls'];
+            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls', 'analytics'];
             
             tabs.forEach(t => {
                 const tabEl = document.getElementById(t + '-tab');
@@ -839,6 +924,7 @@
             if (tab === 'announcements') loadAnnouncements();
             if (tab === 'trash') loadTrash();
             if (tab === 'polls') loadPolls();
+            if (tab === 'analytics') loadAnalytics();
         }
 
         async function saveSettings(e) {
@@ -992,6 +1078,15 @@
                             <i class="fas fa-check-circle" style="color: var(--accent); opacity: 0; transition: 0.3s;" id="check-${p.id}"></i>
                         </div>
                     </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label class="switch">
+                                <input type="checkbox" ${p.is_available ? 'checked' : ''} onchange="toggleAvailability('${p.id}', ${p.is_available})">
+                                <span class="slider round"></span>
+                            </label>
+                            <span style="font-size: 0.75rem; color: ${p.is_available ? 'var(--accent)' : '#ef4444'}">${p.is_available ? 'En Stock' : 'Agotado'}</span>
+                        </div>
+                    </td>
                     <td class="action-btns">
                         <button class="btn-icon btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
                         <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
@@ -1126,6 +1221,67 @@
             }
         }
 
+        async function toggleAvailability(id, currentState) {
+            const { error } = await supabaseClient.from('products').update({ is_available: !currentState }).eq('id', id);
+            if (error) {
+                alert('Error al actualizar disponibilidad: ' + error.message);
+            }
+            loadProducts();
+        }
+
+        async function loadAnalytics() {
+            const menuVisitsEl = document.getElementById('total-menu-visits');
+            const lastVisitEl = document.getElementById('last-menu-visit');
+            const popularList = document.getElementById('popular-products-list');
+            const totalProductsEl = document.getElementById('total-products-count');
+
+            try {
+                // Total products
+                totalProductsEl.textContent = activeProducts.length;
+
+                // Overall visits
+                const { data: analytics } = await supabaseClient.from('site_analytics').select('*').eq('page_name', 'catalog').single();
+                if (analytics) {
+                    menuVisitsEl.textContent = analytics.visit_count;
+                    lastVisitEl.textContent = `Última visita: ${new Date(analytics.last_visit).toLocaleString('es-ES')}`;
+                }
+
+                // Popular products
+                const { data: popular } = await supabaseClient
+                    .from('products')
+                    .select('name, view_count')
+                    .is('deleted_at', null)
+                    .order('view_count', { ascending: false })
+                    .limit(5);
+
+                const totalViews = activeProducts.reduce((acc, p) => acc + (p.view_count || 0), 0) || 1;
+
+                if (popular && popular.length > 0) {
+                    popularList.innerHTML = popular.map(p => {
+                        const percent = ((p.view_count / totalViews) * 100).toFixed(1);
+                        return `
+                            <tr>
+                                <td><div style="font-weight:600;">${p.name}</div></td>
+                                <td>${p.view_count || 0} clicks</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <div style="flex: 1; height: 8px; background: #f5f5f4; border-radius: 4px; overflow: hidden;">
+                                            <div style="width: ${percent}%; height: 100%; background: var(--primary);"></div>
+                                        </div>
+                                        <span style="font-size: 0.8rem; font-weight: 600; width: 45px;">${percent}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    popularList.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem;">Aún no hay datos de interacción.</td></tr>';
+                }
+            } catch (err) {
+                console.error('Analytics error:', err);
+            }
+        }
+
         function openModal(product = null) {
             const modal = document.getElementById('product-modal');
             const title = document.getElementById('modal-title');
@@ -1144,6 +1300,7 @@
                 document.getElementById('p-price').value = product.price;
                 document.getElementById('p-image').value = product.image_url;
                 document.getElementById('p-desc').value = product.description;
+                document.getElementById('p-available').checked = product.is_available;
                 
                 // Set active chips
                 if (product.allergens) {
@@ -1156,6 +1313,7 @@
                 title.textContent = 'Añadir Producto';
                 form.reset();
                 document.getElementById('product-id').value = '';
+                document.getElementById('p-available').checked = true;
             }
             
             modal.style.display = 'flex';
@@ -1198,7 +1356,8 @@
                     price: parseFloat(document.getElementById('p-price').value),
                     image_url: imageUrl,
                     allergens: allergens,
-                    description: document.getElementById('p-desc').value
+                    description: document.getElementById('p-desc').value,
+                    is_available: document.getElementById('p-available').checked
                 };
 
                 if (id) {
