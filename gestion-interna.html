@@ -467,14 +467,10 @@
 
         <!-- Mobile Menu Overlay -->
         <div id="mobile-menu" class="mobile-nav-overlay">
-            <button class="close-menu" onclick="toggleMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="mobile-nav-links">
-                <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
-                <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
-                <a href="#" onclick="handleLogout()">Cerrar Sesión</a>
-            </div>
+            <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+            <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
+            <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
+            <a href="#" onclick="handleLogout()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Cerrar Sesión</a>
         </div>
 
         <main class="admin-container">
