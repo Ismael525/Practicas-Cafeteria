@@ -88,6 +88,7 @@ nav.scrolled {
     color: var(--text);
     font-weight: 500;
     font-size: 0.95rem;
+    text-transform: uppercase;
     transition: var(--transition);
     position: relative;
 }
@@ -154,6 +155,7 @@ nav.scrolled {
     font-size: 1.8rem;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
+    text-transform: uppercase;
     transition: var(--transition);
 }
 

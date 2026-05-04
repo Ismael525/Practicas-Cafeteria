@@ -59,6 +59,7 @@
             background: #fdfcfb;
             cursor: pointer;
             font-size: 0.85rem;
+            text-transform: uppercase;
             transition: var(--transition);
         }
         .filter-chip:hover {
@@ -676,7 +677,7 @@
 
                 const sectionHtml = `
                     <div style="margin-bottom: 3.5rem;">
-                        <h3 style="font-size: 1.7rem; font-family: 'Playfair Display', serif; font-weight: 700; margin-bottom: 1.5rem; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.5rem; display: inline-block;">${catName}</h3>
+                        <h3 style="font-size: 1.7rem; font-family: 'Playfair Display', serif; font-weight: 700; margin-bottom: 1.5rem; color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 0.5rem; display: inline-block; text-transform: uppercase;">${catName}</h3>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2rem;">
                             ${productsHtml}
                         </div>
