@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración | Cafetería Antonio Machado</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="index.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -16,34 +19,40 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .admin-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 3rem;
         }
+
         .admin-header h2 {
             font-size: 2.5rem;
             color: var(--primary);
         }
-        
+
         /* Table Styles */
         .products-table-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
             overflow: hidden;
             margin-bottom: 3rem;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
         }
-        th, td {
+
+        th,
+        td {
             padding: 1.5rem;
             border-bottom: 1px solid #f5f5f4;
         }
+
         th {
             background: #fafaf9;
             font-weight: 700;
@@ -51,9 +60,11 @@
             font-size: 0.85rem;
             text-transform: uppercase;
         }
+
         tr:last-child td {
             border-bottom: none;
         }
+
         .price-input {
             width: 80px;
             padding: 0.5rem;
@@ -61,10 +72,12 @@
             border-radius: 8px;
             outline: none;
         }
+
         .action-btns {
             display: flex;
             gap: 1rem;
         }
+
         .btn-icon {
             background: none;
             border: none;
@@ -72,9 +85,19 @@
             font-size: 1.1rem;
             transition: var(--transition);
         }
-        .btn-edit { color: var(--primary-light); }
-        .btn-delete { color: #ef4444; }
-        .btn-save { color: var(--accent); display: none; }
+
+        .btn-edit {
+            color: var(--primary-light);
+        }
+
+        .btn-delete {
+            color: #ef4444;
+        }
+
+        .btn-save {
+            color: var(--accent);
+            display: none;
+        }
 
         /* Modal / Form */
         .modal {
@@ -84,12 +107,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
         }
+
         .modal-content {
             background: white;
             padding: 3rem;
@@ -98,6 +122,7 @@
             max-width: 600px;
             position: relative;
         }
+
         .close-modal {
             position: absolute;
             top: 1.5rem;
@@ -105,19 +130,27 @@
             cursor: pointer;
             font-size: 1.5rem;
         }
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
             margin-top: 2rem;
         }
+
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
         }
-        .form-group.full { grid-column: 1 / -1; }
-        .form-group input, .form-group select, .form-group textarea {
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             padding: 0.8rem;
             border-radius: 10px;
             border: 1px solid #e7e5e4;
@@ -125,10 +158,14 @@
             transition: all 0.3s ease;
             font-size: 0.95rem;
         }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(120, 53, 15, 0.05);
         }
+
         /* Confirmation Modal */
         .confirm-modal {
             display: none;
@@ -137,12 +174,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             z-index: 3000;
             align-items: center;
             justify-content: center;
         }
+
         .confirm-content {
             background: white;
             padding: 2.5rem;
@@ -150,26 +188,31 @@
             width: 90%;
             max-width: 400px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
         }
+
         .confirm-icon {
             font-size: 3rem;
             color: #ef4444;
             margin-bottom: 1.5rem;
         }
+
         .confirm-btns {
             display: flex;
             gap: 1rem;
             margin-top: 2rem;
         }
+
         .btn-cancel {
             background: #f5f5f4;
             color: var(--text);
         }
+
         .btn-danger {
             background: #ef4444;
             color: white;
         }
+
         .form-group label {
             font-weight: 600;
             font-size: 0.9rem;
@@ -182,6 +225,7 @@
             gap: 0.8rem;
             margin-top: 0.5rem;
         }
+
         .allergen-chip {
             padding: 0.5rem 1rem;
             border-radius: 50px;
@@ -193,9 +237,11 @@
             border: 2px solid transparent;
             user-select: none;
         }
+
         .allergen-chip:hover {
             background: #e7e5e4;
         }
+
         .allergen-chip.active {
             background: var(--primary);
             color: white;
@@ -207,49 +253,61 @@
             .admin-container {
                 padding: 100px 5% 40px;
             }
+
             .admin-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1.5rem;
                 margin-bottom: 2rem;
             }
+
             .admin-header h2 {
                 font-size: 2rem;
             }
+
             .tabs-container {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr;
                 gap: 0.5rem;
                 width: 100%;
             }
+
             .tabs-container button {
                 padding: 0.8rem 0.5rem !important;
                 font-size: 0.85rem !important;
                 width: 100%;
                 justify-content: center;
             }
+
             .tabs-container button:last-child:nth-child(odd) {
                 grid-column: span 2;
             }
+
             .products-table-container {
                 overflow-x: auto;
             }
+
             table {
                 min-width: 600px;
             }
-            th, td {
+
+            th,
+            td {
                 padding: 1rem;
             }
+
             .form-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
+
             .modal-content {
                 padding: 2rem 1.5rem;
                 width: 95%;
                 max-height: 90vh;
                 overflow-y: auto;
             }
+
             .form-group.full {
                 grid-column: span 1;
             }
@@ -260,10 +318,12 @@
             box-shadow: 0 4px 15px rgba(120, 53, 15, 0.1);
             transition: all 0.3s ease;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(120, 53, 15, 0.2);
         }
+
         .tabs-container button {
             display: flex;
             align-items: center;
@@ -293,11 +353,13 @@
             width: 40px;
             height: 20px;
         }
+
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -308,6 +370,7 @@
             background-color: #e7e5e4;
             transition: .4s;
         }
+
         .slider:before {
             position: absolute;
             content: "";
@@ -318,41 +381,66 @@
             background-color: white;
             transition: .4s;
         }
-        input:checked + .slider {
+
+        input:checked+.slider {
             background-color: var(--accent);
         }
-        input:focus + .slider {
+
+        input:focus+.slider {
             box-shadow: 0 0 1px var(--accent);
         }
-        input:checked + .slider:before {
+
+        input:checked+.slider:before {
             transform: translateX(20px);
         }
+
         .slider.round {
             border-radius: 34px;
         }
+
         .slider.round:before {
             border-radius: 50%;
         }
+
         /* Security: hide admin content until auth is verified */
-        #admin-content { display: none; }
-        #auth-loading {
-            position: fixed; inset: 0;
-            background: var(--bg, #fafaf9);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            z-index: 9999; gap: 1rem;
+        #admin-content {
+            display: none;
         }
-        #auth-loading p { color: var(--text-muted, #888); font-size: 0.9rem; }
+
+        #auth-loading {
+            position: fixed;
+            inset: 0;
+            background: var(--bg, #fafaf9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            gap: 1rem;
+        }
+
+        #auth-loading p {
+            color: var(--text-muted, #888);
+            font-size: 0.9rem;
+        }
+
         .auth-spinner {
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border: 3px solid #f5f5f4;
             border-top-color: var(--primary, #78350f);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- Auth loading overlay -->
     <div id="auth-loading">
@@ -362,333 +450,369 @@
 
     <div id="admin-content">
 
-    <nav id="main-nav">
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-            <i class="fas fa-bars"></i>
-        </button>
-        <a href="index.html" class="logo">ANTONIO MACHADO</a>
-        <div class="nav-links">
-            <a href="index.html">Inicio</a>
-            <a href="catalogo.html">Ir al Menú</a>
-        </div>
-        <div class="auth-links">
-            <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar Sesión</button>
-        </div>
-    </nav>
-    
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="mobile-nav-overlay">
-        <button class="close-menu" onclick="toggleMobileMenu()">
-            <i class="fas fa-times"></i>
-        </button>
-        <div class="mobile-nav-links">
-            <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
-            <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
-            <a href="#" onclick="handleLogout()">Cerrar Sesión</a>
-        </div>
-    </div>
+        <nav id="main-nav">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="index.html" class="logo">ANTONIO MACHADO</a>
+            <div class="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="catalogo.html">Ir al Menú</a>
+            </div>
+            <div class="auth-links">
+                <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar
+                    Sesión</button>
+            </div>
+        </nav>
 
-    <main class="admin-container">
-        <div class="admin-header" style="margin-bottom: 4rem;">
-            <h2>Panel de Control</h2>
-            <div class="tabs-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
-                <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary" style="border: 1px solid var(--primary);">Menú Activo</button>
-                <button onclick="switchTab('analytics')" id="tab-analytics-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-chart-line"></i> Estadísticas</button>
-                <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
-                <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i class="fas fa-trash-alt"></i> Papelera</button>
-                <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido Web</button>
-                <button onclick="switchTab('polls')" id="tab-polls-btn" class="btn btn-primary" style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Cuestionarios</button>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="mobile-nav-overlay">
+            <button class="close-menu" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="mobile-nav-links">
+                <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
+                <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
+                <a href="#" onclick="handleLogout()">Cerrar Sesión</a>
             </div>
         </div>
 
-        <!-- Products Tab -->
-        <div id="products-tab">
-            <div class="admin-header" style="margin-top: 2rem;">
-                <h3>Lista de Productos</h3>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                    <div style="position: relative; flex: 1; min-width: 250px;">
-                        <input type="text" id="product-search" placeholder="Buscar por nombre o categoría..." oninput="handleSearch(this.value)" 
-                            style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1px solid #e7e5e4; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
-                            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='#e7e5e4'">
-                        <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #a8a29e;"></i>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <input type="file" id="excel-input" accept=".xlsx, .xls, .csv" style="display: none;" onchange="handleExcelImport(event)">
-                        <button onclick="document.getElementById('excel-input').click()" class="btn btn-primary" style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i> Importar Excel</button>
-                        <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir</button>
-                    </div>
-                </div>
-            </div>
-            <div class="products-table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Categoría</th>
-                            <th>Precio (€)</th>
-                            <th>Disponibilidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-products-list"></tbody>
-                </table>
-                <div id="products-pagination" class="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
-                    <div style="font-size: 0.85rem; color: var(--text-muted);" id="pagination-info">Mostrando 0 de 0 productos</div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button onclick="prevPage()" id="prev-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
-                        <button onclick="nextPage()" id="next-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <main class="admin-container">
+            <div class="admin-header" style="margin-bottom: 4rem;">
+                <h2>Panel de Control</h2>
+                <div class="tabs-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                    <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary"
+                        style="border: 1px solid var(--primary);">Menú Activo</button>
 
-        <!-- Analytics Tab -->
-        <div id="analytics-tab" style="display: none;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
-                <div class="products-table-container" style="padding: 1.5rem; text-align: center;">
-                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Visitas al Menú</div>
-                    <div id="total-menu-visits" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0</div>
-                    <div id="last-menu-visit" style="font-size: 0.75rem; color: #a8a29e; margin-top: 0.5rem;">Cargando...</div>
-                </div>
-                <div class="products-table-container" style="padding: 1.5rem; text-align: center;">
-                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">Productos en Menú</div>
-                    <div id="total-products-count" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">0</div>
-                    <div style="font-size: 0.75rem; color: #a8a29e; margin-top: 0.5rem;">Listos para pedir</div>
+                    <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
+                    <button onclick="switchTab('trash')" id="tab-trash-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i
+                            class="fas fa-trash-alt"></i> Papelera</button>
+                    <button onclick="switchTab('settings')" id="tab-settings-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Contenido
+                        Web</button>
+                    <button onclick="switchTab('polls')" id="tab-polls-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Cuestionarios</button>
+                    <button onclick="switchTab('users')" id="tab-users-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i
+                            class="fas fa-users-cog"></i> Usuarios</button>
                 </div>
             </div>
 
-            <div class="products-table-container" style="padding: 2rem;">
-                <h3>Productos más Populares</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Basado en clics de estudiantes.</p>
-                <table style="margin-top: 1rem;">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Vistas</th>
-                            <th>% del Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="popular-products-list">
-                        <tr><td colspan="3" style="text-align: center; padding: 2rem;">Cargando estadísticas...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div id="announcements-tab" style="display: none;">
-            <div class="products-table-container" style="padding: 2rem;">
-                <div class="admin-header" style="margin-bottom: 2rem;">
-                    <h3>Gestión de Anuncios</h3>
-                    <button class="btn btn-primary" onclick="openAnnModal()">+ Nuevo Anuncio</button>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Texto</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="announcements-list"></tbody>
-                </table>
-            </div>
-        </div>
-        <div id="settings-tab" style="display: none;">
-            <div class="products-table-container" style="padding: 2rem;">
-                <h3>Ajustes de la Página</h3>
-                <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Cambia los textos principales de la web aquí.</p>
-                
-                <form id="settings-form" class="form-grid" style="display: grid; gap: 2rem; margin-top: 0;">
-                    <div class="form-group full">
-                        <label>Título de Bienvenida (Inicio)</label>
-                        <input type="text" id="s-hero-title">
-                    </div>
-                    <div class="form-group full">
-                        <label>Imagen del Banner (Archivo o URL)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="s-hero-image-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
-                            <div class="file-upload-label">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                <span>Subir imagen del banner</span>
-                                <small>JPG, PNG o WEBP (Máx. 5MB)</small>
-                            </div>
-                            <div class="file-selected-name" id="s-hero-image-file-name"></div>
+            <!-- Products Tab -->
+            <div id="products-tab">
+                <div class="admin-header" style="margin-top: 2rem;">
+                    <h3>Lista de Productos</h3>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                        <div style="position: relative; flex: 1; min-width: 250px;">
+                            <input type="text" id="product-search" placeholder="Buscar por nombre o categoría..."
+                                oninput="handleSearch(this.value)"
+                                style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1px solid #e7e5e4; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+                                onfocus="this.style.borderColor='var(--primary)'"
+                                onblur="this.style.borderColor='#e7e5e4'">
+                            <i class="fas fa-search"
+                                style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #a8a29e;"></i>
                         </div>
-                        <input type="text" id="s-hero-image" placeholder="O pega una URL">
-                    </div>
-                    <div class="form-group full">
-                        <label>Subtítulo de Bienvenida (Inicio)</label>
-                        <textarea id="s-hero-desc" rows="2"></textarea>
-                    </div>
-                    <div class="form-group full">
-                        <label>Imagen de Fondo (Inicio) - URL</label>
-                        <input type="text" id="s-hero-image" placeholder="nombre_archivo.png o URL">
-                    </div>
-                    <div class="form-group full">
-                        <label>Título "Sobre Nosotros"</label>
-                        <input type="text" id="s-about-title">
-                    </div>
-                    <div class="form-group full">
-                        <label>Nuestra Historia - Párrafo 1</label>
-                        <textarea id="s-about-text-1" rows="3"></textarea>
-                    </div>
-                    <div class="form-group full">
-                        <label>Nuestra Historia - Párrafo 2</label>
-                        <textarea id="s-about-text-2" rows="3"></textarea>
-                    </div>
-
-                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                        <h3>Identidad Visual</h3>
-                    </div>
-                    <div class="form-group full">
-                        <label>Favicon (Icono de la pestaña)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="s-site-favicon-file" class="file-upload-input" accept="image/x-icon,image/png,image/jpeg" onchange="updateFileName(this)">
-                            <div class="file-upload-label">
-                                <i class="fas fa-icons"></i>
-                                <span>Subir Favicon (.ico o .png)</span>
-                                <small>Se recomienda un tamaño de 32x32 o 64x64</small>
-                            </div>
-                            <div class="file-selected-name" id="s-site-favicon-file-name"></div>
-                        </div>
-                        <input type="text" id="s-site-favicon" placeholder="O pega una URL de icono">
-                    </div>
-
-                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                        <h3>Sección de Servicios (Inicio)</h3>
-                    </div>
-                    <div class="form-group">
-                        <label>Título de la Sección</label>
-                        <input type="text" id="s-section-title">
-                    </div>
-                    <div class="form-group">
-                        <label>Teléfono de Encargos</label>
-                        <input type="text" id="s-contact-phone">
-                    </div>
-
-                    <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                        <h3>Anuncio en el Menú</h3>
-                    </div>
-                    <div class="form-group full">
-                        <label>Texto del Anuncio</label>
-                        <input type="text" id="s-menu-announcement">
-                    </div>
-                    <div class="form-group">
-                        <label>Imagen del Anuncio (Archivo o URL)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="s-menu-announcement-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
-                            <div class="file-upload-label">
-                                <i class="fas fa-bullhorn"></i>
-                                <span>Subir imagen del anuncio</span>
-                                <small>Formato horizontal recomendado</small>
-                            </div>
-                            <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
-                        </div>
-                        <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL">
-                    </div>
-                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 1rem; padding-top: 1.5rem;">
-                        <input type="checkbox" id="s-menu-announcement-visible" style="width: auto;">
-                        <label style="margin-bottom: 0;">Mostrar anuncio en el menú</label>
-                    </div>
-                    
-                    <div class="form-group full" style="margin-top: 2rem;">
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Todos los Cambios</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Announcement Modal -->
-        <div id="ann-modal" class="modal">
-            <div class="modal-content">
-                <span class="close-modal" onclick="closeAnnModal()">&times;</span>
-                <h3 id="ann-modal-title">Nuevo Anuncio</h3>
-                <form id="ann-form">
-                    <input type="hidden" id="ann-id">
-                    <div class="form-grid" style="margin-top: 2rem;">
-                        <div class="form-group full">
-                            <label>Texto del Anuncio</label>
-                            <textarea id="ann-text" rows="3" required placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
-                        </div>
-                        <div class="form-group full">
-                            <label>Imagen (Archivo o URL)</label>
-                            <div class="file-upload-wrapper">
-                                <input type="file" id="ann-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
-                                <div class="file-upload-label">
-                                    <i class="fas fa-image"></i>
-                                    <span>Seleccionar imagen</span>
-                                </div>
-                                <div class="file-selected-name" id="ann-file-name"></div>
-                            </div>
-                            <input type="text" id="ann-url" placeholder="O pega una URL de imagen">
-                        </div>
-                        <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.8rem;">
-                            <input type="checkbox" id="ann-active" checked style="width: auto;">
-                            <label style="margin-bottom: 0;">Activar inmediatamente</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="file" id="excel-input" accept=".xlsx, .xls, .csv" style="display: none;"
+                                onchange="handleExcelImport(event)">
+                            <button onclick="document.getElementById('excel-input').click()" class="btn btn-primary"
+                                style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i>
+                                Importar Excel</button>
+                            <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i>
+                                Añadir</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Anuncio</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Trash Tab -->
-        <div id="trash-tab" style="display: none;">
-            <div class="products-table-container" style="padding: 2rem;">
-                <div class="admin-header" style="margin-bottom: 1rem;">
-                    <div>
-                        <h3>Papelera de Reciclaje</h3>
-                        <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Productos borrados temporalmente. Puedes restaurarlos o eliminarlos para siempre.</p>
-                    </div>
-                    <button class="btn" onclick="emptyTrash()" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; background: #ef4444; color: white; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-fire-alt"></i> Vaciar Todo</button>
                 </div>
                 <div class="products-table-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>Precio</th>
-                                <th>Eliminado</th>
+                                <th>Categoría</th>
+                                <th>Precio (€)</th>
+                                <th>Disponibilidad</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-trash-list"></tbody>
+                        <tbody id="admin-products-list"></tbody>
                     </table>
-                    <div id="trash-pagination" class="pagination-controls" style="display: none; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
-                        <div style="font-size: 0.85rem; color: var(--text-muted);" id="trash-pagination-info">Mostrando 0 de 0 productos</div>
+                    <div id="products-pagination" class="pagination-controls"
+                        style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
+                        <div style="font-size: 0.85rem; color: var(--text-muted);" id="pagination-info">Mostrando 0 de 0
+                            productos</div>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button onclick="trashPrevPage()" id="trash-prev-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
-                            <button onclick="trashNextPage()" id="trash-next-btn" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
+                            <button onclick="prevPage()" id="prev-btn" class="btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
+                            <button onclick="nextPage()" id="next-btn" class="btn"
+                                style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Polls Tab -->
-        <div id="polls-tab" style="display: none;">
-            <div class="products-table-container" style="padding: 2rem;">
-                <div class="admin-header" style="margin-bottom: 2rem;">
-                    <div>
-                        <h3>Gestión de Cuestionarios</h3>
-                        <p style="color: var(--text-muted); font-size: 0.85rem;">Interactúa con los clientes creando encuestas rápidas.</p>
+
+            <div id="announcements-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <div class="admin-header" style="margin-bottom: 2rem;">
+                        <h3>Gestión de Anuncios</h3>
+                        <button class="btn btn-primary" onclick="openAnnModal()">+ Nuevo Anuncio</button>
                     </div>
-                    <button class="btn btn-primary" onclick="openPollModal()"><i class="fas fa-plus"></i> Nuevo Cuestionario</button>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Texto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="announcements-list"></tbody>
+                    </table>
                 </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Pregunta</th>
-                            <th>Opciones</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="polls-list"></tbody>
-                </table>
             </div>
-        </div>
-    </main>
+            <div id="settings-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <h3>Ajustes de la Página</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Cambia los textos
+                        principales de la web aquí.</p>
+
+                    <form id="settings-form" class="form-grid" style="display: grid; gap: 2rem; margin-top: 0;">
+                        <div class="form-group full">
+                            <label>Título de Bienvenida (Inicio)</label>
+                            <input type="text" id="s-hero-title">
+                        </div>
+                        <div class="form-group full">
+                            <label>Imagen del Banner (Archivo o URL)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="s-hero-image-file" class="file-upload-input" accept="image/*"
+                                    onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Subir imagen del banner</span>
+                                    <small>JPG, PNG o WEBP (Máx. 5MB)</small>
+                                </div>
+                                <div class="file-selected-name" id="s-hero-image-file-name"></div>
+                            </div>
+                            <input type="text" id="s-hero-image" placeholder="O pega una URL">
+                        </div>
+                        <div class="form-group full">
+                            <label>Subtítulo de Bienvenida (Inicio)</label>
+                            <textarea id="s-hero-desc" rows="2"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Imagen de Fondo (Inicio) - URL</label>
+                            <input type="text" id="s-hero-image" placeholder="nombre_archivo.png o URL">
+                        </div>
+                        <div class="form-group full">
+                            <label>Título "Sobre Nosotros"</label>
+                            <input type="text" id="s-about-title">
+                        </div>
+                        <div class="form-group full">
+                            <label>Nuestra Historia - Párrafo 1</label>
+                            <textarea id="s-about-text-1" rows="3"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Nuestra Historia - Párrafo 2</label>
+                            <textarea id="s-about-text-2" rows="3"></textarea>
+                        </div>
+
+                        <div
+                            style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Identidad Visual</h3>
+                        </div>
+                        <div class="form-group full">
+                            <label>Favicon (Icono de la pestaña)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="s-site-favicon-file" class="file-upload-input"
+                                    accept="image/x-icon,image/png,image/jpeg" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fas fa-icons"></i>
+                                    <span>Subir Favicon (.ico o .png)</span>
+                                    <small>Se recomienda un tamaño de 32x32 o 64x64</small>
+                                </div>
+                                <div class="file-selected-name" id="s-site-favicon-file-name"></div>
+                            </div>
+                            <input type="text" id="s-site-favicon" placeholder="O pega una URL de icono">
+                        </div>
+
+                        <div
+                            style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Sección de Servicios (Inicio)</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Título de la Sección</label>
+                            <input type="text" id="s-section-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono de Encargos</label>
+                            <input type="text" id="s-contact-phone">
+                        </div>
+
+                        <div
+                            style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Anuncio en el Menú</h3>
+                        </div>
+                        <div class="form-group full">
+                            <label>Texto del Anuncio</label>
+                            <input type="text" id="s-menu-announcement">
+                        </div>
+                        <div class="form-group">
+                            <label>Imagen del Anuncio (Archivo o URL)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="s-menu-announcement-file" class="file-upload-input"
+                                    accept="image/*" onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <span>Subir imagen del anuncio</span>
+                                    <small>Formato horizontal recomendado</small>
+                                </div>
+                                <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
+                            </div>
+                            <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL">
+                        </div>
+                        <div class="form-group"
+                            style="flex-direction: row; align-items: center; gap: 1rem; padding-top: 1.5rem;">
+                            <input type="checkbox" id="s-menu-announcement-visible" style="width: auto;">
+                            <label style="margin-bottom: 0;">Mostrar anuncio en el menú</label>
+                        </div>
+
+                        <div class="form-group full" style="margin-top: 2rem;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Todos los
+                                Cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Announcement Modal -->
+            <div id="ann-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal" onclick="closeAnnModal()">&times;</span>
+                    <h3 id="ann-modal-title">Nuevo Anuncio</h3>
+                    <form id="ann-form">
+                        <input type="hidden" id="ann-id">
+                        <div class="form-grid" style="margin-top: 2rem;">
+                            <div class="form-group full">
+                                <label>Texto del Anuncio</label>
+                                <textarea id="ann-text" rows="3" required
+                                    placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
+                            </div>
+                            <div class="form-group full">
+                                <label>Imagen (Archivo o URL)</label>
+                                <div class="file-upload-wrapper">
+                                    <input type="file" id="ann-file" class="file-upload-input" accept="image/*"
+                                        onchange="updateFileName(this)">
+                                    <div class="file-upload-label">
+                                        <i class="fas fa-image"></i>
+                                        <span>Seleccionar imagen</span>
+                                    </div>
+                                    <div class="file-selected-name" id="ann-file-name"></div>
+                                </div>
+                                <input type="text" id="ann-url" placeholder="O pega una URL de imagen">
+                            </div>
+                            <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.8rem;">
+                                <input type="checkbox" id="ann-active" checked style="width: auto;">
+                                <label style="margin-bottom: 0;">Activar inmediatamente</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                            Anuncio</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Trash Tab -->
+            <div id="trash-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <div class="admin-header" style="margin-bottom: 1rem;">
+                        <div>
+                            <h3>Papelera de Reciclaje</h3>
+                            <p style="color: var(--text-muted); margin-top: 0.5rem; font-size: 0.9rem;">Productos
+                                borrados temporalmente. Puedes restaurarlos o eliminarlos para siempre.</p>
+                        </div>
+                        <button class="btn" onclick="emptyTrash()"
+                            style="padding: 0.6rem 1.2rem; font-size: 0.85rem; background: #ef4444; color: white; border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;"><i
+                                class="fas fa-fire-alt"></i> Vaciar Todo</button>
+                    </div>
+                    <div class="products-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Eliminado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-trash-list"></tbody>
+                        </table>
+                        <div id="trash-pagination" class="pagination-controls"
+                            style="display: none; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
+                            <div style="font-size: 0.85rem; color: var(--text-muted);" id="trash-pagination-info">
+                                Mostrando 0 de 0 productos</div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="trashPrevPage()" id="trash-prev-btn" class="btn"
+                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Anterior</button>
+                                <button onclick="trashNextPage()" id="trash-next-btn" class="btn"
+                                    style="padding: 0.5rem 1rem; font-size: 0.8rem; background: #fff; border: 1px solid #e7e5e4;">Siguiente</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Polls Tab -->
+            <div id="polls-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <div class="admin-header" style="margin-bottom: 2rem;">
+                        <div>
+                            <h3>Gestión de Cuestionarios</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Interactúa con los clientes creando
+                                encuestas rápidas.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openPollModal()"><i class="fas fa-plus"></i> Nuevo
+                            Cuestionario</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pregunta</th>
+                                <th>Opciones</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="polls-list"></tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Users Tab -->
+            <div id="users-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <div class="admin-header" style="margin-bottom: 2rem;">
+                        <div>
+                            <h3>Gestión de Administradores</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Controla quién tiene acceso a este
+                                panel.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openUserModal()"><i class="fas fa-user-plus"></i> Nuevo
+                            Usuario</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Fecha de Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div><!-- end #admin-content -->
 
     <!-- Modal for New/Edit Product -->
@@ -711,14 +835,16 @@
                         <label>Precio (€)</label>
                         <input type="number" step="0.01" id="p-price" required>
                     </div>
-                    <div class="form-group" style="flex-direction: row; align-items: center; gap: 0.8rem; padding-top: 1rem;">
+                    <div class="form-group"
+                        style="flex-direction: row; align-items: center; gap: 0.8rem; padding-top: 1rem;">
                         <input type="checkbox" id="p-available" checked style="width: auto;">
                         <label style="margin-bottom: 0;">Producto Disponible</label>
                     </div>
                     <div class="form-group full">
                         <label>Imagen del Producto (Archivo o URL)</label>
                         <div class="file-upload-wrapper">
-                            <input type="file" id="p-image-file" class="file-upload-input" accept="image/*" onchange="updateFileName(this)">
+                            <input type="file" id="p-image-file" class="file-upload-input" accept="image/*"
+                                onchange="updateFileName(this)">
                             <div class="file-upload-label">
                                 <i class="fas fa-utensils"></i>
                                 <span>Subir foto del producto</span>
@@ -742,7 +868,8 @@
                         <textarea id="p-desc" rows="3"></textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Cambios</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                    Cambios</button>
             </form>
         </div>
     </div>
@@ -752,7 +879,8 @@
         <div class="confirm-content">
             <div class="confirm-icon"><i class="fas fa-exclamation-circle"></i></div>
             <h3 style="margin-bottom: 1rem;">¿Estás seguro?</h3>
-            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción moverá el producto a la papelera.</p>
+            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción moverá el producto a la
+                papelera.</p>
             <div class="confirm-btns">
                 <button onclick="closeConfirm()" class="btn btn-primary btn-cancel full">Cancelar</button>
                 <button id="confirm-yes-btn" class="btn btn-danger full">Sí, borrar</button>
@@ -773,18 +901,46 @@
                 </div>
                 <div class="form-group">
                     <label>Opciones (Mínimo 2)</label>
-                    <div id="poll-options-container" style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;">
+                    <div id="poll-options-container"
+                        style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;">
                         <!-- Options will be added here -->
                     </div>
-                    <button type="button" onclick="addPollOption()" class="btn" style="background: #f5f5f4; color: var(--text); margin-top: 1rem; width: 100%; border-radius: 10px; padding: 0.5rem;">
+                    <button type="button" onclick="addPollOption()" class="btn"
+                        style="background: #f5f5f4; color: var(--text); margin-top: 1rem; width: 100%; border-radius: 10px; padding: 0.5rem;">
                         <i class="fas fa-plus"></i> Añadir Opción
                     </button>
                 </div>
-                <div class="form-group" style="margin-top: 1.5rem; flex-direction: row; align-items: center; gap: 0.8rem;">
+                <div class="form-group"
+                    style="margin-top: 1.5rem; flex-direction: row; align-items: center; gap: 0.8rem;">
                     <input type="checkbox" id="poll-active" checked style="width: auto;">
                     <label style="margin-bottom: 0;">Activar inmediatamente</label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar Cuestionario</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                    Cuestionario</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="close-modal" onclick="closeUserModal()">&times;</span>
+            <h3 id="user-modal-title">Añadir Administrador</h3>
+            <form id="user-form" style="margin-top: 2rem;">
+                <input type="hidden" id="user-manage-id">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Email</label>
+                    <input type="email" id="user-email" required placeholder="ejemplo@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label id="password-label">Contraseña</label>
+                    <input type="password" id="user-password" required minlength="6" placeholder="••••••••">
+                    <small id="password-hint"
+                        style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.3rem;">Mínimo 6
+                        caracteres.</small>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2.5rem;"
+                    id="user-submit-btn">Guardar Usuario</button>
             </form>
         </div>
     </div>
@@ -800,7 +956,7 @@
         let categories = [];
         let currentAnnouncements = [];
         let productSearch = '';
-        
+
         let currentPage = 1;
         let trashCurrentPage = 1;
         const itemsPerPage = 10;
@@ -810,17 +966,17 @@
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
             const filePath = `${fileName}`;
-            
+
             const { error: uploadError } = await supabaseClient.storage
                 .from(bucket)
                 .upload(filePath, file);
-            
+
             if (uploadError) throw uploadError;
-            
+
             const { data: { publicUrl } } = supabaseClient.storage
                 .from(bucket)
                 .getPublicUrl(filePath);
-            
+
             return publicUrl;
         }
 
@@ -901,12 +1057,12 @@
             const tTab = document.getElementById('trash-tab');
             const pBtn = document.getElementById('tab-products-btn');
             const sBtn = document.getElementById('tab-settings-btn');
-            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls', 'analytics'];
-            
+            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls', 'users'];
+
             tabs.forEach(t => {
                 const tabEl = document.getElementById(t + '-tab');
                 const btnEl = document.getElementById('tab-' + t + '-btn');
-                
+
                 if (tabEl) tabEl.style.display = t === tab ? 'block' : 'none';
                 if (btnEl) {
                     if (t === tab) {
@@ -923,9 +1079,135 @@
 
             if (tab === 'announcements') loadAnnouncements();
             if (tab === 'trash') loadTrash();
+            if (tab === 'users') loadUsers();
             if (tab === 'polls') loadPolls();
-            if (tab === 'analytics') loadAnalytics();
+
         }
+
+        // --- USERS MANAGEMENT LOGIC ---
+        let adminUsers = [];
+
+        async function loadUsers() {
+            const { data, error } = await supabaseClient
+                .from('admin_management')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error loading users:', error);
+                return;
+            }
+            adminUsers = data;
+
+            const list = document.getElementById('users-list');
+            list.innerHTML = adminUsers.map(u => `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${u.email}</div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">${new Date(u.created_at).toLocaleDateString()}</div>
+                    </td>
+                    <td class="action-btns">
+                        <button class="btn-icon btn-edit" onclick="editUserPassword('${u.id}', '${u.email}')" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
+                        <button class="btn-icon btn-delete" onclick="deleteAdmin('${u.id}', '${u.email}')" title="Eliminar Acceso"><i class="fas fa-user-slash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openUserModal(user = null) {
+            const modal = document.getElementById('user-modal');
+            const title = document.getElementById('user-modal-title');
+            const emailInput = document.getElementById('user-email');
+            const passHint = document.getElementById('password-hint');
+            const passLabel = document.getElementById('password-label');
+
+            document.getElementById('user-form').reset();
+            document.getElementById('user-manage-id').value = '';
+            emailInput.disabled = false;
+            passLabel.textContent = 'Contraseña';
+            passHint.textContent = 'Mínimo 6 caracteres.';
+
+            if (user) {
+                title.textContent = 'Cambiar Contraseña';
+                document.getElementById('user-manage-id').value = user.id;
+                emailInput.value = user.email;
+                emailInput.disabled = true;
+                passLabel.textContent = 'Nueva Contraseña';
+                passHint.textContent = 'Introduce la nueva contraseña para este usuario.';
+            } else {
+                title.textContent = 'Nuevo Administrador';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeUserModal() {
+            document.getElementById('user-modal').style.display = 'none';
+        }
+
+        function editUserPassword(id, email) {
+            openUserModal({ id, email });
+        }
+
+        async function deleteAdmin(id, email) {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user.id === id) {
+                alert('No puedes eliminarte a ti mismo.');
+                return;
+            }
+
+            if (confirm(`¿Seguro que quieres quitar el acceso a ${email}? Esta acción es irreversible.`)) {
+                const { error } = await supabaseClient.rpc('delete_admin_user', { target_user_id: id });
+                if (error) {
+                    alert('Error: ' + error.message);
+                } else {
+                    loadUsers();
+                }
+            }
+        }
+
+        document.getElementById('user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('user-submit-btn');
+            const originalText = btn.textContent;
+
+            const id = document.getElementById('user-manage-id').value;
+            const email = document.getElementById('user-email').value;
+            const password = document.getElementById('user-password').value;
+
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+
+            try {
+                if (id) {
+                    // Update password
+                    const { error } = await supabaseClient.rpc('update_admin_password', {
+                        target_user_id: id,
+                        new_password: password
+                    });
+                    if (error) throw error;
+                    alert('Contraseña actualizada correctamente.');
+                } else {
+                    // Create new user
+                    const { error } = await supabaseClient.rpc('create_new_admin', {
+                        admin_email: email,
+                        admin_password: password
+                    });
+                    if (error) throw error;
+                    alert('Usuario creado correctamente.');
+                }
+                closeUserModal();
+                loadUsers();
+            } catch (err) {
+                console.error(err);
+                alert('Error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
 
         async function saveSettings(e) {
             e.preventDefault();
@@ -939,7 +1221,7 @@
                 const heroFile = document.getElementById('s-hero-image-file').files[0];
                 const menuFile = document.getElementById('s-menu-announcement-file').files[0];
                 const faviconFile = document.getElementById('s-site-favicon-file').files[0];
-                
+
                 let heroUrl = document.getElementById('s-hero-image').value;
                 let menuUrl = document.getElementById('s-menu-announcement-image').value;
                 let faviconUrl = document.getElementById('s-site-favicon').value;
@@ -972,13 +1254,13 @@
                     { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
                 ];
 
-                const promises = settings.map(s => 
+                const promises = settings.map(s =>
                     supabaseClient.from('site_settings').update({ value: s.value }).eq('key', s.key)
                 );
-                
+
                 const results = await Promise.all(promises);
                 const firstError = results.find(r => r.error);
-                
+
                 if (firstError) throw firstError.error;
 
                 btn.textContent = '¡Guardado!';
@@ -1009,31 +1291,36 @@
                 .select('*, categories(name)')
                 .is('deleted_at', null)
                 .order('created_at', { ascending: false });
-                
+
             if (error) return;
             activeProducts = data;
             renderProducts();
         }
 
+        function normalizeText(text) {
+            if (!text) return '';
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
         function handleSearch(query) {
-            productSearch = query.toLowerCase().trim();
+            productSearch = normalizeText(query);
             currentPage = 1;
             renderProducts();
         }
 
         function renderProducts() {
             const list = document.getElementById('admin-products-list');
-            
+
             // Apply filtering
             const filteredProducts = activeProducts.filter(p => {
-                const nameMatch = p.name.toLowerCase().includes(productSearch);
-                const categoryMatch = (p.categories?.name || '').toLowerCase().includes(productSearch);
+                const nameMatch = normalizeText(p.name).includes(productSearch);
+                const categoryMatch = normalizeText(p.categories?.name || '').includes(productSearch);
                 return nameMatch || categoryMatch;
             });
 
             const totalProducts = filteredProducts.length;
             const totalPages = Math.ceil(totalProducts / itemsPerPage);
-            
+
             if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
             if (currentPage < 1) currentPage = 1;
 
@@ -1131,7 +1418,7 @@
                 .select('*, categories(name)')
                 .not('deleted_at', 'is', null)
                 .order('deleted_at', { ascending: false });
-                
+
             if (error) return;
             trashProducts = data;
             trashCurrentPage = 1;
@@ -1229,64 +1516,13 @@
             loadProducts();
         }
 
-        async function loadAnalytics() {
-            const menuVisitsEl = document.getElementById('total-menu-visits');
-            const lastVisitEl = document.getElementById('last-menu-visit');
-            const popularList = document.getElementById('popular-products-list');
-            const totalProductsEl = document.getElementById('total-products-count');
 
-            try {
-                // Total products
-                totalProductsEl.textContent = activeProducts.length;
-
-                // Overall visits
-                const { data: analytics } = await supabaseClient.from('site_analytics').select('*').eq('page_name', 'catalog').single();
-                if (analytics) {
-                    menuVisitsEl.textContent = analytics.visit_count;
-                    lastVisitEl.textContent = `Última visita: ${new Date(analytics.last_visit).toLocaleString('es-ES')}`;
-                }
-
-                // Popular products
-                const { data: popular } = await supabaseClient
-                    .from('products')
-                    .select('name, view_count')
-                    .is('deleted_at', null)
-                    .order('view_count', { ascending: false })
-                    .limit(5);
-
-                const totalViews = activeProducts.reduce((acc, p) => acc + (p.view_count || 0), 0) || 1;
-
-                if (popular && popular.length > 0) {
-                    popularList.innerHTML = popular.map(p => {
-                        const percent = ((p.view_count / totalViews) * 100).toFixed(1);
-                        return `
-                            <tr>
-                                <td><div style="font-weight:600;">${p.name}</div></td>
-                                <td>${p.view_count || 0} clicks</td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <div style="flex: 1; height: 8px; background: #f5f5f4; border-radius: 4px; overflow: hidden;">
-                                            <div style="width: ${percent}%; height: 100%; background: var(--primary);"></div>
-                                        </div>
-                                        <span style="font-size: 0.8rem; font-weight: 600; width: 45px;">${percent}%</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                } else {
-                    popularList.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 2rem;">Aún no hay datos de interacción.</td></tr>';
-                }
-            } catch (err) {
-                console.error('Analytics error:', err);
-            }
-        }
 
         function openModal(product = null) {
             const modal = document.getElementById('product-modal');
             const title = document.getElementById('modal-title');
             const form = document.getElementById('product-form');
-            
+
             // Reset chips and file input
             document.querySelectorAll('.allergen-chip').forEach(c => c.classList.remove('active'));
             document.getElementById('p-image-file').value = '';
@@ -1301,7 +1537,7 @@
                 document.getElementById('p-image').value = product.image_url;
                 document.getElementById('p-desc').value = product.description;
                 document.getElementById('p-available').checked = product.is_available;
-                
+
                 // Set active chips
                 if (product.allergens) {
                     product.allergens.forEach(a => {
@@ -1315,7 +1551,7 @@
                 document.getElementById('product-id').value = '';
                 document.getElementById('p-available').checked = true;
             }
-            
+
             modal.style.display = 'flex';
         }
 
@@ -1335,16 +1571,16 @@
             const btn = e.target.querySelector('button');
             btn.disabled = true;
             btn.textContent = 'Guardando...';
-            
+
             try {
                 const id = document.getElementById('product-id').value;
                 const activeChips = document.querySelectorAll('.allergen-chip.active');
                 const allergens = Array.from(activeChips).map(c => c.getAttribute('data-val'));
-                
+
                 // Handle file upload
                 const imageFile = document.getElementById('p-image-file').files[0];
                 let imageUrl = document.getElementById('p-image').value;
-                
+
                 if (imageFile) {
                     imageUrl = await uploadImage(imageFile);
                     document.getElementById('p-image').value = imageUrl;
@@ -1444,7 +1680,7 @@
                 .from('announcements')
                 .select('*')
                 .order('created_at', { ascending: false });
-            
+
             currentAnnouncements = data || [];
             const list = document.getElementById('announcements-list');
             list.innerHTML = (data || []).map(ann => `
@@ -1475,7 +1711,7 @@
             const modal = document.getElementById('ann-modal');
             const title = document.getElementById('ann-modal-title');
             const form = document.getElementById('ann-form');
-            
+
             modal.style.display = 'flex';
             form.reset();
             clearFileNames();
@@ -1512,7 +1748,7 @@
             const urlInput = document.getElementById('ann-url').value;
             const active = document.getElementById('ann-active').checked;
             const id = document.getElementById('ann-id').value;
-            
+
             let finalImageUrl = urlInput;
 
             try {
@@ -1534,7 +1770,7 @@
                         .insert([annData]);
                     if (error) throw error;
                 }
-                
+
                 closeAnnModal();
                 loadAnnouncements();
             } catch (err) {
@@ -1565,7 +1801,7 @@
                 .from('polls')
                 .select('*, poll_options(*)')
                 .order('created_at', { ascending: false });
-            
+
             if (error) return;
             currentPolls = data;
 
@@ -1602,15 +1838,15 @@
             const title = document.getElementById('poll-modal-title');
             const form = document.getElementById('poll-form');
             const container = document.getElementById('poll-options-container');
-            
+
             container.innerHTML = '';
-            
+
             if (poll) {
                 title.textContent = 'Editar Cuestionario';
                 document.getElementById('poll-id').value = poll.id;
                 document.getElementById('poll-question').value = poll.question;
                 document.getElementById('poll-active').checked = poll.is_active;
-                
+
                 poll.poll_options.forEach(opt => addPollOption(opt.option_text, opt.id));
             } else {
                 title.textContent = 'Nuevo Cuestionario';
@@ -1620,7 +1856,7 @@
                 addPollOption();
                 addPollOption();
             }
-            
+
             modal.style.display = 'flex';
         }
 
@@ -1654,7 +1890,7 @@
                 const id = document.getElementById('poll-id').value;
                 const question = document.getElementById('poll-question').value;
                 const isActive = document.getElementById('poll-active').checked;
-                
+
                 const optionElements = document.querySelectorAll('.poll-option-input-wrapper');
                 const options = Array.from(optionElements).map(el => ({
                     id: el.querySelector('.poll-option-id').value || undefined,
@@ -1692,7 +1928,7 @@
                     const { data: existingOpts } = await supabaseClient.from('poll_options').select('id').eq('poll_id', pollId);
                     const currentOptIds = options.map(o => o.id).filter(id => id);
                     const toDelete = existingOpts.filter(eo => !currentOptIds.includes(eo.id)).map(eo => eo.id);
-                    
+
                     if (toDelete.length > 0) {
                         await supabaseClient.from('poll_options').delete().in('id', toDelete);
                     }
@@ -1759,16 +1995,16 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                
+
                 // Leemos los datos como array de arrays para encontrar la cabecera real
                 const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
+
                 let headerRowIndex = -1;
                 let headers = [];
                 for (let i = 0; i < rawData.length; i++) {
                     const row = rawData[i];
                     if (!row || !Array.isArray(row)) continue;
-                    
+
                     const rowStr = row.map(c => String(c || '').toLowerCase().trim());
                     // Asumimos que la cabecera es la primera fila que contenga algo parecido a "nombre"
                     if (rowStr.some(c => c === 'nombre' || c === 'producto' || c === 'artículo' || c === 'articulo')) {
@@ -1789,7 +2025,7 @@
                 for (let i = headerRowIndex + 1; i < rawData.length; i++) {
                     const rowArr = rawData[i];
                     if (!rowArr || rowArr.length === 0) continue;
-                    
+
                     // Si la fila está completamente vacía, saltar
                     if (rowArr.every(c => c === undefined || c === null || String(c).trim() === '')) continue;
 
@@ -1841,7 +2077,7 @@
                         const image = findVal(['imagen', 'image', 'foto', 'url', 'image_url', 'img']) || '';
                         const desc = findVal(['detalle', 'info', 'notas', 'observaciones']) || '';
                         const allergensStr = findVal(['alergenos', 'alérgenos', 'allergens', 'contiene', 'alerge']);
-                        
+
                         if (!name || String(name).trim().toLowerCase() === 'nombre' || String(name).trim().toLowerCase() === 'producto') {
                             console.warn('Fila sin nombre válido detectada o es cabecera. Saltando...');
                             skipCount++;
@@ -1874,10 +2110,10 @@
                         // Find or create category ID
                         const categoryNameClean = (String(categoryName || '')).trim();
                         let categoryId = null;
-                        
+
                         if (categoryNameClean) {
                             let category = categories.find(c => c.name.toLowerCase() === categoryNameClean.toLowerCase());
-                            
+
                             if (!category) {
                                 // Intentamos crear la categoría si no existe
                                 console.log(`Creando nueva categoría: ${categoryNameClean}`);
@@ -1886,7 +2122,7 @@
                                     .insert([{ name: categoryNameClean }])
                                     .select()
                                     .single();
-                                
+
                                 if (!catErr && newCat) {
                                     categories.push(newCat); // Actualizamos la lista local
                                     categoryId = newCat.id;
@@ -1904,7 +2140,7 @@
                         const allergens = allergensStr ? String(allergensStr).split(/[,;]/).map(a => a.trim()) : [];
 
                         const cleanName = String(name).trim().replace(/\s*\d+([,.]\d+)?\s*€/gi, '').toUpperCase();
-                        
+
                         // Si el producto ya existe y el Excel no trae imagen, preservamos la existente
                         let finalImageUrl = String(image || '').trim();
                         if (!finalImageUrl && productsMap.has(cleanName)) {
@@ -1932,7 +2168,7 @@
                             }
                             throw error;
                         }
-                        
+
                         processedProductNames.push(productData.name);
                         successCount++;
                     } catch (err) {
@@ -1940,7 +2176,7 @@
                         errorCount++;
                         if (errorCount === 1) {
                             alert(`🚨 ERROR CRÍTICO DETECTADO 🚨\n\n${firstErrorDetails || err.message || JSON.stringify(err)}`);
-                            break; 
+                            break;
                         }
                     }
                 }
@@ -1964,4 +2200,5 @@
         }
     </script>
 </body>
+
 </html>

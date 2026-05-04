@@ -160,31 +160,41 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-msg');
-            
-            if (email !== 'ismaelsanchez05@iesamachado.org') {
-                errorMsg.textContent = 'Acceso denegado. Este usuario no está autorizado.';
-                errorMsg.style.display = 'block';
-                return;
-            }
-
-            errorMsg.style.display = 'none';
             const submitBtn = document.getElementById('submit-btn');
+            
             submitBtn.disabled = true;
             submitBtn.textContent = 'Verificando...';
-
+            
             try {
+                // Autenticar con Supabase
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                
+                if (error) throw error;
 
-                if (error) {
-                    errorMsg.textContent = 'Error: ' + error.message;
-                    errorMsg.style.display = 'block';
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Entrar';
-                } else if (data.user) {
+                if (data.user) {
+                    // Verificar si el usuario está en la lista de administradores autorizados
+                    const { data: adminData, error: adminError } = await supabaseClient
+                        .from('admin_management')
+                        .select('id')
+                        .eq('id', data.user.id)
+                        .single();
+
+                    if (adminError || !adminData) {
+                        // Si no es admin, cerramos la sesión inmediatamente
+                        await supabaseClient.auth.signOut();
+                        errorMsg.textContent = 'Acceso denegado. No tienes permisos de administrador.';
+                        errorMsg.style.display = 'block';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Entrar';
+                        return;
+                    }
+
+                    // Acceso concedido
                     window.location.href = 'gestion-interna.html';
                 }
             } catch (err) {
-                errorMsg.textContent = 'Error de conexión. Si estás abriendo el archivo directamente (file://), por favor usa un servidor local (Live Server).';
+                console.error('Error de login:', err);
+                errorMsg.textContent = 'Error: ' + (err.message === 'Invalid login credentials' ? 'Credenciales incorrectas' : err.message);
                 errorMsg.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Entrar';

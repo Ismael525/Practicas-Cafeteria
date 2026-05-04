@@ -572,6 +572,11 @@
             window.scrollTo({ top: document.querySelector('.search-container').offsetTop - 100, behavior: 'smooth' });
         }
 
+        function normalizeText(text) {
+            if (!text) return '';
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
         function renderProducts() {
             const gridContainer = document.getElementById('products-grid');
             const paginationContainer = document.getElementById('catalog-pagination');
@@ -586,10 +591,18 @@
             }
 
             const filtered = products.filter(p => {
-                const matchCategory = activeCategory === 'all' || String(p.category_id) === String(activeCategory);
+                const normalizedSearch = normalizeText(searchQuery);
+                const normalizedName = normalizeText(p.name || '');
+                const normalizedDesc = normalizeText(p.description || '');
+                
+                // Si hay búsqueda, ignoramos el filtro de categoría como pidió el usuario
+                const matchCategory = searchQuery !== '' || activeCategory === 'all' || String(p.category_id) === String(activeCategory);
+                
                 const pAllergens = (p.allergens || []).map(a => a.toLowerCase());
                 const matchAllergens = !excludedAllergens.some(a => pAllergens.includes(a.toLowerCase()));
-                const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery) || (p.description && p.description.toLowerCase().includes(searchQuery));
+                
+                const matchSearch = !searchQuery || normalizedName.includes(normalizedSearch) || normalizedDesc.includes(normalizedSearch);
+                
                 return matchCategory && matchAllergens && matchSearch;
             });
 
