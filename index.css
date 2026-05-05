@@ -943,3 +943,26 @@ nav.scrolled {
     border-color: var(--primary-light);
     box-shadow: 0 10px 40px rgba(120, 53, 15, 0.1);
 }
+
+/* Optimizaciones para equipos de bajos recursos y accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    /* Reducir carga gráfica en efectos costosos (blur es muy exigente para GPU/CPU) */
+    nav, nav.scrolled, .mobile-nav-overlay, .wa-chat-window, .modal, .confirm-modal {
+        backdrop-filter: none !important;
+        background-color: rgba(253, 252, 251, 0.98) !important;
+    }
+    
+    /* Suavizar o eliminar sombras complejas y transformaciones al hacer hover */
+    .info-card:hover, .product-card:hover, .btn:hover {
+        transform: none !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05) !important;
+    }
+}
+

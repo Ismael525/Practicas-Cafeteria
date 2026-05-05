@@ -158,7 +158,11 @@
     <script src="js/whatsapp.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({ 
+            duration: 1000, 
+            once: true,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+        });
 
         const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';

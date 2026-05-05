@@ -69,7 +69,7 @@
 
     <section class="about-section">
         <div class="about-image" data-aos="fade-right">
-            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800" alt="Cafetería del Instituto">
+            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800" alt="Cafetería del Instituto" loading="lazy" decoding="async">
         </div>
         <div class="about-content" data-aos="fade-left">
             <h2 id="about-title">El Corazón del Instituto</h2>
@@ -92,7 +92,11 @@
     <script src="js/whatsapp.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        AOS.init({ duration: 1000, once: true });
+        AOS.init({ 
+            duration: 1000, 
+            once: true,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+        });
 
         const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
