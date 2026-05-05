@@ -284,20 +284,23 @@
             }
 
             .products-table-container {
-                overflow-x: auto;
+                background: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                overflow: visible !important;
             }
 
-            table {
-                min-width: 600px;
+            .products-table-container table {
+                display: none !important;
             }
 
-            th,
-            td {
-                padding: 1rem;
+            .mobile-cards-container {
+                display: block !important;
             }
 
             .form-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
                 gap: 1rem;
             }
 
@@ -310,6 +313,10 @@
 
             .form-group.full {
                 grid-column: span 1;
+            }
+            
+            .fab {
+                display: flex !important;
             }
         }
 
@@ -438,6 +445,101 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(120, 53, 15, 0.3);
+            z-index: 1000;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .fab:active {
+            transform: scale(0.9);
+        }
+
+        /* Mobile Card View */
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f5f5f4;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .admin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .admin-card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--secondary);
+            word-break: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.2;
+        }
+
+        .admin-card-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .admin-card-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .admin-card-value {
+            font-weight: 500;
+        }
+
+        .admin-card-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f5f5f4;
+        }
+
+        .admin-card-actions button {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .mobile-cards-container {
+            display: none;
+        }
     </style>
 </head>
 
@@ -534,6 +636,7 @@
                         </thead>
                         <tbody id="admin-products-list"></tbody>
                     </table>
+                    <div id="admin-products-cards" class="mobile-cards-container"></div>
                     <div id="products-pagination" class="pagination-controls"
                         style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
                         <div style="font-size: 0.85rem; color: var(--text-muted);" id="pagination-info">Mostrando 0 de 0
@@ -566,6 +669,7 @@
                         </thead>
                         <tbody id="announcements-list"></tbody>
                     </table>
+                    <div id="announcements-cards" class="mobile-cards-container"></div>
                 </div>
             </div>
             <div id="settings-tab" style="display: none;">
@@ -744,6 +848,7 @@
                             </thead>
                             <tbody id="admin-trash-list"></tbody>
                         </table>
+                        <div id="admin-trash-cards" class="mobile-cards-container"></div>
                         <div id="trash-pagination" class="pagination-controls"
                             style="display: none; justify-content: space-between; align-items: center; padding: 1.5rem; background: #fafaf9; border-top: 1px solid #f5f5f4;">
                             <div style="font-size: 0.85rem; color: var(--text-muted);" id="trash-pagination-info">
@@ -782,6 +887,7 @@
                         </thead>
                         <tbody id="polls-list"></tbody>
                     </table>
+                    <div id="polls-cards" class="mobile-cards-container"></div>
                 </div>
             </div>
             <!-- Users Tab -->
@@ -806,6 +912,7 @@
                         </thead>
                         <tbody id="users-list"></tbody>
                     </table>
+                    <div id="users-cards" class="mobile-cards-container"></div>
                 </div>
             </div>
         </main>
@@ -940,6 +1047,11 @@
             </form>
         </div>
     </div>
+
+    <!-- Floating Action Button for Mobile -->
+    <button class="fab" id="mobile-fab" onclick="openModal()" title="Añadir Producto">
+        <i class="fas fa-plus"></i>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -1084,22 +1196,20 @@
         let adminUsers = [];
 
         async function loadUsers() {
-            const { data, error } = await supabaseClient
+            const { data } = await supabaseClient
                 .from('admin_management')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('Error loading users:', error);
-                return;
-            }
-            adminUsers = data;
-
+            adminUsers = data || [];
             const list = document.getElementById('users-list');
+            const cardsContainer = document.getElementById('users-cards');
+
+            // Desktop Table
             list.innerHTML = adminUsers.map(u => `
                 <tr>
                     <td>
-                        <div style="font-weight: 600;">${u.email}</div>
+                        <div style="font-weight: 600; word-break: break-all;">${u.email}</div>
                     </td>
                     <td>
                         <div style="font-size: 0.85rem; color: var(--text-muted);">${new Date(u.created_at).toLocaleDateString()}</div>
@@ -1109,6 +1219,31 @@
                         <button class="btn-icon btn-delete" onclick="deleteAdmin('${u.id}', '${u.email}')" title="Eliminar Acceso"><i class="fas fa-user-slash"></i></button>
                     </td>
                 </tr>
+            `).join('');
+
+            // Mobile Cards
+            cardsContainer.innerHTML = adminUsers.map(u => `
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div style="display: flex; gap: 1rem; align-items: center; min-width: 0; flex: 1;">
+                            <div style="width: 40px; height: 40px; background: #f5f5f4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div style="min-width: 0; flex: 1;">
+                                <div class="admin-card-title">${u.email}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Añadido el ${new Date(u.created_at).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-card-actions">
+                        <button class="btn" onclick="editUserPassword('${u.id}', '${u.email}')" style="background: #f5f5f4; color: var(--primary);">
+                            <i class="fas fa-key"></i> Contraseña
+                        </button>
+                        <button class="btn" onclick="deleteAdmin('${u.id}', '${u.email}')" style="background: #fef2f2; color: #ef4444; border: none;">
+                            <i class="fas fa-user-slash"></i> Quitar
+                        </button>
+                    </div>
+                </div>
             `).join('');
         }
 
@@ -1306,6 +1441,8 @@
 
         function renderProducts() {
             const list = document.getElementById('admin-products-list');
+            const cardsContainer = document.getElementById('admin-products-cards');
+            const isMobile = window.innerWidth <= 768;
 
             // Apply filtering
             const filteredProducts = activeProducts.filter(p => {
@@ -1325,12 +1462,15 @@
             const pageItems = filteredProducts.slice(start, end);
 
             if (totalProducts === 0) {
-                list.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 3rem; color: #a8a29e;">No se encontraron productos que coincidan con "${productSearch}"</td></tr>`;
+                const noResults = `<div style="text-align: center; padding: 3rem; color: #a8a29e;">No se encontraron productos</div>`;
+                list.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 3rem; color: #a8a29e;">No se encontraron productos</td></tr>`;
+                cardsContainer.innerHTML = noResults;
                 document.getElementById('pagination-info').textContent = 'Mostrando 0 productos';
                 document.getElementById('products-pagination').style.display = 'none';
                 return;
             }
 
+            // Render Desktop Table
             list.innerHTML = pageItems.map(p => {
                 const allergenIcons = (p.allergens || []).map(a => {
                     let icon = 'info-circle';
@@ -1374,8 +1514,47 @@
                         <button class="btn-icon btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
                         <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
                     </td>
-                </tr>
-            `}).join('');
+                </tr>`;
+            }).join('');
+
+            // Render Mobile Cards
+            cardsContainer.innerHTML = pageItems.map(p => `
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div style="display: flex; gap: 1rem; align-items: center; min-width: 0; flex: 1;">
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 50px; height: 50px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
+                            <div style="min-width: 0; flex: 1;">
+                                <div class="admin-card-title">${p.name}</div>
+                                <div style="font-size: 0.8rem; color: var(--primary);">${p.categories?.name || 'Varios'}</div>
+                            </div>
+                        </div>
+                        <label class="switch" style="flex-shrink: 0; margin-left: 0.5rem;">
+                            <input type="checkbox" ${p.is_available ? 'checked' : ''} onchange="toggleAvailability('${p.id}', ${p.is_available})">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="admin-card-info">
+                        <div>
+                            <div class="admin-card-label">Precio</div>
+                            <div class="admin-card-value">${parseFloat(p.price).toFixed(2)}€</div>
+                        </div>
+                        <div>
+                            <div class="admin-card-label">Estado</div>
+                            <div class="admin-card-value" style="color: ${p.is_available ? 'var(--accent)' : '#ef4444'}">
+                                ${p.is_available ? 'En Stock' : 'Agotado'}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-card-actions">
+                        <button class="btn" onclick="editProduct('${p.id}')" style="background: #f5f5f4; color: var(--primary);">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn" onclick="askDelete('${p.id}')" style="background: #fef2f2; color: #ef4444; border: none;">
+                            <i class="fas fa-trash"></i> Borrar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
 
             // Update pagination UI
             document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages || 1} (${totalProducts} productos)`;
@@ -1423,6 +1602,7 @@
 
         function renderTrash() {
             const list = document.getElementById('admin-trash-list');
+            const cardsContainer = document.getElementById('admin-trash-cards');
             const total = trashProducts.length;
             const totalPages = Math.ceil(total / itemsPerPage);
 
@@ -1433,11 +1613,14 @@
             const pageItems = trashProducts.slice(start, start + itemsPerPage);
 
             if (total === 0) {
-                list.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 3rem; color: var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>La papelera está vacía</td></tr>`;
+                const emptyMsg = `<div style="text-align:center; padding: 3rem; color: var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>La papelera está vacía</div>`;
+                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 3rem; color: var(--text-muted);">La papelera está vacía</td></tr>`;
+                cardsContainer.innerHTML = emptyMsg;
                 document.getElementById('trash-pagination').style.display = 'none';
                 return;
             }
 
+            // Render Desktop Trash Table
             list.innerHTML = pageItems.map(p => `
                 <tr>
                     <td>
@@ -1456,6 +1639,39 @@
                         <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;" onclick="askPermanentDelete('${p.id}')"><i class="fas fa-times"></i> Eliminar</button>
                     </td>
                 </tr>
+            `).join('');
+
+            // Render Mobile Trash Cards
+            cardsContainer.innerHTML = pageItems.map(p => `
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div style="display: flex; gap: 1rem; align-items: center; min-width: 0; flex: 1;">
+                            <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; opacity: 0.7; flex-shrink: 0;">
+                            <div style="min-width: 0; flex: 1;">
+                                <div class="admin-card-title" style="color: var(--text-muted);">${p.name}</div>
+                                <div style="font-size: 0.75rem; color: var(--primary);">${p.categories?.name || 'Sin categoría'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-card-info">
+                        <div>
+                            <div class="admin-card-label">Precio</div>
+                            <div class="admin-card-value">${parseFloat(p.price || 0).toFixed(2)}€</div>
+                        </div>
+                        <div>
+                            <div class="admin-card-label">Borrado el</div>
+                            <div class="admin-card-value">${new Date(p.deleted_at).toLocaleDateString('es-ES')}</div>
+                        </div>
+                    </div>
+                    <div class="admin-card-actions">
+                        <button class="btn" onclick="restoreProduct('${p.id}')" style="background: var(--accent); color: white;">
+                            <i class="fas fa-undo"></i> Restaurar
+                        </button>
+                        <button class="btn" onclick="askPermanentDelete('${p.id}')" style="background: #fef2f2; color: #ef4444; border: none;">
+                            <i class="fas fa-times"></i> Borrar
+                        </button>
+                    </div>
+                </div>
             `).join('');
 
             // Paginación
@@ -1679,7 +1895,10 @@
 
             currentAnnouncements = data || [];
             const list = document.getElementById('announcements-list');
-            list.innerHTML = (data || []).map(ann => `
+            const cardsContainer = document.getElementById('announcements-cards');
+
+            // Desktop Table
+            list.innerHTML = currentAnnouncements.map(ann => `
                 <tr>
                     <td>
                         ${ann.image_url ? `<img src="${ann.image_url}" style="width:50px; height:50px; border-radius:5px; object-fit:cover;">` : '<i class="fas fa-bullhorn" style="font-size:24px;"></i>'}
@@ -1700,6 +1919,32 @@
                         </div>
                     </td>
                 </tr>
+            `).join('');
+
+            // Mobile Cards
+            cardsContainer.innerHTML = currentAnnouncements.map(ann => `
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div style="display: flex; gap: 1rem; align-items: center; min-width: 0; flex: 1;">
+                            ${ann.image_url ? `<img src="${ann.image_url}" style="width:50px; height:50px; border-radius:12px; object-fit:cover; flex-shrink: 0;">` : '<div style="width:50px; height:50px; background:#f5f5f4; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink: 0;"><i class="fas fa-bullhorn"></i></div>'}
+                            <div style="min-width: 0; flex: 1;">
+                                <div class="admin-card-title">${ann.text}</div>
+                                <div style="font-size: 0.75rem; color: ${ann.is_active ? '#059669' : '#dc2626'}">${ann.is_active ? 'Activo' : 'Inactivo'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-card-actions">
+                        <button class="btn" onclick="editAnnouncement('${ann.id}')" style="background: #f5f5f4; color: var(--primary);">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn" onclick="toggleAnnouncement('${ann.id}', ${ann.is_active})" style="background: ${ann.is_active ? '#fef2f2' : '#ecfdf5'}; color: ${ann.is_active ? '#dc2626' : '#059669'}; border: none;">
+                            <i class="fas fa-${ann.is_active ? 'pause' : 'play'}"></i> ${ann.is_active ? 'Pausar' : 'Activar'}
+                        </button>
+                        <button class="btn" onclick="deleteAnnouncement('${ann.id}')" style="background: #fef2f2; color: #ef4444; border: none; max-width: 50px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
             `).join('');
         }
 
@@ -1802,6 +2047,9 @@
             currentPolls = data;
 
             const list = document.getElementById('polls-list');
+            const cardsContainer = document.getElementById('polls-cards');
+
+            // Desktop Table
             list.innerHTML = currentPolls.map(p => `
                 <tr>
                     <td>
@@ -1826,6 +2074,39 @@
                         <button class="btn-icon btn-delete" onclick="deletePoll('${p.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
+            `).join('');
+
+            // Mobile Cards
+            cardsContainer.innerHTML = currentPolls.map(p => `
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div style="min-width: 0; flex: 1;">
+                            <div class="admin-card-title">${p.question}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">${new Date(p.created_at).toLocaleDateString()}</div>
+                        </div>
+                        <span class="status-pill status-${p.is_active ? 'active' : 'inactive'}" style="background: ${p.is_active ? '#ecfdf5' : '#fef2f2'}; color: ${p.is_active ? '#059669' : '#dc2626'}; padding: 0.2rem 0.6rem; border-radius: 50px; font-size: 0.7rem; font-weight: 600; flex-shrink: 0; margin-left: 0.5rem;">
+                            ${p.is_active ? 'Activo' : 'Inactivo'}
+                        </span>
+                    </div>
+                    <div class="admin-card-info">
+                        <div>
+                            <div class="admin-card-label">Opciones</div>
+                            <div class="admin-card-value">${p.poll_options.length}</div>
+                        </div>
+                        <div>
+                            <div class="admin-card-label">Votos</div>
+                            <div class="admin-card-value">${p.poll_options.reduce((acc, opt) => acc + (opt.votes || 0), 0)}</div>
+                        </div>
+                    </div>
+                    <div class="admin-card-actions">
+                        <button class="btn" onclick="editPoll('${p.id}')" style="background: #f5f5f4; color: var(--primary);">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button class="btn" onclick="togglePollStatus('${p.id}', ${p.is_active})" style="background: ${p.is_active ? '#fef2f2' : '#ecfdf5'}; color: ${p.is_active ? '#dc2626' : '#059669'}; border: none;">
+                            <i class="fas fa-${p.is_active ? 'pause' : 'play'}"></i> ${p.is_active ? 'Pausar' : 'Activar'}
+                        </button>
+                    </div>
+                </div>
             `).join('');
         }
 
