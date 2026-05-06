@@ -67,7 +67,7 @@
                     <h3 id="card1-title">Sistema de Encargos</h3>
                     <p id="card1-desc">Haz tu pedido cómodamente y recógelo sin esperas.</p>
                     <div class="phone-number" id="contact-phone">604 88 52 96</div>
-                    <ul class="card-list">
+                    <ul class="card-list" id="card1-list">
                         <li><i class="fas fa-clock"></i> Fuera de horario lectivo</li>
                         <li><i class="fas fa-id-card"></i> Indica nombre y curso</li>
                         <li><i class="fas fa-hamburger"></i> Recogida en el recreo</li>
@@ -79,12 +79,12 @@
                     <div class="card-icon"><i class="fas fa-wallet"></i></div>
                     <h3 id="card2-title">Tarjetas Monedero</h3>
                     <p id="card2-desc">Ahorra tiempo y agiliza tus pagos con bonos de 5 bocadillos.</p>
-                    <div class="price-grid">
+                    <div class="price-grid" id="card2-prices">
                         <div class="price-item"><span>5 bocadillos (1.00€)</span> <strong>5.00€</strong></div>
                         <div class="price-item"><span>5 bocadillos (1.50€)</span> <strong>7.50€</strong></div>
                         <div class="price-item"><span>5 bocadillos (2.00€)</span> <strong>10.00€</strong></div>
                     </div>
-                    <p class="card-note">* Se paga al inicio y se sella diariamente.</p>
+                    <p class="card-note" id="card2-note">* Se paga al inicio y se sella diariamente.</p>
                 </div>
 
                 <!-- Otros Servicios Card -->
@@ -92,7 +92,7 @@
                     <div class="card-icon"><i class="fas fa-utensils"></i></div>
                     <h3 id="card3-title">Información Diaria</h3>
                     <p id="card3-desc">Todo lo que necesitas saber para tu descanso.</p>
-                    <ul class="card-list">
+                    <ul class="card-list" id="card3-list">
                         <li><i class="fas fa-calendar-alt"></i> Encargos desde las 7:45h</li>
                         <li><i class="fas fa-credit-card"></i> Pago con tarjeta en persona disponible</li>
                         <li><i class="fas fa-bolt"></i> ¡Optimiza tu tiempo de recreo!</li>
@@ -193,6 +193,39 @@
                             document.getElementsByTagName('head')[0].appendChild(link);
                         }
                         link.href = s.value;
+                    }
+
+                    // Complex sections
+                    if (s.key === 'card1_list' || s.key === 'card3_list') {
+                        const listId = s.key.replace(/_/g, '-');
+                        const container = document.getElementById(listId);
+                        if (container) {
+                            const lines = s.value.split('\n').filter(l => l.trim());
+                            container.innerHTML = lines.map(line => {
+                                const parts = line.split('|');
+                                const icon = parts[0]?.trim() || 'check';
+                                const text = parts[1]?.trim() || parts[0]?.trim();
+                                return `<li><i class="fas fa-${icon}"></i> ${text}</li>`;
+                            }).join('');
+                        }
+                    }
+
+                    if (s.key === 'card2_prices') {
+                        const container = document.getElementById('card2-prices');
+                        if (container) {
+                            const lines = s.value.split('\n').filter(l => l.trim());
+                            container.innerHTML = lines.map(line => {
+                                const parts = line.split('|');
+                                const label = parts[0]?.trim() || 'Concepto';
+                                const price = parts[1]?.trim() || '0.00€';
+                                return `<div class="price-item"><span>${label}</span> <strong>${price}</strong></div>`;
+                            }).join('');
+                        }
+                    }
+
+                    if (s.key === 'card2_note') {
+                        const el = document.getElementById('card2-note');
+                        if (el) el.textContent = s.value;
                     }
                 });
             }

@@ -627,6 +627,52 @@
         .mobile-cards-container {
             display: none;
         }
+        .card-items-editor {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: #f9f8f7;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid #e7e5e4;
+        }
+
+        .item-row {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .item-row input {
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #e7e5e4;
+            font-size: 0.85rem;
+        }
+
+        .item-icon,
+        .item-label {
+            flex: 0 0 120px;
+            background: #fff;
+            font-weight: 600;
+        }
+
+        .item-text,
+        .item-price {
+            flex: 1;
+        }
+
+        @media (max-width: 600px) {
+            .item-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .item-icon,
+            .item-label {
+                flex: none;
+            }
+        }
     </style>
 </head>
 
@@ -848,6 +894,24 @@
                             <label>Descripción Tarjeta 1</label>
                             <textarea id="s-card1-desc" rows="2"></textarea>
                         </div>
+                        
+                        <div class="form-group full">
+                            <label>Ítems de la Lista (Icono | Texto)</label>
+                            <div class="card-items-editor">
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: clock" id="card1-icon-1">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 1" id="card1-text-1">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: id-card" id="card1-icon-2">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 2" id="card1-text-2">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: hamburger" id="card1-icon-3">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 3" id="card1-text-3">
+                                </div>
+                            </div>
+                        </div>
 
                         <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
                             <h3>Tarjeta 2: Tarjetas Monedero</h3>
@@ -860,6 +924,27 @@
                             <label>Descripción Tarjeta 2</label>
                             <textarea id="s-card2-desc" rows="2"></textarea>
                         </div>
+                        <div class="form-group full">
+                            <label>Cuadrícula de Precios (Concepto | Precio)</label>
+                            <div class="card-items-editor">
+                                <div class="item-row">
+                                    <input type="text" class="item-label" placeholder="ej: 5 bocadillos" id="card2-label-1">
+                                    <input type="text" class="item-price" placeholder="ej: 5.00€" id="card2-price-1">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-label" placeholder="Concepto 2" id="card2-label-2">
+                                    <input type="text" class="item-price" placeholder="Precio 2" id="card2-price-2">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-label" placeholder="Concepto 3" id="card2-label-3">
+                                    <input type="text" class="item-price" placeholder="Precio 3" id="card2-price-3">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group full">
+                            <label>Nota al pie (Tarjeta 2)</label>
+                            <input type="text" id="s-card2-note">
+                        </div>
 
                         <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
                             <h3>Tarjeta 3: Otros Servicios</h3>
@@ -871,6 +956,23 @@
                         <div class="form-group">
                             <label>Descripción Tarjeta 3</label>
                             <textarea id="s-card3-desc" rows="2"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Ítems de la Lista (Icono | Texto)</label>
+                            <div class="card-items-editor">
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: calendar-alt" id="card3-icon-1">
+                                    <input type="text" class="item-text" placeholder="Texto 1" id="card3-text-1">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: credit-card" id="card3-icon-2">
+                                    <input type="text" class="item-text" placeholder="Texto 2" id="card3-text-2">
+                                </div>
+                                <div class="item-row">
+                                    <input type="text" class="item-icon" placeholder="ej: bolt" id="card3-icon-3">
+                                    <input type="text" class="item-text" placeholder="Texto 3" id="card3-text-3">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-group full" style="margin-top: 2rem;">
@@ -1265,6 +1367,31 @@
                         }
                         link.href = s.value;
                     }
+
+                    // Handle list/price splitting for rows
+                    if (s.key === 'card1_list' || s.key === 'card3_list') {
+                        const cardNum = s.key.charAt(4);
+                        const lines = s.value.split('\n');
+                        lines.forEach((line, i) => {
+                            if (i >= 3) return;
+                            const parts = line.split('|');
+                            const iconEl = document.getElementById(`card${cardNum}-icon-${i + 1}`);
+                            const textEl = document.getElementById(`card${cardNum}-text-${i + 1}`);
+                            if (iconEl) iconEl.value = parts[0]?.trim() || '';
+                            if (textEl) textEl.value = parts[1]?.trim() || '';
+                        });
+                    }
+                    if (s.key === 'card2_prices') {
+                        const lines = s.value.split('\n');
+                        lines.forEach((line, i) => {
+                            if (i >= 3) return;
+                            const parts = line.split('|');
+                            const labelEl = document.getElementById(`card2-label-${i + 1}`);
+                            const priceEl = document.getElementById(`card2-price-${i + 1}`);
+                            if (labelEl) labelEl.value = parts[0]?.trim() || '';
+                            if (priceEl) priceEl.value = parts[1]?.trim() || '';
+                        });
+                    }
                 });
             }
         }
@@ -1496,6 +1623,25 @@
                     document.getElementById('s-site-favicon').value = faviconUrl;
                 }
 
+                // Collect and combine card items
+                const card1List = [1,2,3].map(i => {
+                    const icon = document.getElementById(`card1-icon-${i}`).value.trim();
+                    const text = document.getElementById(`card1-text-${i}`).value.trim();
+                    return icon || text ? `${icon} | ${text}` : null;
+                }).filter(x => x).join('\n');
+
+                const card2Prices = [1,2,3].map(i => {
+                    const label = document.getElementById(`card2-label-${i}`).value.trim();
+                    const price = document.getElementById(`card2-price-${i}`).value.trim();
+                    return label || price ? `${label} | ${price}` : null;
+                }).filter(x => x).join('\n');
+
+                const card3List = [1,2,3].map(i => {
+                    const icon = document.getElementById(`card3-icon-${i}`).value.trim();
+                    const text = document.getElementById(`card3-text-${i}`).value.trim();
+                    return icon || text ? `${icon} | ${text}` : null;
+                }).filter(x => x).join('\n');
+
                 const settings = [
                     { key: 'hero_title', value: document.getElementById('s-hero-title').value },
                     { key: 'hero_desc', value: document.getElementById('s-hero-desc').value },
@@ -1508,10 +1654,14 @@
                     { key: 'contact_phone', value: document.getElementById('s-contact-phone').value },
                     { key: 'card1_title', value: document.getElementById('s-card1-title').value },
                     { key: 'card1_desc', value: document.getElementById('s-card1-desc').value },
+                    { key: 'card1_list', value: card1List },
                     { key: 'card2_title', value: document.getElementById('s-card2-title').value },
                     { key: 'card2_desc', value: document.getElementById('s-card2-desc').value },
+                    { key: 'card2_prices', value: card2Prices },
+                    { key: 'card2_note', value: document.getElementById('s-card2-note').value },
                     { key: 'card3_title', value: document.getElementById('s-card3-title').value },
-                    { key: 'card3_desc', value: document.getElementById('s-card3-desc').value }
+                    { key: 'card3_desc', value: document.getElementById('s-card3-desc').value },
+                    { key: 'card3_list', value: card3List }
                 ];
 
                 const promises = settings.map(s =>
