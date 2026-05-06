@@ -547,14 +547,11 @@
             if (data && data.length > 0) {
                 const slidesHTML = data.map((ann, index) => `
                     <div class="carousel-slide">
-                        <div class="announcement-banner">
-                            ${ann.image_url ? 
-                                `<img class="announcement-img" src="${ann.image_url}" alt="Anuncio">` : 
-                                `<div class="announcement-img" style="display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.1);"><i class="fas fa-bullhorn" style="font-size:2rem;"></i></div>`
-                            }
+                        <div class="announcement-banner ${ann.image_url ? 'has-image' : ''}" 
+                             style="${ann.image_url ? `background-image: url('${ann.image_url}')` : ''}">
+                            ${!ann.image_url ? '<i class="fas fa-bullhorn banner-icon"></i>' : ''}
                             <div class="announcement-content">
-                                <h4>Aviso Importante</h4>
-                                <p>${ann.text}</p>
+                                ${ann.text ? `<p>${ann.text}</p>` : ''}
                             </div>
                         </div>
                     </div>

@@ -375,6 +375,18 @@ nav.scrolled {
     }
 }
 
+/* Hero Announcement Banner */
+.hero-announcement {
+    padding: 2rem;
+    text-align: center;
+    background: rgba(var(--primary-rgb), 0.9);
+    color: white;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .nav-links {
@@ -753,22 +765,42 @@ nav.scrolled {
 }
 
 .announcement-banner {
+    position: relative;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    background-size: cover;
+    background-position: center;
     color: white;
-    padding: 1.8rem 2.5rem;
+    padding: 3rem 2.5rem;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    text-align: center;
+    min-height: 160px;
     height: 100%;
-    border-radius: 0; /* Inherited from carousel container */
+    z-index: 1;
+}
+
+.announcement-banner.has-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4); /* Dark overlay for text readability on bg images */
+    z-index: -1;
+}
+
+.announcement-banner.has-image {
+    background-image: none; /* Will be set via inline style */
+}
+
+.announcement-banner:not(.has-image) i.banner-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
 }
 
 .announcement-img {
-    width: 90px;
-    height: 90px;
-    object-fit: cover;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: none; /* Image is now background */
 }
 
 .announcement-content h4 {
