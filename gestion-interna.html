@@ -348,6 +348,52 @@
             font-weight: 500;
         }
 
+        /* Poll Results Styles */
+        .poll-results-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .poll-result-item {
+            margin-bottom: 1.2rem;
+        }
+
+        .poll-result-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .poll-option-text {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .poll-vote-data {
+            color: var(--text-muted);
+        }
+
+        .poll-bar-track {
+            height: 12px;
+            background: #f5f5f4;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .poll-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         .products-table-container {
             border: 1px solid #f5f5f4;
         }
@@ -897,6 +943,21 @@
                         <tbody id="polls-list"></tbody>
                     </table>
                     <div id="polls-cards" class="mobile-cards-container"></div>
+                </div>
+
+                <!-- Active Poll Results Section -->
+                <div id="poll-results-container" class="products-table-container" style="padding: 2.5rem; margin-top: 2rem; display: none;">
+                    <div class="poll-results-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Resultados de la Encuesta Activa
+                    </div>
+                    <h3 id="active-poll-question" style="margin-bottom: 2rem; color: var(--text);">¿Cuál es tu bocadillo favorito?</h3>
+                    <div id="poll-results-list">
+                        <!-- Bars will be rendered here -->
+                    </div>
+                    <div id="active-poll-total-votes" style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted); text-align: right; border-top: 1px solid #f5f5f4; padding-top: 1rem;">
+                        Total de votos: 0
+                    </div>
                 </div>
             </div>
             <!-- Users Tab -->
@@ -2125,6 +2186,45 @@
                     </div>
                 </div>
             `).join('');
+
+            renderActivePollResults();
+        }
+
+        function renderActivePollResults() {
+            const container = document.getElementById('poll-results-container');
+            const list = document.getElementById('poll-results-list');
+            const questionEl = document.getElementById('active-poll-question');
+            const totalVotesEl = document.getElementById('active-poll-total-votes');
+
+            const activePoll = currentPolls.find(p => p.is_active);
+
+            if (!activePoll) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'block';
+            questionEl.textContent = activePoll.question;
+
+            const totalVotes = activePoll.poll_options.reduce((acc, opt) => acc + (opt.votes || 0), 0);
+            totalVotesEl.textContent = `Total de votos: ${totalVotes}`;
+
+            list.innerHTML = activePoll.poll_options.map(opt => {
+                const votes = opt.votes || 0;
+                const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+                return `
+                    <div class="poll-result-item">
+                        <div class="poll-result-info">
+                            <span class="poll-option-text">${opt.option_text}</span>
+                            <span class="poll-vote-data">${votes} votos (${percentage}%)</span>
+                        </div>
+                        <div class="poll-bar-track">
+                            <div class="poll-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function openPollModal(poll = null) {
