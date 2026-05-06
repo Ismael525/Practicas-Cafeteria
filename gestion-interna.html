@@ -110,17 +110,20 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             z-index: 2000;
-            align-items: center;
+            align-items: flex-start; /* Changed from center to allow scrolling from top */
             justify-content: center;
+            overflow-y: auto; /* Added to handle tall forms */
+            padding: 2rem 0; /* Space at top/bottom when scrolling */
         }
 
         .modal-content {
             background: white;
-            padding: 3rem;
+            padding: 2rem; /* Reduced from 3rem */
             border-radius: 30px;
             width: 90%;
             max-width: 600px;
             position: relative;
+            margin: auto; /* Ensures centering in the scrollable parent */
         }
 
         .close-modal {
@@ -134,14 +137,14 @@
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 2rem;
+            gap: 1rem; /* Reduced from 1.5rem */
+            margin-top: 1.5rem; /* Reduced from 2rem */
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.3rem; /* Reduced from 0.5rem */
         }
 
         .form-group.full {
@@ -222,8 +225,8 @@
         .allergen-selector {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-top: 0.5rem;
+            gap: 0.5rem; /* Reduced from 0.8rem */
+            margin-top: 0.3rem;
         }
 
         .allergen-chip {
@@ -307,8 +310,6 @@
             .modal-content {
                 padding: 2rem 1.5rem;
                 width: 95%;
-                max-height: 90vh;
-                overflow-y: auto;
             }
 
             .form-group.full {
@@ -817,7 +818,7 @@
                                 <label style="margin-bottom: 0;">Activar inmediatamente</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Guardar
                             Anuncio</button>
                     </form>
                 </div>
@@ -971,7 +972,7 @@
                         <textarea id="p-desc" rows="3"></textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Guardar
                     Cambios</button>
             </form>
         </div>
@@ -1018,7 +1019,7 @@
                     <input type="checkbox" id="poll-active" checked style="width: auto;">
                     <label style="margin-bottom: 0;">Activar inmediatamente</label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Guardar
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Guardar
                     Cuestionario</button>
             </form>
         </div>
@@ -1042,7 +1043,7 @@
                         style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.3rem;">Mínimo 6
                         caracteres.</small>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2.5rem;"
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;"
                     id="user-submit-btn">Guardar Usuario</button>
             </form>
         </div>
