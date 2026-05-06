@@ -837,32 +837,40 @@
                             <input type="text" id="s-contact-phone">
                         </div>
 
-                        <div
-                            style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                            <h3>Anuncio en el Menú</h3>
-                        </div>
-                        <div class="form-group full">
-                            <label>Texto del Anuncio</label>
-                            <input type="text" id="s-menu-announcement">
+                        <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Tarjeta 1: Encargos</h3>
                         </div>
                         <div class="form-group">
-                            <label>Imagen del Anuncio (Archivo o URL)</label>
-                            <div class="file-upload-wrapper">
-                                <input type="file" id="s-menu-announcement-file" class="file-upload-input"
-                                    accept="image/*" onchange="updateFileName(this)">
-                                <div class="file-upload-label">
-                                    <i class="fas fa-bullhorn"></i>
-                                    <span>Subir imagen del anuncio</span>
-                                    <small>Formato horizontal recomendado</small>
-                                </div>
-                                <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
-                            </div>
-                            <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL">
+                            <label>Título Tarjeta 1</label>
+                            <input type="text" id="s-card1-title">
                         </div>
-                        <div class="form-group"
-                            style="flex-direction: row; align-items: center; gap: 1rem; padding-top: 1.5rem;">
-                            <input type="checkbox" id="s-menu-announcement-visible" style="width: auto;">
-                            <label style="margin-bottom: 0;">Mostrar anuncio en el menú</label>
+                        <div class="form-group">
+                            <label>Descripción Tarjeta 1</label>
+                            <textarea id="s-card1-desc" rows="2"></textarea>
+                        </div>
+
+                        <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Tarjeta 2: Tarjetas Monedero</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Título Tarjeta 2</label>
+                            <input type="text" id="s-card2-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción Tarjeta 2</label>
+                            <textarea id="s-card2-desc" rows="2"></textarea>
+                        </div>
+
+                        <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Tarjeta 3: Otros Servicios</h3>
+                        </div>
+                        <div class="form-group">
+                            <label>Título Tarjeta 3</label>
+                            <input type="text" id="s-card3-title">
+                        </div>
+                        <div class="form-group">
+                            <label>Descripción Tarjeta 3</label>
+                            <textarea id="s-card3-desc" rows="2"></textarea>
                         </div>
 
                         <div class="form-group full" style="margin-top: 2rem;">
@@ -1498,9 +1506,12 @@
                     { key: 'about_text_2', value: document.getElementById('s-about-text-2').value },
                     { key: 'section_title', value: document.getElementById('s-section-title').value },
                     { key: 'contact_phone', value: document.getElementById('s-contact-phone').value },
-                    { key: 'menu_announcement', value: document.getElementById('s-menu-announcement').value },
-                    { key: 'menu_announcement_image', value: menuUrl },
-                    { key: 'menu_announcement_visible', value: document.getElementById('s-menu-announcement-visible').checked.toString() }
+                    { key: 'card1_title', value: document.getElementById('s-card1-title').value },
+                    { key: 'card1_desc', value: document.getElementById('s-card1-desc').value },
+                    { key: 'card2_title', value: document.getElementById('s-card2-title').value },
+                    { key: 'card2_desc', value: document.getElementById('s-card2-desc').value },
+                    { key: 'card3_title', value: document.getElementById('s-card3-title').value },
+                    { key: 'card3_desc', value: document.getElementById('s-card3-desc').value }
                 ];
 
                 const promises = settings.map(s =>
