@@ -51,6 +51,7 @@
         td {
             padding: 1.5rem;
             border-bottom: 1px solid #f5f5f4;
+            vertical-align: middle; /* Added for vertical centering */
         }
 
         th {
@@ -76,6 +77,9 @@
         .action-btns {
             display: flex;
             gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            min-height: 45px; /* Ensures vertical alignment matches product image */
         }
 
         .btn-icon {
@@ -84,6 +88,10 @@
             cursor: pointer;
             font-size: 1.1rem;
             transition: var(--transition);
+            display: flex; /* Added for inner centering */
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
         }
 
         .btn-edit {
@@ -632,7 +640,7 @@
                                 <th>Categoría</th>
                                 <th>Precio (€)</th>
                                 <th>Disponibilidad</th>
-                                <th>Acciones</th>
+                                <th style="width: 120px; text-align: center;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="admin-products-list"></tbody>
@@ -1215,9 +1223,11 @@
                     <td>
                         <div style="font-size: 0.85rem; color: var(--text-muted);">${new Date(u.created_at).toLocaleDateString()}</div>
                     </td>
-                    <td class="action-btns">
-                        <button class="btn-icon btn-edit" onclick="editUserPassword('${u.id}', '${u.email}')" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
-                        <button class="btn-icon btn-delete" onclick="deleteAdmin('${u.id}', '${u.email}')" title="Eliminar Acceso"><i class="fas fa-user-slash"></i></button>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-edit" onclick="editUserPassword('${u.id}', '${u.email}')" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
+                            <button class="btn-icon btn-delete" onclick="deleteAdmin('${u.id}', '${u.email}')" title="Eliminar Acceso"><i class="fas fa-user-slash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -1511,9 +1521,11 @@
                             <span style="font-size: 0.75rem; color: ${p.is_available ? 'var(--accent)' : '#ef4444'}">${p.is_available ? 'En Stock' : 'Agotado'}</span>
                         </div>
                     </td>
-                    <td class="action-btns">
-                        <button class="btn-icon btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-edit" onclick="editProduct('${p.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon btn-delete" onclick="askDelete('${p.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('');
@@ -1635,9 +1647,11 @@
                     </td>
                     <td>${parseFloat(p.price || 0).toFixed(2)}€</td>
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${new Date(p.deleted_at).toLocaleDateString('es-ES')}</td>
-                    <td class="action-btns">
-                        <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: var(--accent);" onclick="restoreProduct('${p.id}')"><i class="fas fa-undo"></i> Restaurar</button>
-                        <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;" onclick="askPermanentDelete('${p.id}')"><i class="fas fa-times"></i> Eliminar</button>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: var(--accent);" onclick="restoreProduct('${p.id}')"><i class="fas fa-undo"></i> Restaurar</button>
+                            <button class="btn" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;" onclick="askPermanentDelete('${p.id}')"><i class="fas fa-times"></i> Eliminar</button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
@@ -2067,12 +2081,14 @@
                             ${p.is_active ? 'Activo' : 'Inactivo'}
                         </span>
                     </td>
-                    <td class="action-btns">
-                        <button class="btn-icon btn-edit" onclick="editPoll('${p.id}')" title="Editar"><i class="fas fa-edit"></i></button>
-                        <button class="btn-icon" style="color: ${p.is_active ? '#dc2626' : '#059669'}" onclick="togglePollStatus('${p.id}', ${p.is_active})" title="${p.is_active ? 'Desactivar' : 'Activar'}">
-                            <i class="fas fa-${p.is_active ? 'pause' : 'play'}"></i>
-                        </button>
-                        <button class="btn-icon btn-delete" onclick="deletePoll('${p.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-edit" onclick="editPoll('${p.id}')" title="Editar"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon" style="color: ${p.is_active ? '#dc2626' : '#059669'}" onclick="togglePollStatus('${p.id}', ${p.is_active})" title="${p.is_active ? 'Desactivar' : 'Activar'}">
+                                <i class="fas fa-${p.is_active ? 'pause' : 'play'}"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deletePoll('${p.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
