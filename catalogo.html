@@ -277,10 +277,19 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: var(--primary);
+            position: sticky;
+            top: 60px; /* Debajo del nav */
+            z-index: 10;
+            background: rgba(253, 252, 251, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            width: 100%;
             border-bottom: 2px solid var(--primary-light);
-            padding-bottom: 0.5rem;
-            display: inline-block;
             text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        nav.scrolled + .catalog-container .category-title {
+            top: 70px;
         }
         .category-grid {
             display: grid;
@@ -364,8 +373,10 @@
                 font-size: 0.6rem;
             }
             .category-title {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
                 margin-bottom: 1rem;
+                top: 50px; /* Altura aproximada del nav móvil */
+                padding: 0.8rem 0;
             }
             .search-container {
                 margin-bottom: 2rem;
@@ -603,6 +614,12 @@
             const { data } = await supabaseClient.from('site_settings').select('key, value');
             if (data) {
                 data.forEach(s => {
+                    const el = document.getElementById(s.key.replace(/_/g, '-'));
+                    if (el) {
+                        if (el.tagName === 'IMG') el.src = s.value;
+                        else el.textContent = s.value;
+                    }
+
                     if (s.key === 'site_favicon') {
                         let link = document.querySelector("link[rel~='icon']");
                         if (!link) {
@@ -624,11 +641,34 @@
             await loadAnnouncements();
             await loadCategories();
             await loadProducts();
+            setupRealtime();
             AOS.init({ 
                 duration: 1000, 
                 once: true,
                 disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches 
             });
+        }
+
+        function setupRealtime() {
+            supabaseClient
+                .channel('products-realtime')
+                .on('postgres_changes', { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'products' 
+                }, payload => {
+                    const updated = payload.new;
+                    const idx = products.findIndex(p => p.id === updated.id);
+                    if (idx !== -1) {
+                        // Actualizar disponibilidad localmente
+                        products[idx].is_available = updated.is_available;
+                        products[idx].price = updated.price;
+                        products[idx].name = updated.name;
+                        products[idx].description = updated.description;
+                        renderProducts();
+                    }
+                })
+                .subscribe();
         }
 
         async function loadCategories() {
@@ -743,9 +783,26 @@
             });
 
             if (filtered.length === 0) {
-                gridContainer.innerHTML = `<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: var(--text-muted);">No se encontraron productos que coincidan.</div>`;
+                gridContainer.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 5rem 2rem; color: var(--text-muted); background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.03);" data-aos="fade-up">
+                        <i class="fas fa-cookie-bite" style="font-size: 3.5rem; color: #e7e5e4; margin-bottom: 1.5rem; display: block;"></i>
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--secondary); margin-bottom: 0.5rem;">Vaya, hoy no tenemos eso...</h3>
+                        <p>No hay productos que coincidan con tu búsqueda. Prueba con otros filtros o explora nuestras categorías.</p>
+                        <button onclick="resetFilters()" class="btn" style="margin-top: 2rem; background: var(--primary); color: white; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600;">Ver todo el menú</button>
+                    </div>
+                `;
                 paginationContainer.style.display = 'none';
                 return;
+            }
+
+            function resetFilters() {
+                document.getElementById('catalog-search').value = '';
+                searchQuery = '';
+                activeCategory = 'all';
+                excludedAllergens = [];
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                document.querySelector('#category-filters .filter-chip').classList.add('active');
+                renderProducts();
             }
 
             const totalPages = Math.ceil(filtered.length / catalogItemsPerPage);
