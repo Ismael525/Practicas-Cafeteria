@@ -104,10 +104,7 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
-            transition: transform 0.5s ease;
-        }
-        .product-card:hover .product-image img {
-            transform: scale(1.1);
+            transition: var(--transition);
         }
         .product-info {
             padding: 1.5rem;
@@ -407,6 +404,185 @@
                 padding: 0.6rem;
             }
         }
+
+        /* Product Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .product-modal {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 30px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .product-modal {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            max-height: 600px;
+            background: #f5f5f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-image img {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+        .modal-details {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .modal-category {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .modal-title {
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .modal-price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        .modal-desc {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+        .modal-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+        }
+        .extras-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 2.5rem;
+        }
+        .extra-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: #fdfcfb;
+            border: 1px solid #e7e5e4;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .extra-item:hover {
+            border-color: var(--primary-light);
+            background: white;
+        }
+        .extra-name { font-weight: 500; }
+        .extra-price { color: var(--primary); font-weight: 700; }
+        
+        .modal-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 1rem;
+        }
+        .btn-whatsapp-order {
+            flex-grow: 1;
+            background: #25d366;
+            color: white;
+            padding: 1.2rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .btn-whatsapp-order:hover {
+            background: #128c7e;
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 850px) {
+            .product-modal {
+                grid-template-columns: 1fr;
+            }
+            .modal-image {
+                height: 300px;
+            }
+            .modal-details {
+                padding: 1.5rem;
+            }
+            .modal-title {
+                font-size: 1.8rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -515,6 +691,36 @@
         </div>
     </div>
 
+    <div id="product-modal-overlay" class="modal-overlay" onclick="if(event.target === this) closeProductModal()">
+        <div class="product-modal">
+            <div class="modal-close" onclick="closeProductModal()">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-image">
+                <img id="modal-img" src="" alt="">
+            </div>
+            <div class="modal-details">
+                <div id="modal-category" class="modal-category"></div>
+                <h2 id="modal-title" class="modal-title"></h2>
+                <div id="modal-price" class="modal-price"></div>
+                <p id="modal-desc" class="modal-desc"></p>
+                
+                <div id="modal-extras-section">
+                    <h4 class="modal-section-title"><i class="fas fa-plus-circle"></i> Personaliza tu pedido</h4>
+                    <div id="modal-extras-grid" class="extras-grid">
+                        <!-- Extras will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="#" id="modal-whatsapp-btn" class="btn-whatsapp-order" onclick="orderFromModal(event)">
+                        <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/whatsapp.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -525,12 +731,14 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let products = [];
+        let extraProducts = [];
         let categories = [];
         let activeCategory = 'all';
         let excludedAllergens = [];
         let catalogCurrentPage = 1;
         const catalogItemsPerPage = 12;
         let searchQuery = '';
+        const EXTRAS_CATEGORY_NAME = 'EXTRAS';
 
         let currentSlide = 0;
         let slideInterval;
@@ -672,7 +880,9 @@
 
         async function loadCategories() {
             const { data } = await supabaseClient.from('categories').select('*').order('name', { ascending: true });
-            categories = data || [];
+            // Filtrar la categoría EXTRAS de la lista de filtros
+            categories = (data || []).filter(cat => cat.name !== EXTRAS_CATEGORY_NAME);
+            
             const container = document.getElementById('category-filters');
             container.innerHTML = '<div class="filter-chip active" onclick="filterByCategory(\'all\', this)">Todos</div>';
             categories.forEach(cat => {
@@ -765,12 +975,29 @@
                 return;
             }
 
-            const filtered = products.filter(p => {
+            // Separar productos normales de los extras
+            const normalProducts = products.filter(p => {
+                let catName = '';
+                if (p.categories) {
+                    catName = Array.isArray(p.categories) ? (p.categories[0]?.name || '') : (p.categories.name || '');
+                }
+                return catName !== EXTRAS_CATEGORY_NAME;
+            });
+            
+            extraProducts = products.filter(p => {
+                let catName = '';
+                if (p.categories) {
+                    catName = Array.isArray(p.categories) ? (p.categories[0]?.name || '') : (p.categories.name || '');
+                }
+                return catName === EXTRAS_CATEGORY_NAME;
+            });
+
+            const filtered = normalProducts.filter(p => {
                 const normalizedSearch = normalizeText(searchQuery);
                 const normalizedName = normalizeText(p.name || '');
                 const normalizedDesc = normalizeText(p.description || '');
                 
-                // Si hay búsqueda, ignoramos el filtro de categoría como pidió el usuario
+                // Si hay búsqueda, ignoramos el filtro de categoría
                 const matchCategory = searchQuery !== '' || activeCategory === 'all' || String(p.category_id) === String(activeCategory);
                 
                 const pAllergens = (p.allergens || []).map(a => a.toLowerCase());
@@ -837,7 +1064,7 @@
                 const productsHtml = grouped[catName].map(p => {
                     const isAvailable = p.is_available !== false;
                     return `
-                    <div class="product-card ${!isAvailable ? 'unavailable' : ''}" onclick="trackProductView('${p.id}')">
+                    <div class="product-card ${!isAvailable ? 'unavailable' : ''}" onclick="openProductModal('${p.id}')">
                         <div class="product-image">
                             ${!isAvailable ? '<div class="out-of-stock"><span class="out-of-stock-label">Agotado</span></div>' : ''}
                             <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800'}" alt="${p.name}" loading="lazy" decoding="async">
@@ -859,7 +1086,7 @@
                                     }).join('')}
                                 </div>
                                 <div class="order-reminder" style="color: #128c7e; font-size: 0.8rem; font-weight: 600; opacity: 0.9;">
-                                    <i class="fab fa-whatsapp"></i> Recuerda pedir
+                                    <i class="fab fa-whatsapp"></i> Ver detalles
                                 </div>
                             </div>
                         </div>
@@ -876,6 +1103,64 @@
                 `;
                 gridContainer.insertAdjacentHTML('beforeend', sectionHtml);
             });
+        }
+
+        function openProductModal(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            // Track view
+            trackProductView(id);
+
+            // Fill modal details
+            document.getElementById('modal-img').src = product.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800';
+            document.getElementById('modal-title').textContent = product.name;
+            document.getElementById('modal-price').textContent = `${parseFloat(product.price || 0).toFixed(2)}€`;
+            document.getElementById('modal-desc').textContent = product.description || 'Sin descripción disponible.';
+            let catName = 'Producto';
+            if (product.categories) {
+                catName = Array.isArray(product.categories) ? (product.categories[0]?.name || 'Producto') : (product.categories.name || 'Producto');
+            }
+            document.getElementById('modal-category').textContent = catName;
+
+            // Extras
+            const extrasGrid = document.getElementById('modal-extras-grid');
+            const extrasSection = document.getElementById('modal-extras-section');
+            
+            // Solo mostramos extras que estén disponibles
+            const availableExtras = extraProducts.filter(e => e.is_available !== false);
+            
+            if (availableExtras.length > 0) {
+                extrasSection.style.display = 'block';
+                extrasGrid.innerHTML = availableExtras.map(extra => `
+                    <div class="extra-item">
+                        <span class="extra-name">${extra.name}</span>
+                        <span class="extra-price">+${parseFloat(extra.price || 0).toFixed(2)}€</span>
+                    </div>
+                `).join('');
+            } else {
+                extrasSection.style.display = 'none';
+            }
+
+            // Modal overlay
+            document.getElementById('product-modal-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Set data for WhatsApp order
+            document.getElementById('modal-whatsapp-btn').dataset.productName = product.name;
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function orderFromModal(event) {
+            event.preventDefault();
+            const productName = document.getElementById('modal-whatsapp-btn').dataset.productName;
+            const message = `¡Hola! Me gustaría pedir: ${productName}`;
+            const whatsappUrl = `https://wa.me/34645391307?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
         }
 
         async function trackProductView(id) {
