@@ -1324,19 +1324,23 @@
                 }
             });
             
-            // Construir el mensaje de WhatsApp
-            let message = `Hola! Me gustaría pedir un *${productName}*`;
+            // Construir el mensaje de WhatsApp con saltos de línea reales (\n)
+            let message = `¡Hola! Me gustaría pedir un *${productName}*`;
             
             if (otrosExtras.length > 0) {
-                message += `%0A*Extras:* _${otrosExtras.join(', ')}_`;
+                message += `\n*Extras:* _${otrosExtras.join(', ')}_`;
             }
             if (salsas.length > 0) {
-                message += `%0A*Salsas:* _${salsas.join(', ')}_`;
+                message += `\n*Salsas:* _${salsas.join(', ')}_`;
+            }
+            if (bebidas.length > 0) {
+                message += `\n*Bebida:* _${bebidas.join(', ')}_`;
             }
             
-            // Abrir directamente WhatsApp para evitar pasos intermedios
+            // Abrir directamente WhatsApp con el mensaje debidamente codificado
             const phoneNumber = window.GLOBAL_WHATSAPP_NUMBER || '34604885296';
-            const url = `https://api.whatsapp.com/send?phone=${phoneNumber.replace(/\s+/g, '')}&text=${message}`;
+            const cleanPhone = phoneNumber.replace(/\s+/g, '').replace('+', '');
+            const url = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
             
             // Abrir en popup centrado como en whatsapp.js
             const width = 800;
