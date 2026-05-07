@@ -482,10 +482,29 @@
             padding: 10px;
         }
         .modal-details {
-            padding: 3rem;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            max-height: 90vh; /* Coincide con la altura del modal */
+            min-height: 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-light) #f1f1f1;
+        }
+        /* Personalización del scroll para que sea más visible */
+        .modal-details::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-details::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .modal-details::-webkit-scrollbar-thumb {
+            background: var(--primary-light);
+            border-radius: 10px;
+        }
+        .modal-details::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
         }
         .modal-category {
             font-size: 0.8rem;
@@ -531,16 +550,32 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 1.2rem;
-            background: #fdfcfb;
-            border: 1px solid #e7e5e4;
-            border-radius: 15px;
-            font-size: 0.9rem;
+            padding: 0.6rem 0.8rem;
+            background: #fafaf9;
+            border: 1px solid #f5f5f4;
+            border-radius: 12px;
+            font-size: 0.85rem;
             transition: var(--transition);
+            cursor: pointer;
+            user-select: none;
         }
         .extra-item:hover {
             border-color: var(--primary-light);
             background: white;
+            transform: translateY(-2px);
+        }
+        .extra-item.selected {
+            border-color: var(--primary);
+            background: rgba(120, 53, 15, 0.05);
+            box-shadow: 0 4px 10px rgba(120, 53, 15, 0.1);
+        }
+        .extra-item.selected::after {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--primary);
+            margin-left: 10px;
+            font-size: 1rem;
         }
         .extra-name { font-weight: 500; }
         .extra-price { color: var(--primary); font-weight: 700; }
@@ -572,15 +607,41 @@
         @media (max-width: 850px) {
             .product-modal {
                 grid-template-columns: 1fr;
+                max-height: 95vh;
             }
             .modal-image {
-                height: 300px;
+                height: 250px;
             }
             .modal-details {
                 padding: 1.5rem;
+                max-height: calc(95vh - 250px);
             }
             .modal-title {
                 font-size: 1.8rem;
+            }
+            .modal-price {
+                font-size: 1.5rem;
+            }
+            .extras-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .extras-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-details {
+                padding: 1.2rem;
+            }
+            .modal-title {
+                font-size: 1.6rem;
+            }
+            .modal-close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -739,6 +800,9 @@
         const catalogItemsPerPage = 12;
         let searchQuery = '';
         const EXTRAS_CATEGORY_NAME = 'EXTRAS';
+        const BEBIDAS_CATEGORY_NAME = 'BEBIDAS';
+        let extrasCatId = null;
+        let bebidasCatId = null;
 
         let currentSlide = 0;
         let slideInterval;
@@ -867,12 +931,25 @@
                     const updated = payload.new;
                     const idx = products.findIndex(p => p.id === updated.id);
                     if (idx !== -1) {
-                        // Actualizar disponibilidad localmente
-                        products[idx].is_available = updated.is_available;
-                        products[idx].price = updated.price;
-                        products[idx].name = updated.name;
-                        products[idx].description = updated.description;
+                        // Preservar la información de categorías ya que el payload de realtime no la incluye
+                        const oldCategories = products[idx].categories;
+                        products[idx] = { ...updated, categories: oldCategories };
+                        
                         renderProducts();
+                        
+                        // Si el modal está abierto para este producto, refrescarlo
+                        const modalOverlay = document.getElementById('product-modal-overlay');
+                        if (modalOverlay.classList.contains('active')) {
+                            const currentModalId = document.getElementById('modal-whatsapp-btn').dataset.productId;
+                            // Si el producto actualizado es el que está en el modal O es un extra (porque los extras afectan a todos los modales)
+                            const isExtra = Array.isArray(oldCategories) ? 
+                                oldCategories[0]?.name === EXTRAS_CATEGORY_NAME : 
+                                oldCategories?.name === EXTRAS_CATEGORY_NAME;
+                                
+                            if (currentModalId === updated.id || isExtra) {
+                                openProductModal(currentModalId); // Re-abrir con datos frescos
+                            }
+                        }
                     }
                 })
                 .subscribe();
@@ -880,18 +957,31 @@
 
         async function loadCategories() {
             const { data } = await supabaseClient.from('categories').select('*').order('name', { ascending: true });
-            // Filtrar la categoría EXTRAS de la lista de filtros
-            categories = (data || []).filter(cat => cat.name !== EXTRAS_CATEGORY_NAME);
+            categories = data || [];
+            
+            // Identificar IDs globales
+            const extrasCategory = categories.find(c => c.name.trim().toUpperCase() === EXTRAS_CATEGORY_NAME);
+            const bebidasCategory = categories.find(c => c.name.trim().toUpperCase() === BEBIDAS_CATEGORY_NAME);
+            extrasCatId = extrasCategory ? extrasCategory.id : null;
+            bebidasCatId = bebidasCategory ? bebidasCategory.id : null;
+
+            // Solo mostramos en los filtros las categorías que NO sean EXTRAS ni BEBIDAS
+            const filterCategories = categories.filter(cat => 
+                cat.name !== EXTRAS_CATEGORY_NAME && 
+                cat.name !== BEBIDAS_CATEGORY_NAME
+            );
             
             const container = document.getElementById('category-filters');
-            container.innerHTML = '<div class="filter-chip active" onclick="filterByCategory(\'all\', this)">Todos</div>';
-            categories.forEach(cat => {
-                const chip = document.createElement('div');
-                chip.className = 'filter-chip';
-                chip.textContent = cat.name;
-                chip.onclick = () => filterByCategory(cat.id, chip);
-                container.appendChild(chip);
-            });
+            if (container) {
+                container.innerHTML = '<div class="filter-chip active" onclick="filterByCategory(\'all\', this)">Todos</div>';
+                filterCategories.forEach(cat => {
+                    const chip = document.createElement('div');
+                    chip.className = 'filter-chip';
+                    chip.textContent = cat.name;
+                    chip.onclick = () => filterByCategory(cat.id, chip);
+                    container.appendChild(chip);
+                });
+            }
         }
 
         async function loadProducts() {
@@ -975,22 +1065,21 @@
                 return;
             }
 
-            // Separar productos normales de los extras
-            const normalProducts = products.filter(p => {
-                let catName = '';
-                if (p.categories) {
-                    catName = Array.isArray(p.categories) ? (p.categories[0]?.name || '') : (p.categories.name || '');
-                }
-                return catName !== EXTRAS_CATEGORY_NAME;
+            // Identificar IDs de categorías que se tratarán como extras
+            const extrasCategory = categories.find(c => c.name.trim().toUpperCase() === EXTRAS_CATEGORY_NAME);
+            const bebidasCategory = categories.find(c => c.name.trim().toUpperCase() === 'BEBIDAS');
+            
+            const extrasCatId = extrasCategory ? extrasCategory.id : null;
+            const bebidasCatId = bebidasCategory ? bebidasCategory.id : null;
+
+            // Separar productos normales de los extras y bebidas
+            extraProducts = products.filter(p => {
+                const isExtra = extrasCatId && String(p.category_id) === String(extrasCatId);
+                const isBebida = bebidasCatId && String(p.category_id) === String(bebidasCatId);
+                return isExtra || isBebida;
             });
             
-            extraProducts = products.filter(p => {
-                let catName = '';
-                if (p.categories) {
-                    catName = Array.isArray(p.categories) ? (p.categories[0]?.name || '') : (p.categories.name || '');
-                }
-                return catName === EXTRAS_CATEGORY_NAME;
-            });
+            const normalProducts = products.filter(p => !extraProducts.includes(p));
 
             const filtered = normalProducts.filter(p => {
                 const normalizedSearch = normalizeText(searchQuery);
@@ -1127,13 +1216,19 @@
             const extrasGrid = document.getElementById('modal-extras-grid');
             const extrasSection = document.getElementById('modal-extras-section');
             
-            // Solo mostramos extras que estén disponibles
-            const availableExtras = extraProducts.filter(e => e.is_available !== false);
+            // Limpiar selección previa
+            currentlySelectedExtras = [];
+
+            // Si el producto ES una bebida, NO mostramos la sección de extras (salsas)
+            const isBebida = bebidasCatId && String(product.category_id) === String(bebidasCatId);
             
-            if (availableExtras.length > 0) {
+            if (!isBebida && extraProducts.length > 0) {
                 extrasSection.style.display = 'block';
+                // Solo mostramos extras que estén disponibles
+                const availableExtras = extraProducts.filter(e => e.is_available !== false);
+                
                 extrasGrid.innerHTML = availableExtras.map(extra => `
-                    <div class="extra-item">
+                    <div class="extra-item" onclick="toggleExtra(this, '${extra.name.replace(/'/g, "\\'")}')" data-name="${extra.name}">
                         <span class="extra-name">${extra.name}</span>
                         <span class="extra-price">+${parseFloat(extra.price || 0).toFixed(2)}€</span>
                     </div>
@@ -1148,6 +1243,65 @@
             
             // Set data for WhatsApp order
             document.getElementById('modal-whatsapp-btn').dataset.productName = product.name;
+            document.getElementById('modal-whatsapp-btn').dataset.productId = product.id;
+        }
+
+        let currentlySelectedExtras = [];
+
+        function toggleExtra(element, name) {
+            element.classList.toggle('selected');
+            if (element.classList.contains('selected')) {
+                currentlySelectedExtras.push(name);
+            } else {
+                currentlySelectedExtras = currentlySelectedExtras.filter(n => n !== name);
+            }
+        }
+
+        function orderFromModal(event) {
+            if (event) event.preventDefault();
+            const btn = document.getElementById('modal-whatsapp-btn');
+            const productName = btn.dataset.productName;
+            
+            // Usar la variable global que se actualiza al hacer clic en los items
+            const selectedItems = currentlySelectedExtras;
+            
+            // Categorización
+            const sauceKeywords = ['SALSA', 'MAYONESA', 'MOSTAZA', 'KETCHUP', 'MOJO', 'GAUCHA', 'ALIOLI', 'BRAVA', 'YOGURT'];
+            const salsas = [];
+            const otrosExtras = [];
+            
+            selectedItems.forEach(item => {
+                const upperItem = item.toUpperCase();
+                if (sauceKeywords.some(kw => upperItem.includes(kw))) {
+                    salsas.push(item);
+                } else {
+                    otrosExtras.push(item);
+                }
+            });
+            
+            // Construir el mensaje de WhatsApp
+            let message = `Hola! Me gustaría pedir un *${productName}*`;
+            
+            if (otrosExtras.length > 0) {
+                message += `%0A*Extras:* _${otrosExtras.join(', ')}_`;
+            }
+            if (salsas.length > 0) {
+                message += `%0A*Salsas:* _${salsas.join(', ')}_`;
+            }
+            
+            // Abrir directamente WhatsApp para evitar pasos intermedios
+            const phoneNumber = '34604885296';
+            const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+            
+            // Abrir en popup centrado como en whatsapp.js
+            const width = 800;
+            const height = 600;
+            const left = (window.innerWidth / 2) - (width / 2);
+            const top = (window.innerHeight / 2) - (height / 2);
+            
+            window.open(url, 'whatsapp_popup', `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`);
+            
+            closeProductModal();
         }
 
         function closeProductModal() {
