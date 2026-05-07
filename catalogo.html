@@ -532,19 +532,29 @@
             font-size: 1.05rem;
         }
         .modal-section-title {
+            font-family: 'Inter', sans-serif;
             font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: var(--secondary);
+            gap: 0.8rem;
+        }
+        .modal-section-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin: 1.5rem 0 0.8rem 0;
+            font-weight: 800;
         }
         .extras-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.8rem;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem;
         }
         .extra-item {
             display: flex;
@@ -768,8 +778,8 @@
                 
                 <div id="modal-extras-section">
                     <h4 class="modal-section-title"><i class="fas fa-plus-circle"></i> Personaliza tu pedido</h4>
-                    <div id="modal-extras-grid" class="extras-grid">
-                        <!-- Extras will be loaded here -->
+                    <div id="modal-extras-grid">
+                        <!-- Categorized extras will be loaded here -->
                     </div>
                 </div>
 
@@ -889,6 +899,10 @@
                     if (el) {
                         if (el.tagName === 'IMG') el.src = s.value;
                         else el.textContent = s.value;
+                    }
+
+                    if (s.key === 'contact_phone') {
+                        window.GLOBAL_WHATSAPP_NUMBER = s.value;
                     }
 
                     if (s.key === 'site_favicon') {
@@ -1219,22 +1233,53 @@
             // Limpiar selección previa
             currentlySelectedExtras = [];
 
-            // Si el producto ES una bebida, NO mostramos la sección de extras (salsas)
-            const isBebida = bebidasCatId && String(product.category_id) === String(bebidasCatId);
+            // Categorización para el modal
+            const sauceKeywords = ['SALSA', 'MAYONESA', 'MOSTAZA', 'KETCHUP', 'MOJO', 'GAUCHA', 'ALIOLI', 'BRAVA', 'YOGURT'];
+            const availableExtras = extraProducts.filter(e => e.is_available !== false);
             
-            if (!isBebida && extraProducts.length > 0) {
+            const isBebidaProduct = bebidasCatId && String(product.category_id) === String(bebidasCatId);
+            
+            if (!isBebidaProduct && availableExtras.length > 0) {
                 extrasSection.style.display = 'block';
-                // Solo mostramos extras que estén disponibles
-                const availableExtras = extraProducts.filter(e => e.is_available !== false);
                 
-                extrasGrid.innerHTML = availableExtras.map(extra => `
+                const listSalsas = availableExtras.filter(e => {
+                    const isExtraCat = extrasCatId && String(e.category_id) === String(extrasCatId);
+                    return isExtraCat && sauceKeywords.some(kw => e.name.toUpperCase().includes(kw));
+                });
+                
+                const listOtros = availableExtras.filter(e => {
+                    const isExtraCat = extrasCatId && String(e.category_id) === String(extrasCatId);
+                    return isExtraCat && !sauceKeywords.some(kw => e.name.toUpperCase().includes(kw));
+                });
+                
+                const listBebidas = availableExtras.filter(e => 
+                    bebidasCatId && String(e.category_id) === String(bebidasCatId)
+                );
+
+                let html = '';
+                
+                if (listOtros.length > 0) {
+                    html += `<h4 class="modal-section-subtitle">EXTRAS</h4><div class="extras-grid">${listOtros.map(e => renderExtraItem(e)).join('')}</div>`;
+                }
+                if (listSalsas.length > 0) {
+                    html += `<h4 class="modal-section-subtitle">SALSAS</h4><div class="extras-grid">${listSalsas.map(e => renderExtraItem(e)).join('')}</div>`;
+                }
+                if (listBebidas.length > 0) {
+                    html += `<h4 class="modal-section-subtitle">BEBIDA</h4><div class="extras-grid">${listBebidas.map(e => renderExtraItem(e)).join('')}</div>`;
+                }
+                
+                extrasGrid.innerHTML = html;
+            } else {
+                extrasSection.style.display = 'none';
+            }
+
+            function renderExtraItem(extra) {
+                return `
                     <div class="extra-item" onclick="toggleExtra(this, '${extra.name.replace(/'/g, "\\'")}')" data-name="${extra.name}">
                         <span class="extra-name">${extra.name}</span>
                         <span class="extra-price">+${parseFloat(extra.price || 0).toFixed(2)}€</span>
                     </div>
-                `).join('');
-            } else {
-                extrasSection.style.display = 'none';
+                `;
             }
 
             // Modal overlay
@@ -1290,8 +1335,8 @@
             }
             
             // Abrir directamente WhatsApp para evitar pasos intermedios
-            const phoneNumber = '34604885296';
-            const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+            const phoneNumber = window.GLOBAL_WHATSAPP_NUMBER || '34604885296';
+            const url = `https://api.whatsapp.com/send?phone=${phoneNumber.replace(/\s+/g, '')}&text=${message}`;
             
             // Abrir en popup centrado como en whatsapp.js
             const width = 800;

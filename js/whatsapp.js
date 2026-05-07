@@ -44,8 +44,9 @@ function sendWhatsAppMessage() {
     const message = input.value.trim();
     
     if (message) {
-        const phoneNumber = '34604885296'; // Número de la cafetería
-        const url = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        // Usar el número global si existe, si no el por defecto
+        const phoneNumber = window.GLOBAL_WHATSAPP_NUMBER || '34604885296'; 
+        const url = `https://api.whatsapp.com/send?phone=${phoneNumber.replace(/\s+/g, '')}&text=${encodeURIComponent(message)}`;
         
         // Abrir en una ventana emergente (popup) flotante centrada
         const width = 800;
