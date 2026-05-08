@@ -112,9 +112,120 @@
         .back-link-footer:hover {
             color: var(--primary);
         }
+
+        .forgot-password-link {
+            display: block;
+            text-align: right;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .forgot-password-link:hover {
+            color: var(--primary);
+        }
+
+        #reset-request-form, #update-password-form {
+            display: none;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 450px;
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: auto;
+            border-left: 5px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .toast-success { border-left-color: #10b981; }
+        .toast-success .toast-icon { background: #ecfdf5; color: #10b981; }
+
+        .toast-error { border-left-color: #ef4444; }
+        .toast-error .toast-icon { background: #fef2f2; color: #ef4444; }
+
+        .toast-info { border-left-color: var(--primary); }
+        .toast-info .toast-icon { background: #fff7ed; color: var(--primary); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.1rem;
+        }
+
+        .toast-msg {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <a href="index.html" class="back-home-btn">
         <i class="fas fa-arrow-left"></i> Volver al inicio
@@ -135,13 +246,35 @@
                     <label>Contraseña</label>
                     <input type="password" id="password" required placeholder="••••••••">
                 </div>
+                <a href="#" id="forgot-password-link" class="forgot-password-link">¿Has olvidado tu contraseña?</a>
                 <button type="submit" class="btn btn-primary login-btn" id="submit-btn">Entrar</button>
                 <p id="error-msg"></p>
             </form>
 
-            <div class="toggle-auth" style="margin-top: 2rem; font-style: italic; font-size: 0.8rem;">
-                Acceso restringido solo a personal autorizado.
-            </div>
+            <form id="reset-request-form">
+                <div class="form-group">
+                    <label>Email Corporativo</label>
+                    <input type="email" id="reset-email" required placeholder="empleado@iesamachado.org">
+                </div>
+                <div id="reset-alert" class="alert"></div>
+                <button type="submit" class="btn btn-primary login-btn" id="reset-submit-btn">Enviar enlace de recuperación</button>
+                <div class="toggle-auth">
+                    <span id="back-to-login">Volver al inicio de sesión</span>
+                </div>
+            </form>
+
+            <form id="update-password-form">
+                <div class="form-group">
+                    <label>Nueva Contraseña</label>
+                    <input type="password" id="new-password" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" id="confirm-password" required placeholder="••••••••" minlength="6">
+                </div>
+                <div id="update-alert" class="alert"></div>
+                <button type="submit" class="btn btn-primary login-btn" id="update-submit-btn">Actualizar Contraseña</button>
+            </form>
 
             <a href="index.html" class="back-link-footer">
                 <i class="fas fa-house"></i> Ir a la página principal
@@ -155,7 +288,52 @@
         const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: 'fa-check', error: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            const defaultTitles = { success: 'Éxito', error: 'Error', info: 'Aviso' };
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || defaultTitles[type]}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            toast.offsetHeight;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // UI Toggles
+        const authForm = document.getElementById('auth-form');
+        const resetRequestForm = document.getElementById('reset-request-form');
+        const updatePasswordForm = document.getElementById('update-password-form');
+        const authTitle = document.getElementById('auth-title');
+        const authDesc = document.getElementById('auth-desc');
+
+        document.getElementById('forgot-password-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            authForm.style.display = 'none';
+            resetRequestForm.style.display = 'block';
+            authTitle.textContent = 'Recuperar Contraseña';
+            authDesc.textContent = 'Introduce tu email para recibir un enlace.';
+        });
+
+        document.getElementById('back-to-login').addEventListener('click', () => {
+            authForm.style.display = 'block';
+            resetRequestForm.style.display = 'none';
+            authTitle.textContent = 'Acceso Staff';
+            authDesc.textContent = 'Solo para empleados autorizados.';
+        });
+
+        // Login Logic
+        authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -164,15 +342,13 @@
             
             submitBtn.disabled = true;
             submitBtn.textContent = 'Verificando...';
+            errorMsg.style.display = 'none';
             
             try {
-                // Autenticar con Supabase
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                
                 if (error) throw error;
 
                 if (data.user) {
-                    // Verificar si el usuario está en la lista de administradores autorizados
                     const { data: adminData, error: adminError } = await supabaseClient
                         .from('admin_management')
                         .select('id')
@@ -180,7 +356,6 @@
                         .single();
 
                     if (adminError || !adminData) {
-                        // Si no es admin, cerramos la sesión inmediatamente
                         await supabaseClient.auth.signOut();
                         errorMsg.textContent = 'Acceso denegado. No tienes permisos de administrador.';
                         errorMsg.style.display = 'block';
@@ -188,8 +363,6 @@
                         submitBtn.textContent = 'Entrar';
                         return;
                     }
-
-                    // Acceso concedido
                     window.location.href = 'gestion-interna.html';
                 }
             } catch (err) {
@@ -198,6 +371,88 @@
                 errorMsg.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Entrar';
+            }
+        });
+
+        // Reset Request Logic
+        resetRequestForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value.trim();
+            const alert = document.getElementById('reset-alert');
+            const submitBtn = document.getElementById('reset-submit-btn');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            alert.style.display = 'none';
+
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname,
+                });
+                if (error) throw error;
+
+                alert.className = 'alert alert-success';
+                alert.textContent = 'Enlace enviado. Revisa tu correo.';
+                alert.style.display = 'block';
+                showToast('Enlace enviado correctamente.', 'success');
+                submitBtn.textContent = 'Enviado';
+            } catch (err) {
+                alert.className = 'alert alert-error';
+                alert.textContent = 'Error: ' + err.message;
+                alert.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar enlace de recuperación';
+            }
+        });
+
+        // Update Password Logic
+        updatePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const alert = document.getElementById('update-alert');
+            const submitBtn = document.getElementById('update-submit-btn');
+
+            if (newPassword !== confirmPassword) {
+                alert.className = 'alert alert-error';
+                alert.textContent = 'Las contraseñas no coinciden.';
+                alert.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Actualizando...';
+            alert.style.display = 'none';
+
+            try {
+                const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
+                if (error) throw error;
+
+                alert.className = 'alert alert-success';
+                alert.textContent = 'Contraseña actualizada con éxito. Redirigiendo...';
+                alert.style.display = 'block';
+                showToast('Contraseña actualizada con éxito.', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'gestion-interna.html';
+                }, 2000);
+            } catch (err) {
+                alert.className = 'alert alert-error';
+                alert.textContent = 'Error: ' + err.message;
+                alert.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Actualizar Contraseña';
+            }
+        });
+
+        // Listen for recovery event
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                authForm.style.display = 'none';
+                resetRequestForm.style.display = 'none';
+                updatePasswordForm.style.display = 'block';
+                authTitle.textContent = 'Nueva Contraseña';
+                authDesc.textContent = 'Establece tu nueva contraseña de acceso.';
             }
         });
     </script>
