@@ -673,10 +673,82 @@
                 flex: none;
             }
         }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 450px;
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: auto;
+            border-left: 5px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .toast-success { border-left-color: #10b981; }
+        .toast-success .toast-icon { background: #ecfdf5; color: #10b981; }
+
+        .toast-error { border-left-color: #ef4444; }
+        .toast-error .toast-icon { background: #fef2f2; color: #ef4444; }
+
+        .toast-info { border-left-color: var(--primary); }
+        .toast-info .toast-icon { background: #fff7ed; color: var(--primary); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.1rem;
+        }
+
+        .toast-msg {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
     <!-- Auth loading overlay -->
     <div id="auth-loading">
         <div class="auth-spinner"></div>
@@ -1319,6 +1391,46 @@
             });
         }
 
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'fa-check',
+                error: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            const defaultTitles = {
+                success: 'Éxito',
+                error: 'Error',
+                info: 'Aviso'
+            };
+
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas ${icons[type]}"></i>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || defaultTitles[type]}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            
+            // Force reflow
+            toast.offsetHeight;
+            
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
         async function checkAuth() {
             try {
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -1524,20 +1636,21 @@
         async function deleteAdmin(id, email) {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (user.id === id) {
-                alert('No puedes eliminarte a ti mismo.');
+                showToast('No puedes eliminarte a ti mismo.', 'error');
                 return;
             }
 
             if (adminUsers.length <= 1) {
-                alert('No puedes eliminar al último administrador. Debe haber al menos uno para gestionar el sistema.');
+                showToast('No puedes eliminar al último administrador. Debe haber al menos uno para gestionar el sistema.', 'error');
                 return;
             }
 
             if (confirm(`¿Seguro que quieres quitar el acceso a ${email}? Esta acción es irreversible.`)) {
                 const { error } = await supabaseClient.rpc('delete_admin_user', { target_user_id: id });
                 if (error) {
-                    alert('Error: ' + error.message);
+                    showToast(error.message, 'error');
                 } else {
+                    showToast(`Acceso revocado a ${email}`, 'success');
                     loadUsers();
                 }
             }
@@ -1558,7 +1671,7 @@
             // Validar formato de email
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email)) {
-                alert('Por favor, introduce un correo electrónico válido y real.');
+                showToast('Por favor, introduce un correo electrónico válido y real.', 'error');
                 btn.disabled = false;
                 btn.textContent = originalText;
                 return;
@@ -1572,7 +1685,7 @@
                         new_password: password
                     });
                     if (error) throw error;
-                    alert('Contraseña actualizada correctamente.');
+                    showToast('Contraseña actualizada correctamente.', 'success');
                 } else {
                     // Create new user
                     const { error } = await supabaseClient.rpc('create_new_admin', {
@@ -1580,13 +1693,13 @@
                         admin_password: password
                     });
                     if (error) throw error;
-                    alert('Usuario creado correctamente.');
+                    showToast('Usuario creado correctamente.', 'success');
                 }
                 closeUserModal();
                 loadUsers();
             } catch (err) {
                 console.error(err);
-                alert('Error: ' + err.message);
+                showToast(err.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = originalText;
@@ -1680,7 +1793,7 @@
                 clearFileNames();
             } catch (error) {
                 console.error('Error saving settings:', error);
-                alert('Error al guardar: ' + error.message);
+                showToast('Error al guardar: ' + error.message, 'error');
                 btn.textContent = 'Error';
             } finally {
                 btn.disabled = false;
@@ -1982,11 +2095,11 @@
         }
 
         async function emptyTrash() {
-            if (trashProducts.length === 0) { alert('La papelera ya está vacía.'); return; }
+            if (trashProducts.length === 0) { showToast('La papelera ya está vacía.', 'info'); return; }
             if (!confirm(`¿Eliminar DEFINITIVAMENTE los ${trashProducts.length} productos de la papelera? Esta acción no se puede deshacer.`)) return;
             const ids = trashProducts.map(p => p.id);
             const { error } = await supabaseClient.from('products').delete().in('id', ids);
-            if (error) { alert('Error al vaciar la papelera: ' + error.message); return; }
+            if (error) { showToast('Error al vaciar la papelera: ' + error.message, 'error'); return; }
             trashProducts = [];
             trashCurrentPage = 1;
             renderTrash();
@@ -1999,14 +2112,14 @@
                 check.style.opacity = '1';
                 setTimeout(() => check.style.opacity = '0', 2000);
             } else {
-                alert('Error al guardar: ' + error.message);
+                showToast('Error al guardar: ' + error.message, 'error');
             }
         }
 
         async function toggleAvailability(id, currentState) {
             const { error } = await supabaseClient.from('products').update({ is_available: !currentState }).eq('id', id);
             if (error) {
-                alert('Error al actualizar disponibilidad: ' + error.message);
+                showToast('Error al actualizar disponibilidad: ' + error.message, 'error');
             }
             loadProducts();
         }
@@ -2102,7 +2215,7 @@
                 closeModal();
                 loadProducts();
             } catch (error) {
-                alert(error.message);
+                showToast(error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Guardar Producto';
@@ -2304,7 +2417,7 @@
                 closeAnnModal();
                 loadAnnouncements();
             } catch (err) {
-                alert(err.message);
+                showToast(err.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Guardar Anuncio';
@@ -2505,7 +2618,7 @@
                 })).filter(opt => opt.option_text.trim() !== '');
 
                 if (options.length < 2) {
-                    alert('Debes añadir al menos 2 opciones.');
+                    showToast('Debes añadir al menos 2 opciones.', 'error');
                     return;
                 }
 
@@ -2556,7 +2669,7 @@
                 loadPolls();
             } catch (err) {
                 console.error(err);
-                alert('Error al guardar el cuestionario: ' + err.message);
+                showToast('Error al guardar el cuestionario: ' + err.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Guardar Cuestionario';
@@ -2623,7 +2736,7 @@
                 }
 
                 if (headerRowIndex === -1) {
-                    alert('No se pudo detectar la fila de encabezados. Asegúrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".');
+                    showToast('No se pudo detectar la fila de encabezados. Asegúrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".', 'error');
                     event.target.value = '';
                     return;
                 }
@@ -2782,7 +2895,7 @@
                         console.error('Error procesando fila:', err);
                         errorCount++;
                         if (errorCount === 1) {
-                            alert(`🚨 ERROR CRÍTICO DETECTADO 🚨\n\n${firstErrorDetails || err.message || JSON.stringify(err)}`);
+                            showToast(`🚨 ERROR CRÍTICO DETECTADO 🚨\n\n${err.message || 'Error desconocido'}`, 'error');
                             break;
                         }
                     }
@@ -2790,10 +2903,10 @@
 
                 if (successCount === 0 && skipCount > 0) {
                     const detectedHeaders = Object.keys(jsonData[0] || {}).join(', ');
-                    alert(`AVISO: Se detectaron ${jsonData.length} filas pero no se pudo procesar ninguna.\n\nEncabezados detectados:\n[${detectedHeaders}]\n\nAsegúrate de que una columna se llame "NOMBRE".`);
+                    showToast(`AVISO: Se detectaron ${jsonData.length} filas pero no se pudo procesar ninguna. Verifica los encabezados.`, 'info');
                 } else {
                     let msg = `Proceso finalizado:\n- Éxitos: ${successCount}\n- Errores: ${errorCount}\n- Filas omitidas: ${skipCount}`;
-                    alert(msg);
+                    showToast(msg, errorCount > 0 ? 'error' : 'success');
                 }
                 loadProducts();
                 event.target.value = '';

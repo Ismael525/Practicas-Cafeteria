@@ -19,8 +19,80 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="index.css">
+    <style>
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 450px;
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: auto;
+            border-left: 5px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .toast-success { border-left-color: #10b981; }
+        .toast-success .toast-icon { background: #ecfdf5; color: #10b981; }
+
+        .toast-error { border-left-color: #ef4444; }
+        .toast-error .toast-icon { background: #fef2f2; color: #ef4444; }
+
+        .toast-info { border-left-color: var(--primary); }
+        .toast-info .toast-icon { background: #fff7ed; color: var(--primary); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.1rem;
+        }
+
+        .toast-msg {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <nav id="main-nav">
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
@@ -167,6 +239,28 @@
         const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: 'fa-check', error: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            const defaultTitles = { success: 'Éxito', error: 'Error', info: 'Aviso' };
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || defaultTitles[type]}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            toast.offsetHeight;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
 
         async function loadSettings() {
             const { data } = await supabaseClient.from('site_settings').select('key, value');
@@ -317,9 +411,10 @@
                 // Update local data for immediate result display
                 const option = activePoll.poll_options.find(o => o.id === selectedOptionId);
                 if (option) option.votes = (option.votes || 0) + 1;
+                showToast('¡Voto registrado con éxito!', 'success');
                 showResults();
             } else {
-                alert('Error al votar. Inténtalo de nuevo.');
+                showToast('Error al votar. Inténtalo de nuevo.', 'error');
                 btn.disabled = false;
                 btn.textContent = 'Votar ahora';
             }
@@ -388,6 +483,7 @@
                     document.getElementById('vote-btn').disabled = true;
                     document.getElementById('vote-btn').textContent = 'Votar ahora';
                     renderOptions();
+                    showToast('Voto retirado. Ya puedes votar de nuevo.', 'info');
                 } else {
                     console.error('Supabase RPC error:', error);
                     throw error;
@@ -395,7 +491,7 @@
             } catch (err) {
                 changeBtn.disabled = false;
                 changeBtn.innerHTML = originalContent;
-                alert('Error al retirar el voto: ' + (err.message || 'Error desconocido'));
+                showToast(err.message || 'Error desconocido', 'error', 'Error al retirar voto');
             }
         }
 
