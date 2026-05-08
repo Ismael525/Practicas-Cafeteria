@@ -200,6 +200,12 @@
             max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            animation: confirmZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes confirmZoom {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .confirm-icon {
@@ -212,6 +218,12 @@
             display: flex;
             gap: 1rem;
             margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .confirm-btns .btn {
+            flex: 1;
+            min-width: 120px;
         }
 
         .btn-cancel {
@@ -222,6 +234,13 @@
         .btn-danger {
             background: #ef4444;
             color: white;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
         }
 
         .form-group label {
@@ -607,10 +626,11 @@
 
         .admin-card-actions {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.6rem;
             margin-top: 0.5rem;
             padding-top: 1rem;
             border-top: 1px solid #f5f5f4;
+            flex-wrap: wrap;
         }
 
         .admin-card-actions button {
@@ -1264,10 +1284,9 @@
     <!-- Custom Confirmation Modal -->
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-content">
-            <div class="confirm-icon"><i class="fas fa-exclamation-circle"></i></div>
-            <h3 style="margin-bottom: 1rem;">¿Estás seguro?</h3>
-            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción moverá el producto a la
-                papelera.</p>
+            <div class="confirm-icon" id="confirm-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <h3 id="confirm-title" style="margin-bottom: 1rem;">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
             <div class="confirm-btns">
                 <button onclick="closeConfirm()" class="btn btn-primary btn-cancel full">Cancelar</button>
                 <button id="confirm-yes-btn" class="btn btn-danger full">Sí, borrar</button>
@@ -1645,15 +1664,22 @@
                 return;
             }
 
-            if (confirm(`¿Seguro que quieres quitar el acceso a ${email}? Esta acción es irreversible.`)) {
-                const { error } = await supabaseClient.rpc('delete_admin_user', { target_user_id: id });
-                if (error) {
-                    showToast(error.message, 'error');
-                } else {
-                    showToast(`Acceso revocado a ${email}`, 'success');
-                    loadUsers();
+            showConfirm({
+                title: 'Revocar Acceso',
+                message: `¿Seguro que quieres quitar el acceso a ${email}? Esta acción es irreversible.`,
+                btnText: 'Quitar Acceso',
+                btnClass: 'btn-danger',
+                icon: 'user-slash',
+                callback: async () => {
+                    const { error } = await supabaseClient.rpc('delete_admin_user', { target_user_id: id });
+                    if (error) {
+                        showToast(error.message, 'error');
+                    } else {
+                        showToast(`Acceso revocado a ${email}`, 'success');
+                        loadUsers();
+                    }
                 }
-            }
+            });
         }
 
         document.getElementById('user-form').addEventListener('submit', async (e) => {
@@ -2222,46 +2248,88 @@
             }
         });
 
-        // Confirmation Modal Logic
-        let currentDeleteId = null;
-        let isPermanent = false;
+        // --- UNIFIED CONFIRMATION MODAL LOGIC ---
+        let confirmCallback = null;
 
-        function askDelete(id) {
-            const p = activeProducts.find(x => x.id === id);
-            if (!p) return;
-            currentDeleteId = id;
-            isPermanent = false;
-            document.getElementById('confirm-msg').textContent = `¿Quieres mover "${p.name}" a la papelera? Podrás recuperarlo después.`;
-            document.getElementById('confirm-yes-btn').className = 'btn btn-danger full';
-            document.getElementById('confirm-yes-btn').textContent = 'Mover a Papelera';
-            document.getElementById('confirm-modal').style.display = 'flex';
-        }
+        function showConfirm({ title, message, btnText, btnClass, icon, callback }) {
+            document.getElementById('confirm-title').textContent = title || '¿Estás seguro?';
+            document.getElementById('confirm-msg').textContent = message || 'Esta acción no se puede deshacer.';
+            
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            yesBtn.textContent = btnText || 'Confirmar';
+            yesBtn.className = `btn ${btnClass || 'btn-danger'} full`;
+            
+            const iconContainer = document.getElementById('confirm-icon');
+            iconContainer.innerHTML = `<i class="fas fa-${icon || 'exclamation-circle'}"></i>`;
+            iconContainer.style.color = btnClass === 'btn-primary' ? 'var(--primary)' : '#ef4444';
 
-        function askPermanentDelete(id) {
-            const p = trashProducts.find(x => x.id === id);
-            if (!p) return;
-            currentDeleteId = id;
-            isPermanent = true;
-            document.getElementById('confirm-msg').textContent = `¿Estás seguro de eliminar "${p.name}" permanentemente? No hay vuelta atrás.`;
-            document.getElementById('confirm-yes-btn').className = 'btn btn-danger full';
-            document.getElementById('confirm-yes-btn').textContent = 'Eliminar para siempre';
+            confirmCallback = callback;
             document.getElementById('confirm-modal').style.display = 'flex';
         }
 
         function closeConfirm() {
             document.getElementById('confirm-modal').style.display = 'none';
+            confirmCallback = null;
         }
 
         document.getElementById('confirm-yes-btn').onclick = async () => {
-            if (isPermanent) {
-                await supabaseClient.from('products').delete().eq('id', currentDeleteId);
-            } else {
-                await supabaseClient.from('products').update({ deleted_at: new Date().toISOString() }).eq('id', currentDeleteId);
+            const btn = document.getElementById('confirm-yes-btn');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+
+            if (confirmCallback) {
+                try {
+                    await confirmCallback();
+                } catch (err) {
+                    showToast(err.message, 'error');
+                }
             }
+            
+            btn.disabled = false;
+            btn.textContent = originalText;
             closeConfirm();
-            loadProducts();
-            loadTrash();
         };
+
+        // Product Deletion Wrappers
+        function askDelete(id) {
+            const p = activeProducts.find(x => x.id === id);
+            if (!p) return;
+            
+            showConfirm({
+                title: 'Mover a Papelera',
+                message: `¿Quieres mover "${p.name}" a la papelera? Podrás recuperarlo después.`,
+                btnText: 'Mover a Papelera',
+                btnClass: 'btn-danger',
+                icon: 'trash-alt',
+                callback: async () => {
+                    const { error } = await supabaseClient.from('products').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+                    if (error) throw error;
+                    loadProducts();
+                    loadTrash();
+                    showToast('Producto movido a la papelera', 'success');
+                }
+            });
+        }
+
+        function askPermanentDelete(id) {
+            const p = trashProducts.find(x => x.id === id);
+            if (!p) return;
+            
+            showConfirm({
+                title: 'Eliminar Permanentemente',
+                message: `¿Estás seguro de eliminar "${p.name}" para siempre? Esta acción es irreversible.`,
+                btnText: 'Eliminar Definitivamente',
+                btnClass: 'btn-danger',
+                icon: 'fire-alt',
+                callback: async () => {
+                    const { error } = await supabaseClient.from('products').delete().eq('id', id);
+                    if (error) throw error;
+                    loadTrash();
+                    showToast('Producto eliminado permanentemente', 'success');
+                }
+            });
+        }
 
         async function restoreProduct(id) {
             await supabaseClient.from('products').update({ deleted_at: null }).eq('id', id);
@@ -2430,10 +2498,22 @@
         }
 
         async function deleteAnnouncement(id) {
-            if (confirm('¿Seguro que quieres eliminar este anuncio?')) {
-                await supabaseClient.from('announcements').delete().eq('id', id);
-                loadAnnouncements();
-            }
+            const ann = currentAnnouncements.find(x => x.id === id);
+            const shortText = ann && ann.text ? (ann.text.substring(0, 30) + (ann.text.length > 30 ? '...' : '')) : 'este anuncio';
+            
+            showConfirm({
+                title: 'Eliminar Anuncio',
+                message: `¿Estás seguro de que quieres eliminar "${shortText}"?`,
+                btnText: 'Eliminar Anuncio',
+                btnClass: 'btn-danger',
+                icon: 'bullhorn',
+                callback: async () => {
+                    const { error } = await supabaseClient.from('announcements').delete().eq('id', id);
+                    if (error) throw error;
+                    loadAnnouncements();
+                    showToast('Anuncio eliminado correctamente', 'success');
+                }
+            });
         }
 
         // --- POLLS LOGIC ---
@@ -2508,6 +2588,9 @@
                         </button>
                         <button class="btn" onclick="togglePollStatus('${p.id}', ${p.is_active})" style="background: ${p.is_active ? '#fef2f2' : '#ecfdf5'}; color: ${p.is_active ? '#dc2626' : '#059669'}; border: none;">
                             <i class="fas fa-${p.is_active ? 'pause' : 'play'}"></i> ${p.is_active ? 'Pausar' : 'Activar'}
+                        </button>
+                        <button class="btn" onclick="deletePoll('${p.id}')" style="background: #fef2f2; color: #ef4444; border: none;">
+                            <i class="fas fa-trash"></i> Borrar
                         </button>
                     </div>
                 </div>
@@ -2686,10 +2769,21 @@
         }
 
         async function deletePoll(id) {
-            if (confirm('¿Seguro que quieres eliminar este cuestionario? Se borrarán todos los votos.')) {
-                await supabaseClient.from('polls').delete().eq('id', id);
-                loadPolls();
-            }
+            const poll = currentPolls.find(x => x.id === id);
+            
+            showConfirm({
+                title: 'Eliminar Cuestionario',
+                message: `¿Seguro que quieres eliminar "${poll ? poll.question : 'este cuestionario'}"? Se borrarán todos los votos y opciones asociadas.`,
+                btnText: 'Eliminar Cuestionario',
+                btnClass: 'btn-danger',
+                icon: 'poll',
+                callback: async () => {
+                    const { error } = await supabaseClient.from('polls').delete().eq('id', id);
+                    if (error) throw error;
+                    loadPolls();
+                    showToast('Cuestionario eliminado', 'success');
+                }
+            });
         }
 
         function editPoll(id) {
@@ -2704,11 +2798,20 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            if (!confirm('¿Estás seguro de que quieres actualizar el catálogo? Esta acción puede modificar o añadir múltiples productos.')) {
-                event.target.value = '';
-                return;
-            }
+            showConfirm({
+                title: 'Importar Catálogo',
+                message: '¿Estás seguro de que quieres actualizar el catálogo? Esta acción puede modificar o añadir múltiples productos desde el archivo Excel.',
+                btnText: 'Comenzar Importación',
+                btnClass: 'btn-primary',
+                icon: 'file-excel',
+                callback: async () => {
+                    await processExcel(file);
+                }
+            });
+            event.target.value = ''; // Reset for next selection
+        }
 
+        async function processExcel(file) {
             const reader = new FileReader();
             reader.onload = async (e) => {
                 const data = new Uint8Array(e.target.result);
@@ -2726,10 +2829,8 @@
                     if (!row || !Array.isArray(row)) continue;
 
                     const rowStr = row.map(c => String(c || '').toLowerCase().trim());
-                    // Asumimos que la cabecera es la primera fila que contenga algo parecido a "nombre"
                     if (rowStr.some(c => c === 'nombre' || c === 'producto' || c === 'artículo' || c === 'articulo')) {
                         headerRowIndex = i;
-                        // Guardamos los headers originales pero aseguramos que no haya vacíos para usarlos de keys
                         headers = row.map((c, idx) => c ? String(c).trim() : `__EMPTY_${idx}`);
                         break;
                     }
@@ -2737,7 +2838,6 @@
 
                 if (headerRowIndex === -1) {
                     showToast('No se pudo detectar la fila de encabezados. Asegúrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".', 'error');
-                    event.target.value = '';
                     return;
                 }
 
@@ -2745,8 +2845,6 @@
                 for (let i = headerRowIndex + 1; i < rawData.length; i++) {
                     const rowArr = rawData[i];
                     if (!rowArr || rowArr.length === 0) continue;
-
-                    // Si la fila está completamente vacía, saltar
                     if (rowArr.every(c => c === undefined || c === null || String(c).trim() === '')) continue;
 
                     const rowObj = {};
@@ -2755,9 +2853,6 @@
                     }
                     jsonData.push(rowObj);
                 }
-
-                console.log('Filas detectadas en el Excel:', jsonData.length);
-                if (jsonData.length > 0) console.log('Datos de la primera fila:', jsonData[0]);
 
                 // Obtenemos los productos actuales para comparar y preservar imágenes
                 const { data: existingProducts } = await supabaseClient.from('products').select('*').is('deleted_at', null);
