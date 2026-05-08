@@ -1238,8 +1238,9 @@
             const availableExtras = extraProducts.filter(e => e.is_available !== false);
             
             const isBebidaProduct = bebidasCatId && String(product.category_id) === String(bebidasCatId);
+            const isAperitivo = catName.toUpperCase() === 'APERITIVOS';
             
-            if (!isBebidaProduct && availableExtras.length > 0) {
+            if (!isBebidaProduct && !isAperitivo && availableExtras.length > 0) {
                 extrasSection.style.display = 'block';
                 
                 const listSalsas = availableExtras.filter(e => {
