@@ -926,7 +926,27 @@
                             <label>Subtítulo de Bienvenida (Inicio)</label>
                             <textarea id="s-hero-desc" rows="2"></textarea>
                         </div>
-
+                        <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Anuncio en el Menú</h3>
+                        </div>
+                        <div class="form-group full">
+                            <label>Texto del Anuncio (Sale en la parte superior del menú)</label>
+                            <textarea id="s-menu-announcement" rows="2" placeholder="Ej: ¡Nuevo bocadillo de la semana!"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Imagen del Anuncio (Opcional)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="s-menu-announcement-file" class="file-upload-input" accept="image/*"
+                                    onchange="updateFileName(this)">
+                                <div class="file-upload-label">
+                                    <i class="fas fa-bullhorn"></i>
+                                    <span>Subir imagen del anuncio</span>
+                                    <small>Se mostrará junto al texto del anuncio</small>
+                                </div>
+                                <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
+                            </div>
+                            <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL de imagen">
+                        </div>
                         <div class="form-group full">
                             <label>Título "Sobre Nosotros"</label>
                             <input type="text" id="s-about-title">
@@ -1825,20 +1845,27 @@
             try {
                 // Handle file uploads first
                 const heroFileEl = document.getElementById('s-hero-image-file');
-                const logoFileEl = document.getElementById('s-site-logo-file');
+                const menuFileEl = document.getElementById('s-menu-announcement-file');
                 const faviconFileEl = document.getElementById('s-site-favicon-file');
+                const logoFileEl = document.getElementById('s-site-logo-file');
 
                 const heroFile = heroFileEl ? heroFileEl.files[0] : null;
+                const menuFile = menuFileEl ? menuFileEl.files[0] : null;
                 const faviconFile = faviconFileEl ? faviconFileEl.files[0] : null;
                 const logoFile = logoFileEl ? logoFileEl.files[0] : null;
 
                 let heroUrl = document.getElementById('s-hero-image')?.value || '';
+                let menuUrl = document.getElementById('s-menu-announcement-image')?.value || '';
                 let faviconUrl = document.getElementById('s-site-favicon')?.value || '';
                 let logoUrl = document.getElementById('s-site-logo')?.value || '';
 
                 if (heroFile) {
                     heroUrl = await uploadImage(heroFile);
                     if (document.getElementById('s-hero-image')) document.getElementById('s-hero-image').value = heroUrl;
+                }
+                if (menuFile) {
+                    menuUrl = await uploadImage(menuFile);
+                    if (document.getElementById('s-menu-announcement-image')) document.getElementById('s-menu-announcement-image').value = menuUrl;
                 }
                 if (faviconFile) {
                     faviconUrl = await uploadImage(faviconFile);
@@ -1873,6 +1900,8 @@
                     { key: 'hero_desc', value: document.getElementById('s-hero-desc')?.value || '' },
                     { key: 'hero_image', value: heroUrl },
                     { key: 'site_favicon', value: faviconUrl },
+                    { key: 'menu_announcement', value: document.getElementById('s-menu-announcement')?.value || '' },
+                    { key: 'menu_announcement_image', value: menuUrl },
                     { key: 'about_title', value: document.getElementById('s-about-title')?.value || '' },
                     { key: 'about_text_1', value: document.getElementById('s-about-text-1')?.value || '' },
                     { key: 'about_text_2', value: document.getElementById('s-about-text-2')?.value || '' },
@@ -1900,6 +1929,7 @@
                 btn.textContent = '¡Guardado!';
                 // Clear file inputs
                 if (document.getElementById('s-hero-image-file')) document.getElementById('s-hero-image-file').value = '';
+                if (document.getElementById('s-menu-announcement-file')) document.getElementById('s-menu-announcement-file').value = '';
                 if (document.getElementById('s-site-logo-file')) document.getElementById('s-site-logo-file').value = '';
                 if (document.getElementById('s-site-favicon-file')) document.getElementById('s-site-favicon-file').value = '';
                 clearFileNames();
