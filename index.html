@@ -289,6 +289,17 @@
                         link.href = s.value;
                     }
 
+                    if (s.key === 'contact_phone') {
+                        window.GLOBAL_WHATSAPP_NUMBER = s.value;
+                    }
+
+                    if (s.key === 'site_logo' && s.value) {
+                        const logoElements = document.querySelectorAll('.logo');
+                        logoElements.forEach(el => {
+                            el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO" style="height: 45px; width: auto; object-fit: contain;">`;
+                        });
+                    }
+
                     // Complex sections
                     if (s.key === 'card1_list' || s.key === 'card3_list') {
                         const listId = s.key.replace(/_/g, '-');
@@ -495,39 +506,6 @@
             }
         }
 
-        async function loadSettings() {
-            const { data } = await supabaseClient.from('site_settings').select('key, value');
-            if (data) {
-                data.forEach(s => {
-                    const el = document.getElementById(s.key.replace(/_/g, '-'));
-                    if (el) {
-                        if (el.tagName === 'IMG') el.src = s.value;
-                        else el.textContent = s.value;
-                    }
-
-                    if (s.key === 'contact_phone') {
-                        window.GLOBAL_WHATSAPP_NUMBER = s.value;
-                    }
-
-                    if (s.key === 'site_favicon') {
-                        let link = document.querySelector("link[rel~='icon']");
-                        if (!link) {
-                            link = document.createElement('link');
-                            link.rel = 'icon';
-                            document.getElementsByTagName('head')[0].appendChild(link);
-                        }
-                        link.href = s.value;
-                    }
-
-                    if (s.key === 'site_logo' && s.value) {
-                        const logoElements = document.querySelectorAll('.logo');
-                        logoElements.forEach(el => {
-                            el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO" style="height: 45px; width: auto; object-fit: contain;">`;
-                        });
-                    }
-                });
-            }
-        }
 
         async function initPage() {
             await Promise.all([

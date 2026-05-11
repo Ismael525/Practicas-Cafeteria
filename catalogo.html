@@ -720,72 +720,7 @@
             color: var(--primary);
             font-weight: 800;
         }
-        /* Dynamic Menu Announcement Banner */
-        .menu-announcement-banner {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem;
-            border-radius: 25px;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            box-shadow: 0 10px 30px rgba(120, 53, 15, 0.1);
-            position: relative;
-            overflow: hidden;
-            animation: slideDown 0.5s ease-out;
-        }
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .ann-banner-image {
-            width: 70px;
-            height: 70px;
-            border-radius: 15px;
-            object-fit: cover;
-            border: 2px solid rgba(255,255,255,0.3);
-            flex-shrink: 0;
-        }
-        .ann-banner-content {
-            flex: 1;
-            z-index: 1;
-        }
-        .ann-banner-content h4 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            margin-bottom: 0.2rem;
-            font-style: italic;
-            opacity: 0.9;
-        }
-        .ann-banner-content p {
-            font-size: 1rem;
-            font-weight: 600;
-            line-height: 1.4;
-        }
-        .ann-banner-icon {
-            font-size: 3rem;
-            opacity: 0.15;
-            position: absolute;
-            right: 1.5rem;
-            bottom: -0.5rem;
-            transform: rotate(-15deg);
-            z-index: 0;
-        }
 
-        @media (max-width: 600px) {
-            .menu-announcement-banner {
-                padding: 1.2rem;
-                gap: 1rem;
-            }
-            .ann-banner-image {
-                width: 50px;
-                height: 50px;
-            }
-            .ann-banner-content p {
-                font-size: 0.9rem;
-            }
-        }
     </style>
 </head>
 <body>
@@ -815,7 +750,7 @@
     </div>
 
     <main class="catalog-container">
-        <div id="announcement-container"></div>
+
 
         <div class="catalog-header">
             <h2 data-aos="fade-up">Nuestra Carta</h2>
@@ -962,49 +897,7 @@
         let slideInterval;
 
 
-        async function loadAnnouncements() {
-            const { data } = await supabaseClient
-                .from('announcements')
-                .select('*')
-                .eq('is_active', true)
-                .order('created_at', { ascending: false });
-                
-            const container = document.getElementById('announcement-container');
-            if (data && data.length > 0) {
-                const slidesHTML = data.map((ann, index) => `
-                    <div class="carousel-slide">
-                        <div class="announcement-banner ${ann.image_url ? 'has-image' : ''}" 
-                             style="${ann.image_url ? `background-image: url('${ann.image_url}')` : ''}">
-                            ${!ann.image_url ? '<i class="fas fa-bullhorn banner-icon"></i>' : ''}
-                            <div class="announcement-content">
-                                ${ann.text ? `<p>${ann.text}</p>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
 
-                const dotsHTML = data.length > 1 ? `
-                    <div class="carousel-dots">
-                        ${data.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`).join('')}
-                    </div>
-                ` : '';
-
-                container.innerHTML = `
-                    <div class="announcement-carousel" onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
-                        <div class="carousel-track" id="carousel-track">
-                            ${slidesHTML}
-                        </div>
-                        ${dotsHTML}
-                    </div>
-                `;
-
-                if (data.length > 1) {
-                    startCarousel(data.length);
-                }
-            } else {
-                container.innerHTML = '';
-            }
-        }
 
         function startCarousel(count) {
             clearInterval(slideInterval);
@@ -1066,28 +959,7 @@
                         });
                     }
 
-                    if (s.key === 'menu_announcement' && s.value) {
-                        const container = document.getElementById('announcement-container');
-                        const img = data.find(x => x.key === 'menu_announcement_image')?.value;
-                        
-                        const banner = document.createElement('div');
-                        banner.className = 'menu-announcement-banner';
-                        banner.innerHTML = `
-                            ${img ? `<img src="${img}" class="ann-banner-image" alt="Anuncio">` : ''}
-                            <div class="ann-banner-content">
-                                <h4>Anuncio del día</h4>
-                                <p>${s.value}</p>
-                            </div>
-                            <i class="fas fa-bullhorn ann-banner-icon"></i>
-                        `;
-                        // Insert it at the top of the main container, but after the carousel if it exists
-                        const catalog = document.querySelector('.catalog-container');
-                        if (catalog) {
-                            // Insert after announcement-container
-                            const annContainer = document.getElementById('announcement-container');
-                            annContainer.after(banner);
-                        }
-                    }
+
                 });
             }
         }
@@ -1097,7 +969,6 @@
             // Carga paralela de datos iniciales
             await Promise.all([
                 loadSettings(),
-                loadAnnouncements(),
                 loadCategories()
             ]);
             
