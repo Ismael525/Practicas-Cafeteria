@@ -325,7 +325,7 @@
             }
         }
 
-        loadSettings();
+
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
@@ -522,8 +522,14 @@
             }
         }
 
-        loadSettings();
-        loadActivePoll();
+        async function initPage() {
+            await Promise.all([
+                loadSettings(),
+                loadActivePoll()
+            ]);
+        }
+        
+        initPage();
     </script>
 </body>
 </html>
