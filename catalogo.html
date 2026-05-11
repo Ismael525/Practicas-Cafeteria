@@ -487,25 +487,10 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            max-height: 90vh; /* Coincide con la altura del modal */
+            max-height: 90vh;
             min-height: 0;
             scrollbar-width: thin;
             scrollbar-color: var(--primary-light) #f1f1f1;
-        }
-        /* Personalización del scroll para que sea más visible */
-        .modal-details::-webkit-scrollbar {
-            width: 8px;
-        }
-        .modal-details::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .modal-details::-webkit-scrollbar-thumb {
-            background: var(--primary-light);
-            border-radius: 10px;
-        }
-        .modal-details::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
         }
         .modal-category {
             font-size: 0.8rem;
@@ -543,32 +528,69 @@
             align-items: center;
             gap: 0.8rem;
         }
-        .modal-section-subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin: 1.5rem 0 0.8rem 0;
-            font-weight: 800;
+
+        /* Tabs System */
+        .modal-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #f5f5f4;
+            padding-bottom: 0.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
         }
+        .modal-tabs::-webkit-scrollbar { display: none; }
+        
+        .modal-tab {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            background: #fafaf9;
+            border: 1px solid #f5f5f4;
+        }
+        .modal-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .extras-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 0.8rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         .extra-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.6rem 0.8rem;
-            background: #fafaf9;
-            border: 1px solid #f5f5f4;
-            border-radius: 12px;
+            padding: 0.8rem;
+            background: white;
+            border: 1.5px solid #f5f5f4;
+            border-radius: 16px;
             font-size: 0.85rem;
-            transition: var(--transition);
+            transition: all 0.2s ease;
             cursor: pointer;
             user-select: none;
+            position: relative;
         }
         .extra-item:hover {
             border-color: var(--primary-light);
@@ -591,24 +613,46 @@
         .extra-name { font-weight: 500; }
         .extra-price { color: var(--primary); font-weight: 700; }
         
-        .modal-actions {
+        .modal-footer {
             margin-top: auto;
+            position: sticky;
+            bottom: -1px;
+            z-index: 10;
+            background: white;
+            padding-top: 0.8rem;
+            border-top: 1px solid #f5f5f4;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .modal-total-price-container {
+            padding: 0.6rem 1rem;
+            background: #fafaf9;
+            border-radius: 12px;
+            border: 1px dashed var(--primary-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-actions {
             display: flex;
             gap: 1rem;
+            padding-bottom: 0.2rem;
         }
         .btn-whatsapp-order {
             flex-grow: 1;
             background: #25d366;
             color: white;
-            padding: 1.2rem;
-            border-radius: 15px;
+            padding: 0.9rem;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
             font-weight: 700;
             text-decoration: none;
             transition: var(--transition);
+            font-size: 0.95rem;
         }
         .btn-whatsapp-order:hover {
             background: #128c7e;
@@ -640,7 +684,12 @@
 
         @media (max-width: 500px) {
             .extras-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+            .extra-item {
+                padding: 0.6rem;
+                font-size: 0.75rem;
             }
             .modal-details {
                 padding: 1.2rem;
@@ -657,27 +706,17 @@
         }
 
         /* Total Price in Modal */
-        .modal-total-price-container {
-            margin-top: 1.5rem;
-            padding: 1.2rem;
-            background: #fdfcfb;
-            border-radius: 20px;
-            border: 1px dashed var(--primary-light);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            animation: fadeInDown 0.3s ease;
-        }
+        /* Total Price in Modal removed from here as it moved to modal-footer */
+
         .total-label {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             font-weight: 700;
         }
         .total-amount {
-            font-size: 1.8rem;
+            font-size: 1.4rem;
             color: var(--primary);
             font-weight: 800;
         }
@@ -738,6 +777,11 @@
                     <div class="filter-chip" data-allergen="gluten" onclick="toggleAllergenFilter('gluten')">Sin Gluten</div>
                     <div class="filter-chip" data-allergen="lactosa" onclick="toggleAllergenFilter('lactosa')">Sin Lactosa</div>
                     <div class="filter-chip" data-allergen="huevos" onclick="toggleAllergenFilter('huevos')">Sin Huevo</div>
+                    <div class="filter-chip" data-allergen="frutos" onclick="toggleAllergenFilter('frutos')">Sin Frutos Secos</div>
+                    <div class="filter-chip" data-allergen="soja" onclick="toggleAllergenFilter('soja')">Sin Soja</div>
+                    <div class="filter-chip" data-allergen="mostaza" onclick="toggleAllergenFilter('mostaza')">Sin Mostaza</div>
+                    <div class="filter-chip" data-allergen="sesamo" onclick="toggleAllergenFilter('sesamo')">Sin Sésamo</div>
+                    <div class="filter-chip" data-allergen="atun" onclick="toggleAllergenFilter('atun')">Sin Atún</div>
                 </div>
             </div>
         </section>
@@ -810,15 +854,17 @@
                     </div>
                 </div>
 
-                <div id="modal-total-price-container" class="modal-total-price-container">
-                    <span class="total-label">Total</span>
-                    <span id="modal-total-amount" class="total-amount">0.00€</span>
-                </div>
+                <div class="modal-footer">
+                    <div id="modal-total-price-container" class="modal-total-price-container">
+                        <span class="total-label">Total</span>
+                        <span id="modal-total-amount" class="total-amount">0.00€</span>
+                    </div>
 
-                <div class="modal-actions">
-                    <a href="#" id="modal-whatsapp-btn" class="btn-whatsapp-order" onclick="orderFromModal(event)">
-                        <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
-                    </a>
+                    <div class="modal-actions">
+                        <a href="#" id="modal-whatsapp-btn" class="btn-whatsapp-order" onclick="orderFromModal(event)">
+                            <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1223,13 +1269,18 @@
                                 <span class="product-price" style="font-weight: 700; color: var(--primary); white-space: nowrap;">${parseFloat(p.price || 0).toFixed(2)}€</span>
                             </div>
                             ${p.description ? `<p class="product-desc" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">${p.description}</p>` : ''}
-                            <div class="product-meta" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
-                                <div class="allergens" style="display: flex; gap: 0.4rem;">
+                            <div class="product-meta" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                                <div class="allergens" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
                                     ${(p.allergens || []).map(a => {
                                         let icon = 'info-circle';
                                         if (a.toLowerCase().includes('gluten')) icon = 'wheat-awn';
                                         if (a.toLowerCase().includes('lactosa')) icon = 'cow';
                                         if (a.toLowerCase().includes('huevo')) icon = 'egg';
+                                        if (a.toLowerCase().includes('frutos')) icon = 'seedling';
+                                        if (a.toLowerCase().includes('soja')) icon = 'leaf';
+                                        if (a.toLowerCase().includes('mostaza')) icon = 'bottle-droplet';
+                                        if (a.toLowerCase().includes('sésamo') || a.toLowerCase().includes('sesamo')) icon = 'ellipsis-v';
+                                        if (a.toLowerCase().includes('atún') || a.toLowerCase().includes('atun') || a.toLowerCase().includes('pescado')) icon = 'fish';
                                         return `<div class="allergen-icon" title="${a}" style="width: 22px; height: 22px; border-radius: 50%; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;"><i class="fas fa-${icon}"></i></div>`;
                                     }).join('')}
                                 </div>
@@ -1265,7 +1316,14 @@
             document.getElementById('modal-img').src = product.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80';
             document.getElementById('modal-title').textContent = product.name;
             document.getElementById('modal-price').textContent = `${parseFloat(product.price || 0).toFixed(2)}€`;
-            document.getElementById('modal-desc').textContent = product.description || 'Sin descripción disponible.';
+            const modalDesc = document.getElementById('modal-desc');
+            if (product.description && product.description.trim() !== '') {
+                modalDesc.textContent = product.description;
+                modalDesc.style.display = 'block';
+            } else {
+                modalDesc.textContent = '';
+                modalDesc.style.display = 'none';
+            }
             let catName = 'Producto';
             if (product.categories) {
                 catName = Array.isArray(product.categories) ? (product.categories[0]?.name || 'Producto') : (product.categories.name || 'Producto');
@@ -1303,22 +1361,48 @@
                     bebidasCatId && String(e.category_id) === String(bebidasCatId)
                 );
 
-                let html = '';
-                
-                if (listOtros.length > 0) {
-                    html += `<h4 class="modal-section-subtitle">EXTRAS</h4><div class="extras-grid">${listOtros.map(e => renderExtraItem(e)).join('')}</div>`;
-                }
+                let tabsHtml = '';
+                let contentsHtml = '';
+
                 if (listSalsas.length > 0) {
-                    html += `<h4 class="modal-section-subtitle">SALSAS</h4><div class="extras-grid">${listSalsas.map(e => renderExtraItem(e)).join('')}</div>`;
+                    tabsHtml += `<div class="modal-tab" onclick="switchTab(this, 'tab-salsas')">SALSAS</div>`;
+                    contentsHtml += `<div id="tab-salsas" class="tab-content"><div class="extras-grid">${listSalsas.map(e => renderExtraItem(e)).join('')}</div></div>`;
+                }
+                if (listOtros.length > 0) {
+                    tabsHtml += `<div class="modal-tab" onclick="switchTab(this, 'tab-extras')">EXTRAS</div>`;
+                    contentsHtml += `<div id="tab-extras" class="tab-content"><div class="extras-grid">${listOtros.map(e => renderExtraItem(e)).join('')}</div></div>`;
                 }
                 if (listBebidas.length > 0) {
-                    html += `<h4 class="modal-section-subtitle">BEBIDA</h4><div class="extras-grid">${listBebidas.map(e => renderExtraItem(e)).join('')}</div>`;
+                    tabsHtml += `<div class="modal-tab" onclick="switchTab(this, 'tab-bebidas')">BEBIDA</div>`;
+                    contentsHtml += `<div id="tab-bebidas" class="tab-content"><div class="extras-grid">${listBebidas.map(e => renderExtraItem(e)).join('')}</div></div>`;
                 }
                 
-                extrasGrid.innerHTML = html;
+                extrasGrid.innerHTML = `
+                    <div class="modal-tabs">${tabsHtml}</div>
+                    ${contentsHtml}
+                `;
+                
+                // Activar la primera pestaña por defecto
+                const firstTab = extrasGrid.querySelector('.modal-tab');
+                const firstContent = extrasGrid.querySelector('.tab-content');
+                if (firstTab && firstContent) {
+                    firstTab.classList.add('active');
+                    firstContent.classList.add('active');
+                }
             } else {
                 extrasSection.style.display = 'none';
             }
+
+            function switchTab(el, tabId) {
+                const modal = el.closest('#modal-extras-grid');
+                modal.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+                modal.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                el.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            }
+            // Exponer la función globalmente para los onclick
+            window.switchTab = switchTab;
 
             function renderExtraItem(extra) {
                 const price = parseFloat(extra.price || 0);
@@ -1405,10 +1489,7 @@
                 message += `\n*Bebida:* _${bebidasSeleccionadas.join(', ')}_`;
             }
             
-            // Añadir el total al mensaje para mayor claridad
-            const extrasTotal = selectedItems.reduce((sum, item) => sum + item.price, 0);
-            const total = parseFloat(btn.dataset.basePrice || 0) + extrasTotal;
-            message += `\n\n*Total:* ${total.toFixed(2)}€`;
+
             
             // Abrir directamente WhatsApp con el mensaje debidamente codificado
             const phoneNumber = window.GLOBAL_WHATSAPP_NUMBER || '34604885296';

@@ -1267,7 +1267,10 @@
                             <div class="allergen-chip" data-val="Lactosa">Lactosa</div>
                             <div class="allergen-chip" data-val="Huevo">Huevo</div>
                             <div class="allergen-chip" data-val="Frutos Secos">Frutos Secos</div>
-                            <div class="allergen-chip" data-val="Pescado">Pescado</div>
+                            <div class="allergen-chip" data-val="Soja">Soja</div>
+                            <div class="allergen-chip" data-val="Mostaza">Mostaza</div>
+                            <div class="allergen-chip" data-val="Sésamo">Sésamo</div>
+                            <div class="allergen-chip" data-val="Atún">Atún</div>
                         </div>
                     </div>
                     <div class="form-group full">
@@ -1897,7 +1900,10 @@
                     if (lowerA.includes('lactosa')) icon = 'cow';
                     if (lowerA.includes('huevo')) icon = 'egg';
                     if (lowerA.includes('frutos')) icon = 'seedling';
-                    if (lowerA.includes('pescado')) icon = 'fish';
+                    if (lowerA.includes('soja')) icon = 'leaf';
+                    if (lowerA.includes('mostaza')) icon = 'bottle-droplet';
+                    if (lowerA.includes('sésamo') || lowerA.includes('sesamo')) icon = 'ellipsis-v';
+                    if (lowerA.includes('atún') || lowerA.includes('atun') || lowerA.includes('pescado')) icon = 'fish';
                     return `<i class="fas fa-${icon}" title="${a}" style="margin-right: 4px; color: var(--primary);"></i>`;
                 }).join('');
 
