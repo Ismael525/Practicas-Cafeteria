@@ -1207,10 +1207,12 @@
                 const isSpecial = upperCat.includes('DESAYUNO') || upperCat.includes('BONO');
                 const productsHtml = grouped[catName].map(p => {
                     const isAvailable = p.is_available !== false;
+                    const canClick = isAvailable && !isSpecial;
+                    
                     return `
-                    <div class="product-card ${!isAvailable ? 'unavailable' : ''} ${isSpecial ? 'no-click' : ''}" 
-                         ${isSpecial ? '' : `onclick="openProductModal('${p.id}')"`}
-                         ${isSpecial ? 'style="cursor: default; transform: none; box-shadow: none;"' : ''}>
+                    <div class="product-card ${!isAvailable ? 'unavailable' : ''} ${!canClick ? 'no-click' : ''}" 
+                         ${canClick ? `onclick="openProductModal('${p.id}')"` : ''}
+                         ${!canClick ? 'style="cursor: default; transform: none; box-shadow: none;"' : ''}>
                         <div class="product-image">
                             ${!isAvailable ? '<div class="out-of-stock"><span class="out-of-stock-label">Agotado</span></div>' : ''}
                             <img src="${p.image_url ? p.image_url : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80'}" alt="${p.name}" loading="lazy" decoding="async">
