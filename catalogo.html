@@ -721,26 +721,50 @@
             font-weight: 800;
         }
 
-        /* ── Announcements Banner ── */
+        /* ── Announcements Banner & Carousel ── */
         .announcements-wrapper {
             margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 24px;
+            box-shadow: 0 12px 35px rgba(120, 53, 15, 0.15);
+            background: #854d0e; /* Match announcement base color to prevent white line */
         }
 
-        /* Base banner (texto + icono o texto + miniatura) */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            background: #854d0e;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            display: flex;
+            align-items: stretch;
+        }
+
+        /* Base banner */
         .announcement-banner {
             position: relative;
             display: flex;
             align-items: center;
-            gap: 2rem;
-            background: linear-gradient(135deg, var(--primary) 0%, #92400e 100%);
-            color: white;
-            border-radius: 24px;
-            padding: 2rem 2.5rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 12px 35px rgba(120, 53, 15, 0.3);
-            animation: slideInAnn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+            width: 100%;
+            gap: 2rem !important;
+            background: linear-gradient(135deg, var(--primary) 0%, #854d0e 100%) !important;
+            color: white !important;
+            padding: 2rem 3rem !important;
             overflow: hidden;
-            min-height: 90px;
+            min-height: 120px !important;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Círculos decorativos de fondo */
@@ -767,78 +791,75 @@
             pointer-events: none;
         }
 
-        @keyframes slideInAnn {
-            from { opacity: 0; transform: translateY(-16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Icono altavoz (sin imagen) */
         .ann-icon {
             flex-shrink: 0;
-            width: 56px;
-            height: 56px;
+            width: 60px !important;
+            height: 60px !important;
             border-radius: 50%;
-            background: rgba(255,255,255,0.18);
-            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.2) !important;
+            border: 1.5px solid rgba(255,255,255,0.4) !important;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.5rem !important;
             backdrop-filter: blur(4px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
 
-        /* Miniatura imagen lateral */
         .ann-img-thumb {
             flex-shrink: 0;
-            width: 80px;
-            height: 80px;
-            border-radius: 16px;
+            width: 85px !important;
+            height: 85px !important;
+            border-radius: 18px !important;
             object-fit: cover;
-            border: 3px solid rgba(255,255,255,0.35);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 2.5px solid rgba(255,255,255,0.35) !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
         }
 
-        /* Texto del anuncio */
         .ann-body {
             flex: 1;
             min-width: 0;
-        }
-        .ann-label {
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.7;
-            margin-bottom: 0.4rem;
-        }
-        .ann-text {
-            font-size: 1.05rem;
-            font-weight: 600;
-            line-height: 1.55;
-            letter-spacing: 0.01em;
-            word-break: break-word;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            gap: 4px !important;
         }
 
-        /* Badge lateral */
+        .ann-label {
+            font-size: 0.75rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            letter-spacing: 2px !important;
+            color: rgba(255,255,255,0.85) !important;
+            margin: 0 !important;
+        }
+
+        .ann-text {
+            display: block !important;
+            font-size: 1.45rem !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+            letter-spacing: -0.01em !important;
+            word-break: break-word !important;
+        }
+
         .ann-badge {
             flex-shrink: 0;
-            align-self: flex-start;
-            background: rgba(255,255,255,0.18);
-            border: 1.5px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15) !important;
+            border: 1px solid rgba(255,255,255,0.4) !important;
             border-radius: 50px;
-            padding: 0.3rem 1rem;
-            font-size: 0.72rem;
-            font-weight: 800;
+            padding: 0.3rem 1.1rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 800 !important;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
-            white-space: nowrap;
+            letter-spacing: 1.2px !important;
             backdrop-filter: blur(4px);
         }
 
-        /* Caso especial: solo imagen → fondo grande */
+        /* Image-only banner */
         .announcement-banner.image-only {
             padding: 0;
-            min-height: 220px;
+            min-height: 250px;
             align-items: flex-end;
             background: #1a1a1a;
         }
@@ -847,47 +868,69 @@
             inset: 0;
             background-size: cover;
             background-position: center;
-            border-radius: 24px;
             opacity: 0.85;
-            transition: opacity 0.3s;
-        }
-        .announcement-banner.image-only:hover .ann-bg {
-            opacity: 1;
         }
         .announcement-banner.image-only .ann-overlay {
             position: absolute;
             inset: 0;
-            border-radius: 24px;
-            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
         }
         .announcement-banner.image-only .ann-image-caption {
             position: relative;
             z-index: 2;
-            padding: 1.5rem 2rem;
-            font-size: 0.75rem;
+            padding: 1.5rem 2.5rem;
+            font-size: 0.8rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            opacity: 0.85;
+            color: white;
         }
-        /* Quitar pseudoelementos decorativos en image-only */
-        .announcement-banner.image-only::before,
-        .announcement-banner.image-only::after { display: none; }
 
-        /* Responsive */
-        @media (max-width: 600px) {
+        /* Carousel Dots */
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 768px) {
             .announcement-banner {
-                padding: 1.4rem 1.5rem;
-                gap: 1.2rem;
-                border-radius: 18px;
-                min-height: 70px;
+                padding: 1.5rem !important;
+                gap: 1.2rem !important;
+                min-height: 100px !important;
             }
-            .ann-icon { width: 46px; height: 46px; font-size: 1.2rem; }
-            .ann-img-thumb { width: 60px; height: 60px; border-radius: 12px; }
-            .ann-text { font-size: 0.9rem; }
-            .ann-badge { display: none; }
-            .announcement-banner.image-only { min-height: 160px; }
-            .announcement-banner.image-only .ann-image-caption { padding: 1rem 1.2rem; }
+            .ann-icon { 
+                width: 48px !important; 
+                height: 48px !important; 
+                font-size: 1.2rem !important; 
+            }
+            .ann-img-thumb { 
+                width: 65px !important; 
+                height: 65px !important; 
+            }
+            .ann-text { 
+                font-size: 1.15rem !important; /* Más grande en móvil también */
+                line-height: 1.2 !important;
+            }
+            .ann-badge { display: none !important; }
+            .announcement-banner.image-only { min-height: 180px !important; }
         }
 
 
@@ -1067,13 +1110,12 @@
         let bebidasCatId = null;
 
         let searchTimeout;
+        let currentSlide = 0;
         let slideInterval;
-
-
-
 
         function startCarousel(count) {
             clearInterval(slideInterval);
+            if (count <= 1) return;
             slideInterval = setInterval(() => {
                 currentSlide = (currentSlide + 1) % count;
                 updateCarousel();
@@ -1131,8 +1173,6 @@
                             el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO" style="height: 45px; width: auto; object-fit: contain;">`;
                         });
                     }
-
-
                 });
             }
         }
@@ -1159,37 +1199,53 @@
                 const hasImg = url => url && url.trim().length > 0;
                 const hasText = t  => t  && t.trim().length > 0;
 
-                container.innerHTML = active.map((ann, i) => {
+                const slidesHtml = active.map((ann, i) => {
                     const imgOk  = hasImg(ann.image_url);
                     const textOk = hasText(ann.text);
 
-                    // —— Solo imagen: fondo grande ——
+                    let content = '';
                     if (imgOk && !textOk) {
-                        return `
-                        <div class="announcement-banner image-only" style="animation-delay:${i*0.1}s">
+                        content = `
+                        <div class="announcement-banner image-only">
                             <div class="ann-bg" style="background-image:url('${ann.image_url}')"></div>
                             <div class="ann-overlay"></div>
                             <span class="ann-image-caption">&#128226; Novedad</span>
                         </div>`;
+                    } else {
+                        const leftEl = imgOk
+                            ? `<img src="${ann.image_url}" alt="Anuncio" class="ann-img-thumb">`
+                            : `<div class="ann-icon"><i class="fas fa-bullhorn"></i></div>`;
+
+                        content = `
+                        <div class="announcement-banner">
+                            ${leftEl}
+                            <div class="ann-body">
+                                <div class="ann-label">Aviso</div>
+                                <span class="ann-text">${ann.text}</span>
+                            </div>
+                            <span class="ann-badge">Novedad</span>
+                        </div>`;
                     }
-
-                    // —— Con texto ——
-                    const leftEl = imgOk
-                        ? `<img src="${ann.image_url}" alt="Anuncio" class="ann-img-thumb">`
-                        : `<div class="ann-icon"><i class="fas fa-bullhorn"></i></div>`;
-
-                    return `
-                    <div class="announcement-banner" style="animation-delay:${i*0.1}s">
-                        ${leftEl}
-                        <div class="ann-body">
-                            <div class="ann-label">&#128226; Aviso</div>
-                            <span class="ann-text">${ann.text}</span>
-                        </div>
-                        <span class="ann-badge">Novedad</span>
-                    </div>`;
+                    return `<div class="carousel-slide">${content}</div>`;
                 }).join('');
 
+                const dotsHtml = active.length > 1 
+                    ? `<div class="carousel-dots">${active.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`).join('')}</div>`
+                    : '';
+
+                container.innerHTML = `
+                    <div class="carousel-container" onmouseenter="pauseCarousel()" onmouseleave="resumeCarousel()">
+                        <div id="carousel-track" class="carousel-track">
+                            ${slidesHtml}
+                        </div>
+                        ${dotsHtml}
+                    </div>
+                `;
+
                 container.style.display = 'block';
+                currentSlide = 0;
+                if (active.length > 1) startCarousel(active.length);
+
             } catch (err) {
                 console.warn('No se pudieron cargar los anuncios:', err);
             }
