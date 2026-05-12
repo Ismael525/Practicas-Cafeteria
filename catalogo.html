@@ -721,6 +721,176 @@
             font-weight: 800;
         }
 
+        /* ── Announcements Banner ── */
+        .announcements-wrapper {
+            margin-bottom: 3rem;
+        }
+
+        /* Base banner (texto + icono o texto + miniatura) */
+        .announcement-banner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #92400e 100%);
+            color: white;
+            border-radius: 24px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 12px 35px rgba(120, 53, 15, 0.3);
+            animation: slideInAnn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+            overflow: hidden;
+            min-height: 90px;
+        }
+
+        /* Círculos decorativos de fondo */
+        .announcement-banner::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+            pointer-events: none;
+        }
+        .announcement-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: 80px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            pointer-events: none;
+        }
+
+        @keyframes slideInAnn {
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Icono altavoz (sin imagen) */
+        .ann-icon {
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.18);
+            border: 2px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Miniatura imagen lateral */
+        .ann-img-thumb {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.35);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Texto del anuncio */
+        .ann-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .ann-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+            margin-bottom: 0.4rem;
+        }
+        .ann-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            line-height: 1.55;
+            letter-spacing: 0.01em;
+            word-break: break-word;
+        }
+
+        /* Badge lateral */
+        .ann-badge {
+            flex-shrink: 0;
+            align-self: flex-start;
+            background: rgba(255,255,255,0.18);
+            border: 1.5px solid rgba(255,255,255,0.4);
+            border-radius: 50px;
+            padding: 0.3rem 1rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Caso especial: solo imagen → fondo grande */
+        .announcement-banner.image-only {
+            padding: 0;
+            min-height: 220px;
+            align-items: flex-end;
+            background: #1a1a1a;
+        }
+        .announcement-banner.image-only .ann-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            border-radius: 24px;
+            opacity: 0.85;
+            transition: opacity 0.3s;
+        }
+        .announcement-banner.image-only:hover .ann-bg {
+            opacity: 1;
+        }
+        .announcement-banner.image-only .ann-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+        }
+        .announcement-banner.image-only .ann-image-caption {
+            position: relative;
+            z-index: 2;
+            padding: 1.5rem 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.85;
+        }
+        /* Quitar pseudoelementos decorativos en image-only */
+        .announcement-banner.image-only::before,
+        .announcement-banner.image-only::after { display: none; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .announcement-banner {
+                padding: 1.4rem 1.5rem;
+                gap: 1.2rem;
+                border-radius: 18px;
+                min-height: 70px;
+            }
+            .ann-icon { width: 46px; height: 46px; font-size: 1.2rem; }
+            .ann-img-thumb { width: 60px; height: 60px; border-radius: 12px; }
+            .ann-text { font-size: 0.9rem; }
+            .ann-badge { display: none; }
+            .announcement-banner.image-only { min-height: 160px; }
+            .announcement-banner.image-only .ann-image-caption { padding: 1rem 1.2rem; }
+        }
+
+
     </style>
 </head>
 <body>
@@ -751,6 +921,9 @@
 
     <main class="catalog-container">
 
+
+        <!-- Announcements Banner -->
+        <div id="announcements-container" class="announcements-wrapper" style="display:none;"></div>
 
         <div class="catalog-header">
             <h2 data-aos="fade-up">Nuestra Carta</h2>
@@ -964,12 +1137,71 @@
             }
         }
 
+        async function loadAnnouncements() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('announcements')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const container = document.getElementById('announcements-container');
+                if (!container) return;
+
+                const active = data || [];
+                if (active.length === 0) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                const hasImg = url => url && url.trim().length > 0;
+                const hasText = t  => t  && t.trim().length > 0;
+
+                container.innerHTML = active.map((ann, i) => {
+                    const imgOk  = hasImg(ann.image_url);
+                    const textOk = hasText(ann.text);
+
+                    // —— Solo imagen: fondo grande ——
+                    if (imgOk && !textOk) {
+                        return `
+                        <div class="announcement-banner image-only" style="animation-delay:${i*0.1}s">
+                            <div class="ann-bg" style="background-image:url('${ann.image_url}')"></div>
+                            <div class="ann-overlay"></div>
+                            <span class="ann-image-caption">&#128226; Novedad</span>
+                        </div>`;
+                    }
+
+                    // —— Con texto ——
+                    const leftEl = imgOk
+                        ? `<img src="${ann.image_url}" alt="Anuncio" class="ann-img-thumb">`
+                        : `<div class="ann-icon"><i class="fas fa-bullhorn"></i></div>`;
+
+                    return `
+                    <div class="announcement-banner" style="animation-delay:${i*0.1}s">
+                        ${leftEl}
+                        <div class="ann-body">
+                            <div class="ann-label">&#128226; Aviso</div>
+                            <span class="ann-text">${ann.text}</span>
+                        </div>
+                        <span class="ann-badge">Novedad</span>
+                    </div>`;
+                }).join('');
+
+                container.style.display = 'block';
+            } catch (err) {
+                console.warn('No se pudieron cargar los anuncios:', err);
+            }
+        }
+
         async function initCatalog() {
             
             // Carga paralela de datos iniciales
             await Promise.all([
                 loadSettings(),
-                loadCategories()
+                loadCategories(),
+                loadAnnouncements()
             ]);
             
             // Los productos se cargan después de tener las categorías (para saber IDs de extras/bebidas)
