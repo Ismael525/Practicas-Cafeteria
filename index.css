@@ -61,23 +61,23 @@ nav {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 1.5rem 5%;
+    padding: 1rem 5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    background: rgba(253, 252, 251, 0.95);
-    /* backdrop-filter: blur(10px); REMOVIDO para mejorar rendimiento de scroll */
-    border-bottom: 1px solid rgba(120, 53, 15, 0.1);
-    transition: var(--transition);
+    background: rgba(253, 252, 251, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(120, 53, 15, 0.08);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 nav.scrolled {
-    background: rgba(253, 252, 251, 0.98);
-    /* backdrop-filter: blur(10px); REMOVIDO */
-    padding: 0.8rem 5%;
-    box-shadow: 0 4px 20px rgba(120, 53, 15, 0.08);
-    border-bottom: 1px solid rgba(120, 53, 15, 0.1);
+    background: rgba(253, 252, 251, 0.95);
+    padding: 0.6rem 5%;
+    box-shadow: 0 10px 30px rgba(120, 53, 15, 0.05);
+    border-bottom: 1px solid rgba(120, 53, 15, 0.05);
 }
 
 .nav-links {
@@ -175,11 +175,39 @@ nav.scrolled {
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: 2px;
     color: var(--primary);
     text-decoration: none;
+    transition: opacity 0.5s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; /* Hidden by default to avoid text flash */
+}
+
+.logo.logo-ready {
+    opacity: 1;
+}
+
+.logo:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.logo img {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.08));
+}
+
+.logo:hover img {
+    transform: scale(1.05) rotate(-1deg);
+    filter: drop-shadow(0 8px 15px rgba(120, 53, 15, 0.15));
 }
 
 /* Hero Section */
@@ -397,10 +425,14 @@ nav.scrolled {
         padding: 0.5rem;
     }
     .logo {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         white-space: nowrap;
         justify-self: center;
         grid-column: 2;
+        letter-spacing: 1px;
+    }
+    .logo img {
+        height: 52px;
     }
     .auth-links {
         display: none; 

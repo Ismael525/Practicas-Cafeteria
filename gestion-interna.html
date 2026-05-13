@@ -1592,7 +1592,7 @@
                             if (s.value) {
                                 logoTexts.forEach(el => {
                                     if (!el.querySelector('img')) {
-                                        el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO" id="site-logo-img" style="height: 40px; width: auto; object-fit: contain;">`;
+                                        el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO" id="site-logo-img">`;
                                     } else {
                                         const img = el.querySelector('img');
                                         img.src = s.value;
