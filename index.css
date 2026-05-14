@@ -207,7 +207,7 @@ nav.scrolled {
 
 .logo:hover img {
     transform: scale(1.05) rotate(-1deg);
-    filter: drop-shadow(0 8px 20px rgba(217, 119, 6, 0.45));
+    filter: drop-shadow(0 8px 15px rgba(120, 53, 15, 0.15));
 }
 
 /* Hero Section */
