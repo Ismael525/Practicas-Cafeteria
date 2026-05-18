@@ -437,7 +437,7 @@
                         submitBtn.textContent = 'Entrar';
                         return;
                     }
-                    window.location.href = 'admin';
+                    window.location.href = 'admin.html';
                 }
             } catch (err) {
                 console.error('Error de login:', err);
@@ -508,7 +508,7 @@
                 showToast('Contraseña actualizada con éxito.', 'success');
                 
                 setTimeout(() => {
-                    window.location.href = 'admin';
+                    window.location.href = 'admin.html';
                 }, 2000);
             } catch (err) {
                 alert.className = 'alert alert-error';
