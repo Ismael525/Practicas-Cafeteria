@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /nosotros.html
+Allow: /menu.html
+Disallow: /admin.html
+Disallow: /admin
+Disallow: /login.html
+Disallow: /login
+
+Sitemap: https://tu-dominio.com/sitemap.xml
