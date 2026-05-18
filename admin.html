@@ -784,7 +784,7 @@
             <a href="index.html" class="logo">ANTONIO MACHADO</a>
             <div class="nav-links">
                 <a href="index.html">Inicio</a>
-                <a href="catalogo.html">Ir al Menú</a>
+                <a href="menu">Ir al Menú</a>
             </div>
             <div class="auth-links">
                 <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar
@@ -796,7 +796,7 @@
         <div id="mobile-menu" class="mobile-nav-overlay">
             <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
             <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
-            <a href="catalogo.html" onclick="toggleMobileMenu()">Ver Menú</a>
+            <a href="menu" onclick="toggleMobileMenu()">Ver Menú</a>
             <a href="#" onclick="handleLogout()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Cerrar Sesión</a>
         </div>
 
@@ -1541,13 +1541,13 @@
             try {
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
                 if (error || !session) {
-                    window.location.href = 'login.html';
+                    window.location.href = 'login';
                 } else {
                     initAdmin();
                 }
             } catch (err) {
                 console.error('Connection error:', err);
-                window.location.href = 'login.html';
+                window.location.href = 'login';
             }
         }
 
@@ -2463,7 +2463,7 @@
 
         async function handleLogout() {
             await supabaseClient.auth.signOut();
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         }
 
         function editProduct(id) {
