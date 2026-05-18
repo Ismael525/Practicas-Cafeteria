@@ -1,0 +1,10 @@
+.git
+.agents
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose.yml
+*.md
+skills-lock.json
+Thumbs.db
+.DS_Store

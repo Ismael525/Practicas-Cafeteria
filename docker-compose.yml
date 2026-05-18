@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  cafeteria-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cafeteria_web
+    restart: unless-stopped
+    ports:
+      # Puerto_Host:Puerto_Contenedor
+      # Si el puerto 80 ya está en uso en tu servidor Ubuntu 26, 
+      # puedes cambiar el de la izquierda (ej: "8080:80")
+      - "80:80"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
