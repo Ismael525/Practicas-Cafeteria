@@ -201,8 +201,8 @@ nav.scrolled {
     height: 90px;
     width: auto;
     object-fit: contain;
+    mix-blend-mode: multiply;
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    filter: drop-shadow(0 4px 12px rgba(217, 119, 6, 0.25));
 }
 
 nav.scrolled .logo img {
@@ -211,7 +211,6 @@ nav.scrolled .logo img {
 
 .logo:hover img {
     transform: scale(1.05) rotate(-1deg);
-    filter: drop-shadow(0 8px 15px rgba(120, 53, 15, 0.15));
 }
 
 /* Hero Section */
@@ -442,7 +441,6 @@ nav.scrolled .logo img {
     .logo img {
         height: 65px;
         max-width: 60vw;
-        filter: drop-shadow(0 6px 16px rgba(217, 119, 6, 0.35));
     }
     .auth-links {
         display: none; 
