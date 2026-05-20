@@ -820,6 +820,9 @@
                     <button onclick="switchTab('users')" id="tab-users-btn" class="btn btn-primary"
                         style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i
                             class="fas fa-users-cog"></i> Usuarios</button>
+                    <button onclick="switchTab('backups')" id="tab-backups-btn" class="btn btn-primary"
+                        style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);"><i
+                            class="fas fa-cloud-download-alt"></i> Copias de Seguridad</button>
                 </div>
             </div>
 
@@ -1251,6 +1254,34 @@
                     <div id="users-cards" class="mobile-cards-container"></div>
                 </div>
             </div>
+
+            <!-- Backups Tab -->
+            <div id="backups-tab" style="display: none;">
+                <div class="products-table-container" style="padding: 2rem;">
+                    <div class="admin-header" style="margin-bottom: 2rem;">
+                        <div>
+                            <h3>Copias de Seguridad (Fusión Segura)</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 600px; margin-top: 0.5rem;">
+                                Crea una copia de seguridad en formato JSON de todos los datos públicos (menú, ajustes, anuncios). 
+                                Al restaurar, se realizará una <b>fusión segura</b>: no se eliminarán los datos que hayas creado después de la copia, solo se restaurarán los que existían en ese momento.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <button onclick="exportBackup()" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem;">
+                            <i class="fas fa-download"></i> Descargar Copia (JSON)
+                        </button>
+                        
+                        <div style="position: relative;">
+                            <input type="file" id="backup-input" accept=".json" style="display: none;" onchange="importBackup(event)">
+                            <button onclick="document.getElementById('backup-input').click()" class="btn btn-primary" style="background: var(--secondary); border: none; padding: 1rem 2rem; font-size: 1rem;">
+                                <i class="fas fa-upload"></i> Restaurar desde Copia
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div><!-- end #admin-content -->
 
@@ -1637,7 +1668,7 @@
             const tTab = document.getElementById('trash-tab');
             const pBtn = document.getElementById('tab-products-btn');
             const sBtn = document.getElementById('tab-settings-btn');
-            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls', 'users'];
+            const tabs = ['products', 'announcements', 'settings', 'trash', 'polls', 'users', 'backups'];
 
             tabs.forEach(t => {
                 const tabEl = document.getElementById(t + '-tab');
@@ -3132,6 +3163,69 @@
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('active');
             document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        async function exportBackup() {
+            try {
+                showToast('Preparando copia de seguridad...', 'info');
+                const tables = ['categories', 'products', 'site_settings', 'announcements', 'polls', 'poll_options', 'web_sections'];
+                const backupData = {};
+                
+                for (const table of tables) {
+                    const { data, error } = await supabaseClient.from(table).select('*');
+                    if (error) throw error;
+                    backupData[table] = data || [];
+                }
+                
+                const backupJson = JSON.stringify(backupData, null, 2);
+                const blob = new Blob([backupJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_cafeteria_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Copia de seguridad descargada con éxito', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('Error al exportar: ' + err.message, 'error');
+            }
+        }
+
+        async function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const tablesToRestore = ['categories', 'products', 'site_settings', 'announcements', 'polls', 'poll_options', 'web_sections'];
+                    
+                    showToast('Iniciando restauración segura...', 'info');
+                    
+                    for (const table of tablesToRestore) {
+                        if (data[table] && data[table].length > 0) {
+                            // Usamos upsert. Para que funcione bien necesita la PK. Supabase por defecto usa la PK primaria.
+                            const { error } = await supabaseClient.from(table).upsert(data[table]);
+                            if (error) {
+                                console.error(`Error restaurando tabla ${table}:`, error);
+                                throw new Error(`Error en la tabla ${table}: ${error.message}`);
+                            }
+                        }
+                    }
+                    
+                    showToast('Restauración completada con éxito. Recargando...', 'success');
+                    setTimeout(() => window.location.reload(), 2000);
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error al restaurar: ' + err.message, 'error');
+                }
+                event.target.value = ''; // Reset input
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
