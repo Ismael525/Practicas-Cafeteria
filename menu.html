@@ -1084,7 +1084,7 @@
         <div class="footer-container">
             <div class="footer-col">
                 <h4>Antonio Machado</h4>
-                <p>La cafetería de tu instituto. Bocadillos recién hechos, café de especialidad y el mejor ambiente para tu descanso.</p>
+                <p id="footer-desc">La cafetería de tu instituto. Bocadillos recién hechos, café de especialidad y el mejor ambiente para tu descanso.</p>
             </div>
             <div class="footer-col">
                 <h4>Enlaces Rápidos</h4>
@@ -1098,14 +1098,14 @@
                 <h4>Contacto</h4>
                 <ul class="footer-contact-info">
                     <li><i class="fas fa-map-marker-alt"></i> IES Antonio Machado</li>
-                    <li><i class="fas fa-clock"></i> Lunes a Viernes: 7:45 - 14:00</li>
+                    <li><i class="fas fa-clock"></i> <span id="footer-schedule">Lunes a Viernes: 7:45 - 14:00</span></li>
                     <li><i class="fab fa-whatsapp"></i> 604 88 52 96</li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 Cafetería Antonio Machado. Todos los derechos reservados.</p>
-            <p><a href="#">Aviso Legal y LSSIC</a> | <a href="#">Política de Privacidad</a></p>
+            <p><a href="#" id="footer-lssic-url">Aviso Legal y LSSIC</a> | <a href="#" id="footer-privacy-url">Política de Privacidad</a></p>
         </div>
     </footer>
 
@@ -1172,6 +1172,7 @@
                     const el = document.getElementById(s.key.replace(/_/g, '-'));
                     if (el) {
                         if (el.tagName === 'IMG') el.src = s.value;
+                        else if (el.tagName === 'A') el.href = s.value;
                         else el.textContent = s.value;
                     }
 

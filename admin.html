@@ -1102,6 +1102,26 @@
                             </div>
                         </div>
 
+                        <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
+                            <h3>Pie de Página (Footer)</h3>
+                        </div>
+                        <div class="form-group full">
+                            <label>Descripción de la Marca</label>
+                            <textarea id="s-footer-desc" rows="3"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label>Horario</label>
+                            <input type="text" id="s-footer-schedule">
+                        </div>
+                        <div class="form-group">
+                            <label>URL de Aviso Legal y LSSIC</label>
+                            <input type="text" id="s-footer-lssic-url" placeholder="Ej: /aviso-legal.html">
+                        </div>
+                        <div class="form-group">
+                            <label>URL de Política de Privacidad</label>
+                            <input type="text" id="s-footer-privacy-url" placeholder="Ej: /privacidad.html">
+                        </div>
+
                         <div class="form-group full" style="margin-top: 2rem;">
                             <button type="submit" class="btn btn-primary" style="width: 100%;">Guardar Todos los
                                 Cambios</button>
@@ -1949,7 +1969,11 @@
                     { key: 'card3_title', value: document.getElementById('s-card3-title')?.value || '' },
                     { key: 'card3_desc', value: document.getElementById('s-card3-desc')?.value || '' },
                     { key: 'card3_list', value: card3List },
-                    { key: 'site_logo', value: logoUrl }
+                    { key: 'site_logo', value: logoUrl },
+                    { key: 'footer_desc', value: document.getElementById('s-footer-desc')?.value || '' },
+                    { key: 'footer_schedule', value: document.getElementById('s-footer-schedule')?.value || '' },
+                    { key: 'footer_lssic_url', value: document.getElementById('s-footer-lssic-url')?.value || '' },
+                    { key: 'footer_privacy_url', value: document.getElementById('s-footer-privacy-url')?.value || '' }
                 ];
 
                 const { error } = await supabaseClient
