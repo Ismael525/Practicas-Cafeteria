@@ -275,19 +275,12 @@
             font-weight: 700;
             margin-bottom: 1.5rem;
             color: var(--primary);
-            position: sticky;
-            top: 60px; /* Debajo del nav */
-            z-index: 10;
-            background: rgba(253, 252, 251, 0.98); /* Un poco más opaco */
-            /* backdrop-filter: blur(10px); REMOVIDO: Causa lag extremo en scroll */
+            background: transparent;
             padding: 1rem 0;
             width: 100%;
             border-bottom: 2px solid var(--primary-light);
             text-transform: uppercase;
             transition: all 0.3s ease;
-        }
-        nav.scrolled + .catalog-container .category-title {
-            top: 70px;
         }
         .category-grid {
             display: grid;
