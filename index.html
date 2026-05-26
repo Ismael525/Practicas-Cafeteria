@@ -1,12 +1,552 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=inicio.html">
-    <link rel="canonical" href="inicio.html">
-    <title>Cafetería Antonio Machado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafetería Antonio Machado | Café de Especialidad</title>
+    <meta name="description" content="Descubre el mejor café artesanal en Cafetería Antonio Machado. Experiencia única, granos de especialidad y ambiente acogedor.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="index.css">
+    <style>
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 450px;
+            transform: translateX(120%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: auto;
+            border-left: 5px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        .toast-success { border-left-color: #10b981; }
+        .toast-success .toast-icon { background: #ecfdf5; color: #10b981; }
+
+        .toast-error { border-left-color: #ef4444; }
+        .toast-error .toast-icon { background: #fef2f2; color: #ef4444; }
+
+        .toast-info { border-left-color: var(--primary); }
+        .toast-info .toast-icon { background: #fff7ed; color: var(--primary); }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            margin-bottom: 0.1rem;
+        }
+
+        .toast-msg {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
 </head>
 <body>
-    <script>window.location.replace("inicio.html");</script>
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <nav id="main-nav">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="index.html" class="logo">ANTONIO MACHADO</a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Inicio</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="menu.html">Menú</a>
+        </div>
+        <div class="auth-links">
+            <a href="login.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;">Staff Login</a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="mobile-nav-overlay">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html" class="active" onclick="toggleMobileMenu()">Inicio</a>
+        <a href="nosotros.html" onclick="toggleMobileMenu()">Nosotros</a>
+        <a href="menu.html" onclick="toggleMobileMenu()">Menú</a>
+        <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
+    </div>
+
+    <section class="hero" id="hero-bg">
+        <div class="hero-content">
+            <h1 id="hero-title" data-aos="fade-up">Cargando...</h1>
+            <p id="hero-desc" data-aos="fade-up" data-aos-delay="200"></p>
+            <div data-aos="fade-up" data-aos-delay="400">
+                <a href="menu.html" class="btn btn-primary">Explorar Menú</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="info-section">
+        <div class="container">
+            <h2 class="section-title" id="section-title" data-aos="fade-up">Servicios y Encargos</h2>
+            
+            <div class="info-grid">
+                <!-- Encargos Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3 id="card1-title">Sistema de Encargos</h3>
+                    <p id="card1-desc">Haz tu pedido cómodamente y recógelo sin esperas.</p>
+                    <div class="phone-number" id="contact-phone">604 88 52 96</div>
+                    <ul class="card-list" id="card1-list">
+                        <li><i class="fas fa-clock"></i> Fuera de horario lectivo</li>
+                        <li><i class="fas fa-id-card"></i> Indica nombre y curso</li>
+                        <li><i class="fas fa-hamburger"></i> Recogida en el recreo</li>
+                    </ul>
+                </div>
+
+                <!-- Tarjetas Monedero Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-icon"><i class="fas fa-wallet"></i></div>
+                    <h3 id="card2-title">Tarjetas Monedero</h3>
+                    <p id="card2-desc">Ahorra tiempo y agiliza tus pagos con bonos de 5 bocadillos.</p>
+                    <div class="price-grid" id="card2-prices">
+                        <div class="price-item"><span>5 bocadillos (1.00€)</span> <strong>5.00€</strong></div>
+                        <div class="price-item"><span>5 bocadillos (1.50€)</span> <strong>7.50€</strong></div>
+                        <div class="price-item"><span>5 bocadillos (2.00€)</span> <strong>10.00€</strong></div>
+                    </div>
+                    <p class="card-note" id="card2-note">* Se paga al inicio y se sella diariamente.</p>
+                </div>
+
+                <!-- Otros Servicios Card -->
+                <div class="info-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-icon"><i class="fas fa-utensils"></i></div>
+                    <h3 id="card3-title">Información Diaria</h3>
+                    <p id="card3-desc">Todo lo que necesitas saber para tu descanso.</p>
+                    <ul class="card-list" id="card3-list">
+                        <li><i class="fas fa-calendar-alt"></i> Encargos desde las 7:45h</li>
+                        <li><i class="fas fa-credit-card"></i> Pago con tarjeta en persona disponible</li>
+                        <li><i class="fas fa-bolt"></i> ¡Optimiza tu tiempo de recreo!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="poll-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Encuesta del Día</h2>
+            <div class="poll-container" data-aos="fade-up">
+                <div id="poll-loading">
+                    <p>Cargando cuestionario...</p>
+                </div>
+                <div id="poll-content" style="display: none;">
+                    <h2 class="poll-question" id="display-poll-question"></h2>
+                    <div class="poll-options" id="display-poll-options">
+                        <!-- Options will be loaded here -->
+                    </div>
+                    <button id="vote-btn" class="btn btn-primary poll-vote-btn" disabled onclick="submitVote()">Votar ahora</button>
+                    <div id="voted-msg" class="poll-voted-msg" style="display: none;">
+                        <i class="fas fa-check-circle"></i> ¡Gracias por tu participación!
+                    </div>
+                    <button id="change-vote-btn" class="btn" style="display: none; margin-top: 1rem; width: 100%; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 0.6rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;" onclick="retractVote()">
+                        <i class="fas fa-undo"></i> Cambiar mi voto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="wa-widget">
+        <div id="wa-chat-window" class="wa-chat-window">
+            <div class="wa-chat-header">
+                <div style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <i class="fas fa-bread-slice"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 700;">Cafetería Antonio Machado</div>
+                    <div class="wa-chat-status">● En línea</div>
+                </div>
+            </div>
+            <div class="wa-chat-body">
+                <div class="wa-message">
+                    ¡Hola! 🥖 ¿En qué podemos ayudarte hoy? Cuéntanos qué te gustaría pedir.
+                </div>
+            </div>
+            <div class="wa-chat-footer">
+                <input type="text" id="wa-chat-input" class="wa-input" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') sendWhatsAppMessage()">
+                <button class="wa-send-btn" onclick="sendWhatsAppMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <div class="wa-btn" onclick="toggleWhatsApp()">
+            <i class="fab fa-whatsapp"></i>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Antonio Machado</h4>
+                <p id="footer-desc">La cafetería de tu instituto. Bocadillos recién hechos, café de especialidad y el mejor ambiente para tu descanso.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces Rápidos</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="nosotros.html">Sobre Nosotros</a></li>
+                    <li><a href="menu.html">Menú y Pedidos</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <ul class="footer-contact-info">
+                    <li><i class="fas fa-map-marker-alt"></i> IES Antonio Machado</li>
+                    <li><i class="fas fa-clock"></i> <span id="footer-schedule">Lunes a Viernes: 7:45 - 14:00</span></li>
+                    <li><i class="fab fa-whatsapp"></i> 604 88 52 96</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Cafetería Antonio Machado. Todos los derechos reservados.</p>
+            <p><a href="#" id="footer-lssic-url">Aviso Legal y LSSIC</a> | <a href="privacidad.html" id="footer-privacy-url">Política de Privacidad</a></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ 
+            duration: 1000, 
+            once: true,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+        });
+
+        const SUPABASE_URL = 'https://zkacoudrehddslndmpzy.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_8H72Pi-Mk0gPdh-sOEDSCA_mb3iefP4';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function showToast(message, type = 'info', title = '') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: 'fa-check', error: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+            const defaultTitles = { success: 'Éxito', error: 'Error', info: 'Aviso' };
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${icons[type]}"></i></div>
+                <div class="toast-content">
+                    <div class="toast-title">${title || defaultTitles[type]}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+            `;
+            container.appendChild(toast);
+            toast.offsetHeight;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        async function loadSettings() {
+            const { data } = await supabaseClient.from('site_settings').select('key, value');
+            if (data) {
+                data.forEach(s => {
+                    const el = document.getElementById(s.key.replace(/_/g, '-'));
+                    if (el) {
+                        if (el.tagName === 'IMG') el.src = s.value;
+                        else if (el.tagName === 'A') el.href = s.value;
+                        else el.textContent = s.value;
+                    }
+                    
+                    if (s.key === 'hero_image') {
+                        const hero = document.getElementById('hero-bg');
+                        if (hero) {
+                            hero.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${s.value}')`;
+                        }
+                    }
+
+                    if (s.key === 'site_favicon') {
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.getElementsByTagName('head')[0].appendChild(link);
+                        }
+                        link.href = s.value;
+                    }
+
+                    if (s.key === 'contact_phone') {
+                        window.GLOBAL_WHATSAPP_NUMBER = s.value;
+                    }
+
+                    if (s.key === 'site_logo' && s.value) {
+                        const logoElements = document.querySelectorAll('.logo');
+                        logoElements.forEach(el => {
+                            el.innerHTML = `<img src="${s.value}" alt="ANTONIO MACHADO">`;
+                        });
+                    }
+
+                    // Complex sections
+                    if (s.key === 'card1_list' || s.key === 'card3_list') {
+                        const listId = s.key.replace(/_/g, '-');
+                        const container = document.getElementById(listId);
+                        if (container) {
+                            const lines = s.value.split('\n').filter(l => l.trim());
+                            container.innerHTML = lines.map(line => {
+                                const parts = line.split('|');
+                                const icon = parts[0]?.trim() || 'check';
+                                const text = parts[1]?.trim() || parts[0]?.trim();
+                                return `<li><i class="fas fa-${icon}"></i> ${text}</li>`;
+                            }).join('');
+                        }
+                    }
+
+                    if (s.key === 'card2_prices') {
+                        const container = document.getElementById('card2-prices');
+                        if (container) {
+                            const lines = s.value.split('\n').filter(l => l.trim());
+                            container.innerHTML = lines.map(line => {
+                                const parts = line.split('|');
+                                const label = parts[0]?.trim() || 'Concepto';
+                                const price = parts[1]?.trim() || '0.00€';
+                                return `<div class="price-item"><span>${label}</span> <strong>${price}</strong></div>`;
+                            }).join('');
+                        }
+                    }
+
+                    if (s.key === 'card2_note') {
+                        const el = document.getElementById('card2-note');
+                        if (el) el.textContent = s.value;
+                    }
+                });
+                document.querySelectorAll('.logo').forEach(el => el.classList.add('logo-ready'));
+            }
+        }
+
+
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('active');
+            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // --- POLL LOGIC ---
+        let activePoll = null;
+        let selectedOptionId = null;
+        let votedOptionId = null;
+
+        async function loadActivePoll() {
+            const { data: poll, error } = await supabaseClient
+                .from('polls')
+                .select('*, poll_options(*)')
+                .eq('is_active', true)
+                .single();
+            
+            if (error || !poll) {
+                document.getElementById('poll-loading').innerHTML = '<p>No hay cuestionarios activos en este momento.</p>';
+                return;
+            }
+
+            activePoll = poll;
+            document.getElementById('poll-loading').style.display = 'none';
+            document.getElementById('poll-content').style.display = 'block';
+            document.getElementById('display-poll-question').textContent = poll.question;
+
+            const hasVoted = localStorage.getItem(`voted_${poll.id}`);
+            votedOptionId = localStorage.getItem(`voted_option_${poll.id}`) || null;
+            if (hasVoted) {
+                showResults();
+            } else {
+                renderOptions();
+            }
+        }
+
+        function renderOptions() {
+            const container = document.getElementById('display-poll-options');
+            container.innerHTML = activePoll.poll_options.map(opt => `
+                <div class="poll-option" onclick="selectOption('${opt.id}', this)">
+                    <span>${opt.option_text}</span>
+                    <i class="far fa-circle"></i>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(id, element) {
+            selectedOptionId = id;
+            document.querySelectorAll('.poll-option').forEach(el => {
+                el.classList.remove('selected');
+                el.querySelector('i').className = 'far fa-circle';
+            });
+            element.classList.add('selected');
+            element.querySelector('i').className = 'fas fa-check-circle';
+            document.getElementById('vote-btn').disabled = false;
+        }
+
+        async function submitVote() {
+            if (!selectedOptionId) return;
+            
+            const btn = document.getElementById('vote-btn');
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            // Use secure server-side function to increment vote (prevents manipulation)
+            const { error } = await supabaseClient.rpc('vote_for_option', { option_id: selectedOptionId });
+
+            if (!error) {
+                votedOptionId = selectedOptionId;
+                localStorage.setItem(`voted_${activePoll.id}`, 'true');
+                localStorage.setItem(`voted_option_${activePoll.id}`, selectedOptionId);
+                // Update local data for immediate result display
+                const option = activePoll.poll_options.find(o => o.id === selectedOptionId);
+                if (option) option.votes = (option.votes || 0) + 1;
+                showToast('¡Voto registrado con éxito!', 'success');
+                showResults();
+            } else {
+                showToast('Error al votar. Inténtalo de nuevo.', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Votar ahora';
+            }
+        }
+
+        function showResults() {
+            const container = document.getElementById('display-poll-options');
+            const totalVotes = activePoll.poll_options.reduce((acc, opt) => acc + (opt.votes || 0), 0);
+            
+            document.getElementById('vote-btn').style.display = 'none';
+            document.getElementById('voted-msg').style.display = 'flex';
+            document.getElementById('change-vote-btn').style.display = 'block';
+
+            container.innerHTML = activePoll.poll_options.map(opt => {
+                const percentage = totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0;
+                const isVoted = opt.id === votedOptionId;
+                return `
+                    <div class="poll-results" style="${isVoted ? 'border-left: 3px solid var(--primary); padding-left: 0.75rem;' : ''}">
+                        <div class="poll-result-info">
+                            <span>${opt.option_text}${isVoted ? ' <i class="fas fa-check" style="color: var(--primary); font-size: 0.75rem;"></i>' : ''}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                        <div class="poll-result-bar">
+                            <div class="poll-result-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function retractVote() {
+            if (!votedOptionId) {
+                console.error('No votedOptionId found to retract');
+                return;
+            }
+
+            const changeBtn = document.getElementById('change-vote-btn');
+            const originalContent = changeBtn.innerHTML;
+            changeBtn.disabled = true;
+            changeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Retirando voto...';
+
+            try {
+                const { error } = await supabaseClient.rpc('unvote_option', { option_id: votedOptionId });
+
+                if (!error) {
+                    // Update local data
+                    const option = activePoll.poll_options.find(o => o.id === votedOptionId);
+                    if (option) option.votes = Math.max(0, (option.votes || 0) - 1);
+
+                    // Reset state
+                    localStorage.removeItem(`voted_${activePoll.id}`);
+                    localStorage.removeItem(`voted_option_${activePoll.id}`);
+                    votedOptionId = null;
+                    selectedOptionId = null;
+
+                    // Hide change vote button and msg
+                    changeBtn.style.display = 'none';
+                    document.getElementById('voted-msg').style.display = 'none';
+                    
+                    // Restore original content for next time
+                    changeBtn.innerHTML = originalContent;
+                    changeBtn.disabled = false;
+
+                    // Restore vote UI
+                    document.getElementById('vote-btn').style.display = 'block';
+                    document.getElementById('vote-btn').disabled = true;
+                    document.getElementById('vote-btn').textContent = 'Votar ahora';
+                    renderOptions();
+                    showToast('Voto retirado. Ya puedes votar de nuevo.', 'info');
+                } else {
+                    console.error('Supabase RPC error:', error);
+                    throw error;
+                }
+            } catch (err) {
+                changeBtn.disabled = false;
+                changeBtn.innerHTML = originalContent;
+                showToast(err.message || 'Error desconocido', 'error', 'Error al retirar voto');
+            }
+        }
+
+
+        async function initPage() {
+            await Promise.all([
+                loadSettings(),
+                loadActivePoll()
+            ]);
+        }
+        
+        initPage();
+    </script>
 </body>
 </html>
