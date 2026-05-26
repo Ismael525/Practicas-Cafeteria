@@ -1025,6 +1025,24 @@ nav.scrolled .logo img {
     color: var(--primary-light);
 }
 
+.legal-footer-banner {
+    background-color: transparent;
+    color: #a8a29e;
+    padding: 1.5rem 1rem 0;
+    margin: 2rem auto 0;
+    max-width: 1000px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.8;
+}
+
+.legal-footer-banner p {
+    margin: 0;
+    font-weight: 400;
+}
+
 /* =========================================
    PAGE TRANSITIONS
    ========================================= */
