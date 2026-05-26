@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MenÃº | CafeterÃ­a Antonio Machado</title>
+    <title>Menú | Cafetería Antonio Machado</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
@@ -86,11 +86,11 @@
             border: 1px solid #e7e5e4;
             display: flex;
             flex-direction: column;
-            will-change: transform; /* OptimizaciÃ³n para animaciones */
+            will-change: transform; /* Optimización para animaciones */
         }
         .product-card:hover {
             transform: translateY(-5px); /* Reducido de -10px */
-            box-shadow: 0 10px 25px rgba(120, 53, 15, 0.1); /* Sombra mÃ¡s simple */
+            box-shadow: 0 10px 25px rgba(120, 53, 15, 0.1); /* Sombra más simple */
             border-color: var(--primary-light);
         }
         .product-image {
@@ -265,7 +265,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Estilos de cuadrÃ­cula para categorÃ­as */
+        /* Estilos de cuadrícula para categorías */
         .category-section {
             margin-bottom: 4rem;
         }
@@ -367,7 +367,7 @@
             .category-title {
                 font-size: 1.1rem;
                 margin-bottom: 1rem;
-                top: 50px; /* Altura aproximada del nav mÃ³vil */
+                top: 50px; /* Altura aproximada del nav móvil */
                 padding: 0.8rem 0;
                 border-bottom: none;
             }
@@ -714,7 +714,7 @@
             font-weight: 800;
         }
 
-        /* â”€â”€ Announcements Banner & Carousel â”€â”€ */
+        /* ── Announcements Banner & Carousel ── */
         .announcements-wrapper {
             margin-bottom: 3rem;
             position: relative;
@@ -760,7 +760,7 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* CÃ­rculos decorativos de fondo */
+        /* Círculos decorativos de fondo */
         .announcement-banner::before {
             content: '';
             position: absolute;
@@ -919,7 +919,7 @@
                 height: 65px !important; 
             }
             .ann-text { 
-                font-size: 1.15rem !important; /* MÃ¡s grande en mÃ³vil tambiÃ©n */
+                font-size: 1.15rem !important; /* Más grande en móvil también */
                 line-height: 1.2 !important;
             }
             .ann-badge { display: none !important; }
@@ -939,7 +939,7 @@
         <div class="nav-links">
             <a href="inicio.html">Inicio</a>
             <a href="nosotros.html">Nosotros</a>
-            <a href="menu.html" class="active">MenÃº</a>
+            <a href="menu.html" class="active">Menú</a>
         </div>
         <div class="auth-links">
             <a href="login.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem; font-size: 0.8rem;">Staff Login</a>
@@ -951,7 +951,7 @@
         <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
         <a href="inicio.html" onclick="toggleMobileMenu()">Inicio</a>
         <a href="nosotros.html" onclick="toggleMobileMenu()">Nosotros</a>
-        <a href="menu.html" class="active" onclick="toggleMobileMenu()">MenÃº</a>
+        <a href="menu.html" class="active" onclick="toggleMobileMenu()">Menú</a>
         <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
     </div>
 
@@ -963,26 +963,26 @@
 
         <div class="catalog-header">
             <h2 data-aos="fade-up">Nuestra Carta</h2>
-            <p data-aos="fade-up" data-aos-delay="100">SelecciÃ³n artesanal de cafÃ©s, reposterÃ­a y bocados salados.</p>
+            <p data-aos="fade-up" data-aos-delay="100">Selección artesanal de cafés, repostería y bocados salados.</p>
         </div>
 
         <div class="search-container" data-aos="fade-up" data-aos-delay="150">
             <div class="search-input-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="catalog-search" class="search-input" placeholder="Â¿QuÃ© te apetece hoy? Busca aquÃ­..." oninput="handleSearch()">
+                <input type="text" id="catalog-search" class="search-input" placeholder="¿Qué te apetece hoy? Busca aquí..." oninput="handleSearch()">
             </div>
         </div>
 
         <section class="filters-section" data-aos="fade-up">
             <div class="filter-group">
-                <label>CategorÃ­a</label>
+                <label>Categoría</label>
                 <div class="filter-options" id="category-filters">
                     <div class="filter-chip active" onclick="filterByCategory('all')">Todos</div>
                     <!-- Categories will be loaded here -->
                 </div>
             </div>
             <div class="filter-group">
-                <label>Sin AlÃ©rgenos</label>
+                <label>Sin Alérgenos</label>
                 <div class="filter-options" id="allergen-filters">
                     <div class="filter-chip" data-allergen="gluten" onclick="toggleAllergenFilter('gluten')">Sin Gluten</div>
                     <div class="filter-chip" data-allergen="lactosa" onclick="toggleAllergenFilter('lactosa')">Sin Lactosa</div>
@@ -990,8 +990,8 @@
                     <div class="filter-chip" data-allergen="frutos" onclick="toggleAllergenFilter('frutos')">Sin Frutos Secos</div>
                     <div class="filter-chip" data-allergen="soja" onclick="toggleAllergenFilter('soja')">Sin Soja</div>
                     <div class="filter-chip" data-allergen="mostaza" onclick="toggleAllergenFilter('mostaza')">Sin Mostaza</div>
-                    <div class="filter-chip" data-allergen="sesamo" onclick="toggleAllergenFilter('sesamo')">Sin SÃ©samo</div>
-                    <div class="filter-chip" data-allergen="atun" onclick="toggleAllergenFilter('atun')">Sin AtÃºn</div>
+                    <div class="filter-chip" data-allergen="sesamo" onclick="toggleAllergenFilter('sesamo')">Sin Sésamo</div>
+                    <div class="filter-chip" data-allergen="atun" onclick="toggleAllergenFilter('atun')">Sin Atún</div>
                 </div>
             </div>
         </section>
@@ -1008,7 +1008,7 @@
             <button id="catalog-prev" onclick="changeCatalogPage(-1)" class="btn" style="background: white; color: var(--primary); border: 1px solid var(--primary); padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 600; transition: all 0.3s; cursor: pointer;">
                 <i class="fas fa-chevron-left"></i> Anterior
             </button>
-            <span id="catalog-page-info" style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">PÃ¡gina 1 de 1</span>
+            <span id="catalog-page-info" style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;">Página 1 de 1</span>
             <button id="catalog-next" onclick="changeCatalogPage(1)" class="btn" style="background: white; color: var(--primary); border: 1px solid var(--primary); padding: 0.8rem 1.5rem; border-radius: 50px; font-weight: 600; transition: all 0.3s; cursor: pointer;">
                 Siguiente <i class="fas fa-chevron-right"></i>
             </button>
@@ -1022,13 +1022,13 @@
                     <i class="fas fa-bread-slice"></i>
                 </div>
                 <div>
-                    <div style="font-weight: 700;">CafeterÃ­a Antonio Machado</div>
-                    <div class="wa-chat-status">â— En lÃ­nea</div>
+                    <div style="font-weight: 700;">Cafetería Antonio Machado</div>
+                    <div class="wa-chat-status">● En línea</div>
                 </div>
             </div>
             <div class="wa-chat-body">
                 <div class="wa-message">
-                    Â¡Hola! ðŸ¥– Â¿En quÃ© podemos ayudarte hoy? CuÃ©ntanos quÃ© te gustarÃ­a pedir.
+                    ¡Hola! 🥖 ¿En qué podemos ayudarte hoy? Cuéntanos qué te gustaría pedir.
                 </div>
             </div>
             <div class="wa-chat-footer">
@@ -1067,7 +1067,7 @@
                 <div class="modal-footer">
                     <div id="modal-total-price-container" class="modal-total-price-container">
                         <span class="total-label">Total</span>
-                        <span id="modal-total-amount" class="total-amount">0.00â‚¬</span>
+                        <span id="modal-total-amount" class="total-amount">0.00€</span>
                     </div>
 
                     <div class="modal-actions">
@@ -1084,14 +1084,14 @@
         <div class="footer-container">
             <div class="footer-col">
                 <h4>Antonio Machado</h4>
-                <p id="footer-desc">La cafeterÃ­a de tu instituto. Bocadillos reciÃ©n hechos, cafÃ© de especialidad y el mejor ambiente para tu descanso.</p>
+                <p id="footer-desc">La cafetería de tu instituto. Bocadillos recién hechos, café de especialidad y el mejor ambiente para tu descanso.</p>
             </div>
             <div class="footer-col">
-                <h4>Enlaces RÃ¡pidos</h4>
+                <h4>Enlaces Rápidos</h4>
                 <ul class="footer-links">
                     <li><a href="inicio.html">Inicio</a></li>
                     <li><a href="nosotros.html">Sobre Nosotros</a></li>
-                    <li><a href="menu.html">MenÃº y Pedidos</a></li>
+                    <li><a href="menu.html">Menú y Pedidos</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -1104,8 +1104,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 CafeterÃ­a Antonio Machado. Todos los derechos reservados.</p>
-            <p><a href="#" id="footer-lssic-url">Aviso Legal y LSSIC</a> | <a href="privacidad.html" id="footer-privacy-url">PolÃ­tica de Privacidad</a></p>
+            <p>&copy; 2026 Cafetería Antonio Machado. Todos los derechos reservados.</p>
+            <p><a href="#" id="footer-lssic-url">Aviso Legal y LSSIC</a> | <a href="privacidad.html" id="footer-privacy-url">Política de Privacidad</a></p>
         </div>
     </footer>
 
@@ -1284,7 +1284,7 @@
                 loadAnnouncements()
             ]);
             
-            // Los productos se cargan despuÃ©s de tener las categorÃ­as (para saber IDs de extras/bebidas)
+            // Los productos se cargan después de tener las categorías (para saber IDs de extras/bebidas)
             await loadProducts();
             
             setupRealtime();
@@ -1306,17 +1306,17 @@
                     const updated = payload.new;
                     const idx = products.findIndex(p => p.id === updated.id);
                     if (idx !== -1) {
-                        // Preservar la informaciÃ³n de categorÃ­as ya que el payload de realtime no la incluye
+                        // Preservar la información de categorías ya que el payload de realtime no la incluye
                         const oldCategories = products[idx].categories;
                         products[idx] = { ...updated, categories: oldCategories };
                         
                         renderProducts();
                         
-                        // Si el modal estÃ¡ abierto para este producto, refrescarlo
+                        // Si el modal está abierto para este producto, refrescarlo
                         const modalOverlay = document.getElementById('product-modal-overlay');
                         if (modalOverlay.classList.contains('active')) {
                             const currentModalId = document.getElementById('modal-whatsapp-btn').dataset.productId;
-                            // Si el producto actualizado es el que estÃ¡ en el modal O es un extra (porque los extras afectan a todos los modales)
+                            // Si el producto actualizado es el que está en el modal O es un extra (porque los extras afectan a todos los modales)
                             const isExtra = Array.isArray(oldCategories) ? 
                                 oldCategories[0]?.name === EXTRAS_CATEGORY_NAME : 
                                 oldCategories?.name === EXTRAS_CATEGORY_NAME;
@@ -1340,7 +1340,7 @@
             extrasCatId = extrasCategory ? extrasCategory.id : null;
             bebidasCatId = bebidasCategory ? bebidasCategory.id : null;
 
-            // Solo mostramos en los filtros las categorÃ­as que NO sean EXTRAS ni BEBIDAS
+            // Solo mostramos en los filtros las categorías que NO sean EXTRAS ni BEBIDAS
             const filterCategories = categories.filter(cat => 
                 cat.name !== EXTRAS_CATEGORY_NAME && 
                 cat.name !== BEBIDAS_CATEGORY_NAME
@@ -1385,7 +1385,7 @@
                 renderProducts();
             } catch (err) {
                 console.error("Error loading products:", err);
-                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: #ef4444;">Error al cargar el menÃº.</div>';
+                grid.innerHTML = '<div style="text-align: center; grid-column: 1/-1; padding: 3rem; color: #ef4444;">Error al cargar el menú.</div>';
             }
         }
 
@@ -1443,7 +1443,7 @@
                 return;
             }
 
-            // Identificar IDs de categorÃ­as que se tratarÃ¡n como extras
+            // Identificar IDs de categorías que se tratarán como extras
             const extrasCategory = categories.find(c => c.name.trim().toUpperCase() === EXTRAS_CATEGORY_NAME);
             const bebidasCategory = categories.find(c => c.name.trim().toUpperCase() === 'BEBIDAS');
             
@@ -1464,7 +1464,7 @@
                 const normalizedName = normalizeText(p.name || '');
                 const normalizedDesc = normalizeText(p.description || '');
                 
-                // Si hay bÃºsqueda, ignoramos el filtro de categorÃ­a
+                // Si hay búsqueda, ignoramos el filtro de categoría
                 const matchCategory = searchQuery !== '' || activeCategory === 'all' || String(p.category_id) === String(activeCategory);
                 
                 const pAllergens = (p.allergens || []).map(a => a.toLowerCase());
@@ -1480,8 +1480,8 @@
                     <div style="text-align: center; grid-column: 1/-1; padding: 5rem 2rem; color: var(--text-muted); background: white; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.03);" data-aos="fade-up">
                         <i class="fas fa-cookie-bite" style="font-size: 3.5rem; color: #e7e5e4; margin-bottom: 1.5rem; display: block;"></i>
                         <h3 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--secondary); margin-bottom: 0.5rem;">Vaya, hoy no tenemos eso...</h3>
-                        <p>No hay productos que coincidan con tu bÃºsqueda. Prueba con otros filtros o explora nuestras categorÃ­as.</p>
-                        <button onclick="resetFilters()" class="btn" style="margin-top: 2rem; background: var(--primary); color: white; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600;">Ver todo el menÃº</button>
+                        <p>No hay productos que coincidan con tu búsqueda. Prueba con otros filtros o explora nuestras categorías.</p>
+                        <button onclick="resetFilters()" class="btn" style="margin-top: 2rem; background: var(--primary); color: white; padding: 0.8rem 2rem; border-radius: 50px; font-weight: 600;">Ver todo el menú</button>
                     </div>
                 `;
                 paginationContainer.style.display = 'none';
@@ -1507,7 +1507,7 @@
             const paginatedItems = filtered.slice(start, end);
 
             paginationContainer.style.display = filtered.length > catalogItemsPerPage ? 'flex' : 'none';
-            document.getElementById('catalog-page-info').textContent = `PÃ¡gina ${catalogCurrentPage} de ${totalPages}`;
+            document.getElementById('catalog-page-info').textContent = `Página ${catalogCurrentPage} de ${totalPages}`;
             document.getElementById('catalog-prev').disabled = catalogCurrentPage === 1;
             document.getElementById('catalog-next').disabled = catalogCurrentPage === totalPages;
             document.getElementById('catalog-prev').style.opacity = catalogCurrentPage === 1 ? '0.5' : '1';
@@ -1545,7 +1545,7 @@
                         <div class="product-info">
                             <div class="product-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; gap: 1rem;">
                                 <h3 class="product-name" style="margin: 0; font-size: 1.25rem; color: var(--secondary); font-weight: 700;">${p.name}</h3>
-                                <span class="product-price" style="font-weight: 700; color: var(--primary); white-space: nowrap;">${parseFloat(p.price || 0).toFixed(2)}â‚¬</span>
+                                <span class="product-price" style="font-weight: 700; color: var(--primary); white-space: nowrap;">${parseFloat(p.price || 0).toFixed(2)}€</span>
                             </div>
                             ${p.description ? `<p class="product-desc" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">${p.description}</p>` : ''}
                             <div class="product-meta" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
@@ -1558,13 +1558,13 @@
                                         if (a.toLowerCase().includes('frutos')) icon = 'seedling';
                                         if (a.toLowerCase().includes('soja')) icon = 'leaf';
                                         if (a.toLowerCase().includes('mostaza')) icon = 'bottle-droplet';
-                                        if (a.toLowerCase().includes('sÃ©samo') || a.toLowerCase().includes('sesamo')) icon = 'ellipsis-v';
-                                        if (a.toLowerCase().includes('atÃºn') || a.toLowerCase().includes('atun') || a.toLowerCase().includes('pescado')) icon = 'fish';
+                                        if (a.toLowerCase().includes('sésamo') || a.toLowerCase().includes('sesamo')) icon = 'ellipsis-v';
+                                        if (a.toLowerCase().includes('atún') || a.toLowerCase().includes('atun') || a.toLowerCase().includes('pescado')) icon = 'fish';
                                         return `<div class="allergen-icon" title="${a}" style="width: 22px; height: 22px; border-radius: 50%; background: #fef2f2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.6rem;"><i class="fas fa-${icon}"></i></div>`;
                                     }).join('')}
                                 </div>
                                 <div class="order-reminder" style="color: #128c7e; font-size: 0.8rem; font-weight: 600; opacity: 0.9;">
-                                    <i class="fab fa-whatsapp"></i> Â¡Recuerda pedir!
+                                    <i class="fab fa-whatsapp"></i> ¡Recuerda pedir!
                                 </div>
                             </div>
                         </div>
@@ -1587,14 +1587,14 @@
             const product = products.find(p => p.id === id);
             if (!product) return;
 
-            // 1. Mostrar el modal inmediatamente para respuesta visual instantÃ¡nea
+            // 1. Mostrar el modal inmediatamente para respuesta visual instantánea
             document.getElementById('product-modal-overlay').classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // 2. Rellenar los datos bÃ¡sicos
+            // 2. Rellenar los datos básicos
             document.getElementById('modal-img').src = product.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80';
             document.getElementById('modal-title').textContent = product.name;
-            document.getElementById('modal-price').textContent = `${parseFloat(product.price || 0).toFixed(2)}â‚¬`;
+            document.getElementById('modal-price').textContent = `${parseFloat(product.price || 0).toFixed(2)}€`;
             const modalDesc = document.getElementById('modal-desc');
             if (product.description && product.description.trim() !== '') {
                 modalDesc.textContent = product.description;
@@ -1613,10 +1613,10 @@
             const extrasGrid = document.getElementById('modal-extras-grid');
             const extrasSection = document.getElementById('modal-extras-section');
             
-            // Limpiar selecciÃ³n previa
+            // Limpiar selección previa
             currentlySelectedExtras = [];
 
-            // CategorizaciÃ³n para el modal
+            // Categorización para el modal
             const sauceKeywords = ['SALSA', 'MAYONESA', 'MOSTAZA', 'KETCHUP', 'MOJO', 'GAUCHA', 'ALIOLI', 'BRAVA', 'YOGURT'];
             const availableExtras = extraProducts.filter(e => e.is_available !== false);
             
@@ -1661,7 +1661,7 @@
                     ${contentsHtml}
                 `;
                 
-                // Activar la primera pestaÃ±a por defecto
+                // Activar la primera pestaña por defecto
                 const firstTab = extrasGrid.querySelector('.modal-tab');
                 const firstContent = extrasGrid.querySelector('.tab-content');
                 if (firstTab && firstContent) {
@@ -1680,7 +1680,7 @@
                 el.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
             }
-            // Exponer la funciÃ³n globalmente para los onclick
+            // Exponer la función globalmente para los onclick
             window.switchTab = switchTab;
 
             function renderExtraItem(extra) {
@@ -1689,7 +1689,7 @@
                 return `
                     <div class="extra-item" onclick="toggleExtra(this, '${extra.name.replace(/'/g, "\\'")}', ${price}, ${isDrink})" data-name="${extra.name}" data-price="${price}">
                         <span class="extra-name">${extra.name}</span>
-                        <span class="extra-price">+${price.toFixed(2)}â‚¬</span>
+                        <span class="extra-price">+${price.toFixed(2)}€</span>
                     </div>
                 `;
             }
@@ -1712,9 +1712,9 @@
             const extrasTotal = currentlySelectedExtras.reduce((sum, item) => sum + item.price, 0);
             const total = basePrice + extrasTotal;
             
-            document.getElementById('modal-total-amount').textContent = `${total.toFixed(2)}â‚¬`;
+            document.getElementById('modal-total-amount').textContent = `${total.toFixed(2)}€`;
             
-            // AnimaciÃ³n sutil al cambiar
+            // Animación sutil al cambiar
             const container = document.getElementById('modal-total-price-container');
             container.style.transform = 'scale(1.02)';
             setTimeout(() => container.style.transform = 'scale(1)', 100);
@@ -1738,7 +1738,7 @@
             // Usar la variable global que se actualiza al hacer clic en los items
             const selectedItems = currentlySelectedExtras;
             
-            // CategorizaciÃ³n
+            // Categorización
             const sauceKeywords = ['SALSA', 'MAYONESA', 'MOSTAZA', 'KETCHUP', 'MOJO', 'GAUCHA', 'ALIOLI', 'BRAVA', 'YOGURT'];
             const salsas = [];
             const otrosExtras = [];
@@ -1755,8 +1755,8 @@
                 }
             });
             
-            // Construir el mensaje de WhatsApp con saltos de lÃ­nea reales (\n)
-            let message = `Â¡Hola! Me gustarÃ­a pedir un *${productName}*`;
+            // Construir el mensaje de WhatsApp con saltos de línea reales (\n)
+            let message = `¡Hola! Me gustaría pedir un *${productName}*`;
             
             if (otrosExtras.length > 0) {
                 message += `\n*Extras:* _${otrosExtras.join(', ')}_`;

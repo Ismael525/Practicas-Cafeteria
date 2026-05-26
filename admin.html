@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de AdministraciÃ³n | CafeterÃ­a Antonio Machado</title>
+    <title>Panel de Administración | Cafetería Antonio Machado</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -784,11 +784,11 @@
             <a href="inicio.html" class="logo">ANTONIO MACHADO</a>
             <div class="nav-links">
                 <a href="inicio.html">Inicio</a>
-                <a href="menu.html">Ir al MenÃº</a>
+                <a href="menu.html">Ir al Menú</a>
             </div>
             <div class="auth-links">
                 <button onclick="handleLogout()" class="btn btn-primary" style="background: var(--text);">Cerrar
-                    SesiÃ³n</button>
+                    Sesión</button>
             </div>
         </nav>
 
@@ -796,8 +796,8 @@
         <div id="mobile-menu" class="mobile-nav-overlay">
             <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
             <a href="inicio.html" onclick="toggleMobileMenu()">Inicio</a>
-            <a href="menu.html" onclick="toggleMobileMenu()">Ver MenÃº</a>
-            <a href="#" onclick="handleLogout()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Cerrar SesiÃ³n</a>
+            <a href="menu.html" onclick="toggleMobileMenu()">Ver Menú</a>
+            <a href="#" onclick="handleLogout()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Cerrar Sesión</a>
         </div>
 
         <main class="admin-container">
@@ -805,7 +805,7 @@
                 <h2>Panel de Control</h2>
                 <div class="tabs-container" style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
                     <button onclick="switchTab('products')" id="tab-products-btn" class="btn btn-primary"
-                        style="border: 1px solid var(--primary);">MenÃº Activo</button>
+                        style="border: 1px solid var(--primary);">Menú Activo</button>
 
                     <button onclick="switchTab('announcements')" id="tab-announcements-btn" class="btn btn-primary"
                         style="background: var(--white); color: var(--primary); border: 1px solid var(--primary);">Anuncios</button>
@@ -832,7 +832,7 @@
                     <h3>Lista de Productos</h3>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
                         <div style="position: relative; flex: 1; min-width: 250px;">
-                            <input type="text" id="product-search" placeholder="Buscar por nombre o categorÃ­a..."
+                            <input type="text" id="product-search" placeholder="Buscar por nombre o categoría..."
                                 oninput="handleSearch(this.value)"
                                 style="width: 100%; padding: 0.6rem 1rem 0.6rem 2.5rem; border: 1px solid #e7e5e4; border-radius: 10px; font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
                                 onfocus="this.style.borderColor='var(--primary)'"
@@ -847,7 +847,7 @@
                                 style="background: #10b981; border-color: #10b981;"><i class="fas fa-file-excel"></i>
                                 Importar Excel</button>
                             <button onclick="openModal()" class="btn btn-primary"><i class="fas fa-plus"></i>
-                                AÃ±adir</button>
+                                Añadir</button>
                         </div>
                     </div>
                 </div>
@@ -856,8 +856,8 @@
                         <thead>
                             <tr>
                                 <th>Producto</th>
-                                <th>CategorÃ­a</th>
-                                <th>Precio (â‚¬)</th>
+                                <th>Categoría</th>
+                                <th>Precio (€)</th>
                                 <th>Disponibilidad</th>
                                 <th style="width: 120px; text-align: center;">Acciones</th>
                             </tr>
@@ -883,7 +883,7 @@
             <div id="announcements-tab" style="display: none;">
                 <div class="products-table-container" style="padding: 2rem;">
                     <div class="admin-header" style="margin-bottom: 2rem;">
-                        <h3>GestiÃ³n de Anuncios</h3>
+                        <h3>Gestión de Anuncios</h3>
                         <button class="btn btn-primary" onclick="openAnnModal()">+ Nuevo Anuncio</button>
                     </div>
                     <table>
@@ -902,13 +902,13 @@
             </div>
             <div id="settings-tab" style="display: none;">
                 <div class="products-table-container" style="padding: 2rem;">
-                    <h3>Ajustes de la PÃ¡gina</h3>
+                    <h3>Ajustes de la Página</h3>
                     <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">Cambia los textos
-                        principales de la web aquÃ­.</p>
+                        principales de la web aquí.</p>
 
                     <form id="settings-form" class="form-grid" style="display: grid; gap: 2rem; margin-top: 0;">
                         <div class="form-group full">
-                            <label>TÃ­tulo de Bienvenida (Inicio)</label>
+                            <label>Título de Bienvenida (Inicio)</label>
                             <input type="text" id="s-hero-title">
                         </div>
                         <div class="form-group full">
@@ -919,22 +919,22 @@
                                 <div class="file-upload-label">
                                     <i class="fas fa-cloud-upload-alt"></i>
                                     <span>Subir imagen del banner</span>
-                                    <small>JPG, PNG o WEBP (MÃ¡x. 5MB)</small>
+                                    <small>JPG, PNG o WEBP (Máx. 5MB)</small>
                                 </div>
                                 <div class="file-selected-name" id="s-hero-image-file-name"></div>
                             </div>
                             <input type="text" id="s-hero-image" placeholder="O pega una URL">
                         </div>
                         <div class="form-group full">
-                            <label>SubtÃ­tulo de Bienvenida (Inicio)</label>
+                            <label>Subtítulo de Bienvenida (Inicio)</label>
                             <textarea id="s-hero-desc" rows="2"></textarea>
                         </div>
                         <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                            <h3>Anuncio en el MenÃº</h3>
+                            <h3>Anuncio en el Menú</h3>
                         </div>
                         <div class="form-group full">
-                            <label>Texto del Anuncio (Sale en la parte superior del menÃº)</label>
-                            <textarea id="s-menu-announcement" rows="2" placeholder="Ej: Â¡Nuevo bocadillo de la semana!"></textarea>
+                            <label>Texto del Anuncio (Sale en la parte superior del menú)</label>
+                            <textarea id="s-menu-announcement" rows="2" placeholder="Ej: ¡Nuevo bocadillo de la semana!"></textarea>
                         </div>
                         <div class="form-group full">
                             <label>Imagen del Anuncio (Opcional)</label>
@@ -944,22 +944,22 @@
                                 <div class="file-upload-label">
                                     <i class="fas fa-bullhorn"></i>
                                     <span>Subir imagen del anuncio</span>
-                                    <small>Se mostrarÃ¡ junto al texto del anuncio</small>
+                                    <small>Se mostrará junto al texto del anuncio</small>
                                 </div>
                                 <div class="file-selected-name" id="s-menu-announcement-file-name"></div>
                             </div>
                             <input type="text" id="s-menu-announcement-image" placeholder="O pega una URL de imagen">
                         </div>
                         <div class="form-group full">
-                            <label>TÃ­tulo "Sobre Nosotros"</label>
+                            <label>Título "Sobre Nosotros"</label>
                             <input type="text" id="s-about-title">
                         </div>
                         <div class="form-group full">
-                            <label>Nuestra Historia - PÃ¡rrafo 1</label>
+                            <label>Nuestra Historia - Párrafo 1</label>
                             <textarea id="s-about-text-1" rows="3"></textarea>
                         </div>
                         <div class="form-group full">
-                            <label>Nuestra Historia - PÃ¡rrafo 2</label>
+                            <label>Nuestra Historia - Párrafo 2</label>
                             <textarea id="s-about-text-2" rows="3"></textarea>
                         </div>
 
@@ -968,14 +968,14 @@
                             <h3>Identidad Visual</h3>
                         </div>
                         <div class="form-group full">
-                            <label>Favicon (Icono de la pestaÃ±a)</label>
+                            <label>Favicon (Icono de la pestaña)</label>
                             <div class="file-upload-wrapper">
                                 <input type="file" id="s-site-favicon-file" class="file-upload-input"
                                     accept="image/x-icon,image/png,image/jpeg" onchange="updateFileName(this)">
                                 <div class="file-upload-label">
                                     <i class="fas fa-icons"></i>
                                     <span>Subir Favicon (.ico o .png)</span>
-                                    <small>Se recomienda un tamaÃ±o de 32x32 o 64x64</small>
+                                    <small>Se recomienda un tamaño de 32x32 o 64x64</small>
                                 </div>
                                 <div class="file-selected-name" id="s-site-favicon-file-name"></div>
                             </div>
@@ -983,7 +983,7 @@
                         </div>
 
                         <div class="form-group full">
-                            <label>Logo de la CafeterÃ­a</label>
+                            <label>Logo de la Cafetería</label>
                             <div class="file-upload-wrapper">
                                 <input type="file" id="s-site-logo-file" class="file-upload-input"
                                     accept="image/*" onchange="updateFileName(this)">
@@ -999,14 +999,14 @@
 
                         <div
                             style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                            <h3>SecciÃ³n de Servicios (Inicio)</h3>
+                            <h3>Sección de Servicios (Inicio)</h3>
                         </div>
                         <div class="form-group">
-                            <label>TÃ­tulo de la SecciÃ³n</label>
+                            <label>Título de la Sección</label>
                             <input type="text" id="s-section-title">
                         </div>
                         <div class="form-group">
-                            <label>TelÃ©fono de Encargos</label>
+                            <label>Teléfono de Encargos</label>
                             <input type="text" id="s-contact-phone">
                         </div>
 
@@ -1014,28 +1014,28 @@
                             <h3>Tarjeta 1: Encargos</h3>
                         </div>
                         <div class="form-group">
-                            <label>TÃ­tulo Tarjeta 1</label>
+                            <label>Título Tarjeta 1</label>
                             <input type="text" id="s-card1-title">
                         </div>
                         <div class="form-group">
-                            <label>DescripciÃ³n Tarjeta 1</label>
+                            <label>Descripción Tarjeta 1</label>
                             <textarea id="s-card1-desc" rows="2"></textarea>
                         </div>
                         
                         <div class="form-group full">
-                            <label>Ãtems de la Lista (Icono | Texto)</label>
+                            <label>Ítems de la Lista (Icono | Texto)</label>
                             <div class="card-items-editor">
                                 <div class="item-row">
                                     <input type="text" class="item-icon" placeholder="ej: clock" id="card1-icon-1">
-                                    <input type="text" class="item-text" placeholder="Texto del Ã­tem 1" id="card1-text-1">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 1" id="card1-text-1">
                                 </div>
                                 <div class="item-row">
                                     <input type="text" class="item-icon" placeholder="ej: id-card" id="card1-icon-2">
-                                    <input type="text" class="item-text" placeholder="Texto del Ã­tem 2" id="card1-text-2">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 2" id="card1-text-2">
                                 </div>
                                 <div class="item-row">
                                     <input type="text" class="item-icon" placeholder="ej: hamburger" id="card1-icon-3">
-                                    <input type="text" class="item-text" placeholder="Texto del Ã­tem 3" id="card1-text-3">
+                                    <input type="text" class="item-text" placeholder="Texto del ítem 3" id="card1-text-3">
                                 </div>
                             </div>
                         </div>
@@ -1044,19 +1044,19 @@
                             <h3>Tarjeta 2: Tarjetas Monedero</h3>
                         </div>
                         <div class="form-group">
-                            <label>TÃ­tulo Tarjeta 2</label>
+                            <label>Título Tarjeta 2</label>
                             <input type="text" id="s-card2-title">
                         </div>
                         <div class="form-group">
-                            <label>DescripciÃ³n Tarjeta 2</label>
+                            <label>Descripción Tarjeta 2</label>
                             <textarea id="s-card2-desc" rows="2"></textarea>
                         </div>
                         <div class="form-group full">
-                            <label>CuadrÃ­cula de Precios (Concepto | Precio)</label>
+                            <label>Cuadrícula de Precios (Concepto | Precio)</label>
                             <div class="card-items-editor">
                                 <div class="item-row">
                                     <input type="text" class="item-label" placeholder="ej: 5 bocadillos" id="card2-label-1">
-                                    <input type="text" class="item-price" placeholder="ej: 5.00â‚¬" id="card2-price-1">
+                                    <input type="text" class="item-price" placeholder="ej: 5.00€" id="card2-price-1">
                                 </div>
                                 <div class="item-row">
                                     <input type="text" class="item-label" placeholder="Concepto 2" id="card2-label-2">
@@ -1077,15 +1077,15 @@
                             <h3>Tarjeta 3: Otros Servicios</h3>
                         </div>
                         <div class="form-group">
-                            <label>TÃ­tulo Tarjeta 3</label>
+                            <label>Título Tarjeta 3</label>
                             <input type="text" id="s-card3-title">
                         </div>
                         <div class="form-group">
-                            <label>DescripciÃ³n Tarjeta 3</label>
+                            <label>Descripción Tarjeta 3</label>
                             <textarea id="s-card3-desc" rows="2"></textarea>
                         </div>
                         <div class="form-group full">
-                            <label>Ãtems de la Lista (Icono | Texto)</label>
+                            <label>Ítems de la Lista (Icono | Texto)</label>
                             <div class="card-items-editor">
                                 <div class="item-row">
                                     <input type="text" class="item-icon" placeholder="ej: calendar-alt" id="card3-icon-1">
@@ -1103,10 +1103,10 @@
                         </div>
 
                         <div style="grid-column: 1 / -1; border-top: 1px solid #eee; padding-top: 2rem; margin-top: 1rem;">
-                            <h3>Pie de PÃ¡gina (Footer)</h3>
+                            <h3>Pie de Página (Footer)</h3>
                         </div>
                         <div class="form-group full">
-                            <label>DescripciÃ³n de la Marca</label>
+                            <label>Descripción de la Marca</label>
                             <textarea id="s-footer-desc" rows="3"></textarea>
                         </div>
                         <div class="form-group full">
@@ -1118,7 +1118,7 @@
                             <input type="text" id="s-footer-lssic-url" placeholder="Ej: /aviso-legal.html">
                         </div>
                         <div class="form-group">
-                            <label>URL de PolÃ­tica de Privacidad</label>
+                            <label>URL de Política de Privacidad</label>
                             <input type="text" id="s-footer-privacy-url" placeholder="Ej: /privacidad.html">
                         </div>
 
@@ -1141,7 +1141,7 @@
                             <div class="form-group full">
                                 <label>Texto del Anuncio</label>
                                 <textarea id="ann-text" rows="3"
-                                    placeholder="Ej: Â¡Hoy bocadillo especial a 2.50â‚¬!"></textarea>
+                                    placeholder="Ej: ¡Hoy bocadillo especial a 2.50€!"></textarea>
                             </div>
                             <div class="form-group full">
                                 <label>Imagen (Archivo o URL)</label>
@@ -1213,9 +1213,9 @@
                 <div class="products-table-container" style="padding: 2rem;">
                     <div class="admin-header" style="margin-bottom: 2rem;">
                         <div>
-                            <h3>GestiÃ³n de Cuestionarios</h3>
-                            <p style="color: var(--text-muted); font-size: 0.85rem;">InteractÃºa con los clientes creando
-                                encuestas rÃ¡pidas.</p>
+                            <h3>Gestión de Cuestionarios</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Interactúa con los clientes creando
+                                encuestas rápidas.</p>
                         </div>
                         <button class="btn btn-primary" onclick="openPollModal()"><i class="fas fa-plus"></i> Nuevo
                             Cuestionario</button>
@@ -1240,7 +1240,7 @@
                         <i class="fas fa-chart-bar"></i>
                         Resultados de la Encuesta Activa
                     </div>
-                    <h3 id="active-poll-question" style="margin-bottom: 2rem; color: var(--text);">Â¿CuÃ¡l es tu bocadillo favorito?</h3>
+                    <h3 id="active-poll-question" style="margin-bottom: 2rem; color: var(--text);">¿Cuál es tu bocadillo favorito?</h3>
                     <div id="poll-results-list">
                         <!-- Bars will be rendered here -->
                     </div>
@@ -1254,8 +1254,8 @@
                 <div class="products-table-container" style="padding: 2rem;">
                     <div class="admin-header" style="margin-bottom: 2rem;">
                         <div>
-                            <h3>GestiÃ³n de Administradores</h3>
-                            <p style="color: var(--text-muted); font-size: 0.85rem;">Controla quiÃ©n tiene acceso a este
+                            <h3>Gestión de Administradores</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Controla quién tiene acceso a este
                                 panel.</p>
                         </div>
                         <button class="btn btn-primary" onclick="openUserModal()"><i class="fas fa-user-plus"></i> Nuevo
@@ -1265,7 +1265,7 @@
                         <thead>
                             <tr>
                                 <th>Email</th>
-                                <th>Fecha de CreaciÃ³n</th>
+                                <th>Fecha de Creación</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -1280,10 +1280,10 @@
                 <div class="products-table-container" style="padding: 2rem;">
                     <div class="admin-header" style="margin-bottom: 2rem;">
                         <div>
-                            <h3>Copias de Seguridad (FusiÃ³n Segura)</h3>
+                            <h3>Copias de Seguridad (Fusión Segura)</h3>
                             <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 600px; margin-top: 0.5rem;">
-                                Crea una copia de seguridad en formato JSON de todos los datos pÃºblicos (menÃº, ajustes, anuncios). 
-                                Al restaurar, se realizarÃ¡ una <b>fusiÃ³n segura</b>: no se eliminarÃ¡n los datos que hayas creado despuÃ©s de la copia, solo se restaurarÃ¡n los que existÃ­an en ese momento.
+                                Crea una copia de seguridad en formato JSON de todos los datos públicos (menú, ajustes, anuncios). 
+                                Al restaurar, se realizará una <b>fusión segura</b>: no se eliminarán los datos que hayas creado después de la copia, solo se restaurarán los que existían en ese momento.
                             </p>
                         </div>
                     </div>
@@ -1309,7 +1309,7 @@
     <div id="product-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3 id="modal-title">AÃ±adir Producto</h3>
+            <h3 id="modal-title">Añadir Producto</h3>
             <form id="product-form">
                 <input type="hidden" id="product-id">
                 <div class="form-grid">
@@ -1318,11 +1318,11 @@
                         <input type="text" id="p-name" required>
                     </div>
                     <div class="form-group">
-                        <label>CategorÃ­a</label>
+                        <label>Categoría</label>
                         <select id="p-category" required></select>
                     </div>
                     <div class="form-group">
-                        <label>Precio (â‚¬)</label>
+                        <label>Precio (€)</label>
                         <input type="number" step="0.01" id="p-price" required>
                     </div>
                     <div class="form-group"
@@ -1344,7 +1344,7 @@
                         <input type="url" id="p-image" placeholder="O pega una URL: https://images.unsplash.com/...">
                     </div>
                     <div class="form-group full">
-                        <label>AlÃ©rgenos (Selecciona los que contenga)</label>
+                        <label>Alérgenos (Selecciona los que contenga)</label>
                         <div id="allergen-selector" class="allergen-selector">
                             <div class="allergen-chip" data-val="Gluten">Gluten</div>
                             <div class="allergen-chip" data-val="Lactosa">Lactosa</div>
@@ -1352,12 +1352,12 @@
                             <div class="allergen-chip" data-val="Frutos Secos">Frutos Secos</div>
                             <div class="allergen-chip" data-val="Soja">Soja</div>
                             <div class="allergen-chip" data-val="Mostaza">Mostaza</div>
-                            <div class="allergen-chip" data-val="SÃ©samo">SÃ©samo</div>
-                            <div class="allergen-chip" data-val="AtÃºn">AtÃºn</div>
+                            <div class="allergen-chip" data-val="Sésamo">Sésamo</div>
+                            <div class="allergen-chip" data-val="Atún">Atún</div>
                         </div>
                     </div>
                     <div class="form-group full">
-                        <label>DescripciÃ³n</label>
+                        <label>Descripción</label>
                         <textarea id="p-desc" rows="3"></textarea>
                     </div>
                 </div>
@@ -1371,11 +1371,11 @@
     <div id="confirm-modal" class="confirm-modal">
         <div class="confirm-content">
             <div class="confirm-icon" id="confirm-icon"><i class="fas fa-exclamation-circle"></i></div>
-            <h3 id="confirm-title" style="margin-bottom: 1rem;">Â¿EstÃ¡s seguro?</h3>
-            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acciÃ³n no se puede deshacer.</p>
+            <h3 id="confirm-title" style="margin-bottom: 1rem;">¿Estás seguro?</h3>
+            <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.9rem;">Esta acción no se puede deshacer.</p>
             <div class="confirm-btns">
                 <button onclick="closeConfirm()" class="btn btn-primary btn-cancel full">Cancelar</button>
-                <button id="confirm-yes-btn" class="btn btn-danger full">SÃ­, borrar</button>
+                <button id="confirm-yes-btn" class="btn btn-danger full">Sí, borrar</button>
             </div>
         </div>
     </div>
@@ -1389,17 +1389,17 @@
                 <input type="hidden" id="poll-id">
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label>Pregunta</label>
-                    <input type="text" id="poll-question" required placeholder="Â¿CuÃ¡l es tu bocadillo favorito?">
+                    <input type="text" id="poll-question" required placeholder="¿Cuál es tu bocadillo favorito?">
                 </div>
                 <div class="form-group">
-                    <label>Opciones (MÃ­nimo 2)</label>
+                    <label>Opciones (Mínimo 2)</label>
                     <div id="poll-options-container"
                         style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem;">
                         <!-- Options will be added here -->
                     </div>
                     <button type="button" onclick="addPollOption()" class="btn"
                         style="background: #f5f5f4; color: var(--text); margin-top: 1rem; width: 100%; border-radius: 10px; padding: 0.5rem;">
-                        <i class="fas fa-plus"></i> AÃ±adir OpciÃ³n
+                        <i class="fas fa-plus"></i> Añadir Opción
                     </button>
                 </div>
                 <div class="form-group"
@@ -1417,7 +1417,7 @@
     <div id="user-modal" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <span class="close-modal" onclick="closeUserModal()">&times;</span>
-            <h3 id="user-modal-title">AÃ±adir Administrador</h3>
+            <h3 id="user-modal-title">Añadir Administrador</h3>
             <form id="user-form" style="margin-top: 2rem;">
                 <input type="hidden" id="user-manage-id">
                 <div class="form-group" style="margin-bottom: 1.5rem;">
@@ -1425,10 +1425,10 @@
                     <input type="email" id="user-email" required placeholder="ejemplo@gmail.com">
                 </div>
                 <div class="form-group">
-                    <label id="password-label">ContraseÃ±a</label>
-                    <input type="password" id="user-password" required minlength="6" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+                    <label id="password-label">Contraseña</label>
+                    <input type="password" id="user-password" required minlength="6" placeholder="••••••••">
                     <small id="password-hint"
-                        style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.3rem;">MÃ­nimo 6
+                        style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.3rem;">Mínimo 6
                         caracteres.</small>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;"
@@ -1438,7 +1438,7 @@
     </div>
 
     <!-- Floating Action Button for Mobile -->
-    <button class="fab" id="mobile-fab" onclick="openModal()" title="AÃ±adir Producto">
+    <button class="fab" id="mobile-fab" onclick="openModal()" title="Añadir Producto">
         <i class="fas fa-plus"></i>
     </button>
 
@@ -1560,7 +1560,7 @@
             };
 
             const defaultTitles = {
-                success: 'Ã‰xito',
+                success: 'Éxito',
                 error: 'Error',
                 info: 'Aviso'
             };
@@ -1739,7 +1739,7 @@
                     </td>
                     <td>
                         <div class="action-btns">
-                            <button class="btn-icon btn-edit" onclick="editUserPassword('${u.id}', '${u.email}')" title="Cambiar ContraseÃ±a"><i class="fas fa-key"></i></button>
+                            <button class="btn-icon btn-edit" onclick="editUserPassword('${u.id}', '${u.email}')" title="Cambiar Contraseña"><i class="fas fa-key"></i></button>
                             <button class="btn-icon btn-delete" onclick="deleteAdmin('${u.id}', '${u.email}')" title="Eliminar Acceso"><i class="fas fa-user-slash"></i></button>
                         </div>
                     </td>
@@ -1756,13 +1756,13 @@
                             </div>
                             <div style="min-width: 0; flex: 1;">
                                 <div class="admin-card-title">${u.email}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">AÃ±adido el ${new Date(u.created_at).toLocaleDateString()}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Añadido el ${new Date(u.created_at).toLocaleDateString()}</div>
                             </div>
                         </div>
                     </div>
                     <div class="admin-card-actions">
                         <button class="btn" onclick="editUserPassword('${u.id}', '${u.email}')" style="background: #f5f5f4; color: var(--primary);">
-                            <i class="fas fa-key"></i> ContraseÃ±a
+                            <i class="fas fa-key"></i> Contraseña
                         </button>
                         <button class="btn" onclick="deleteAdmin('${u.id}', '${u.email}')" style="background: #fef2f2; color: #ef4444; border: none;">
                             <i class="fas fa-user-slash"></i> Quitar
@@ -1782,16 +1782,16 @@
             document.getElementById('user-form').reset();
             document.getElementById('user-manage-id').value = '';
             emailInput.disabled = false;
-            passLabel.textContent = 'ContraseÃ±a';
-            passHint.textContent = 'MÃ­nimo 6 caracteres.';
+            passLabel.textContent = 'Contraseña';
+            passHint.textContent = 'Mínimo 6 caracteres.';
 
             if (user) {
-                title.textContent = 'Cambiar ContraseÃ±a';
+                title.textContent = 'Cambiar Contraseña';
                 document.getElementById('user-manage-id').value = user.id;
                 emailInput.value = user.email;
                 emailInput.disabled = true;
-                passLabel.textContent = 'Nueva ContraseÃ±a';
-                passHint.textContent = 'Introduce la nueva contraseÃ±a para este usuario.';
+                passLabel.textContent = 'Nueva Contraseña';
+                passHint.textContent = 'Introduce la nueva contraseña para este usuario.';
             } else {
                 title.textContent = 'Nuevo Administrador';
             }
@@ -1815,13 +1815,13 @@
             }
 
             if (adminUsers.length <= 1) {
-                showToast('No puedes eliminar al Ãºltimo administrador. Debe haber al menos uno para gestionar el sistema.', 'error');
+                showToast('No puedes eliminar al último administrador. Debe haber al menos uno para gestionar el sistema.', 'error');
                 return;
             }
 
             showConfirm({
                 title: 'Revocar Acceso',
-                message: `Â¿Seguro que quieres quitar el acceso a ${email}? Esta acciÃ³n es irreversible.`,
+                message: `¿Seguro que quieres quitar el acceso a ${email}? Esta acción es irreversible.`,
                 btnText: 'Quitar Acceso',
                 btnClass: 'btn-danger',
                 icon: 'user-slash',
@@ -1852,7 +1852,7 @@
             // Validar formato de email
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email)) {
-                showToast('Por favor, introduce un correo electrÃ³nico vÃ¡lido y real.', 'error');
+                showToast('Por favor, introduce un correo electrónico válido y real.', 'error');
                 btn.disabled = false;
                 btn.textContent = originalText;
                 return;
@@ -1866,7 +1866,7 @@
                         new_password: password
                     });
                     if (error) throw error;
-                    showToast('ContraseÃ±a actualizada correctamente.', 'success');
+                    showToast('Contraseña actualizada correctamente.', 'success');
                 } else {
                     // Create new user
                     const { error } = await supabaseClient.rpc('create_new_admin', {
@@ -1982,7 +1982,7 @@
 
                 if (error) throw error;
 
-                btn.textContent = 'Â¡Guardado!';
+                btn.textContent = '¡Guardado!';
                 // Clear file inputs
                 if (document.getElementById('s-hero-image-file')) document.getElementById('s-hero-image-file').value = '';
                 if (document.getElementById('s-menu-announcement-file')) document.getElementById('s-menu-announcement-file').value = '';
@@ -2071,8 +2071,8 @@
                     if (lowerA.includes('frutos')) icon = 'seedling';
                     if (lowerA.includes('soja')) icon = 'leaf';
                     if (lowerA.includes('mostaza')) icon = 'bottle-droplet';
-                    if (lowerA.includes('sÃ©samo') || lowerA.includes('sesamo')) icon = 'ellipsis-v';
-                    if (lowerA.includes('atÃºn') || lowerA.includes('atun') || lowerA.includes('pescado')) icon = 'fish';
+                    if (lowerA.includes('sésamo') || lowerA.includes('sesamo')) icon = 'ellipsis-v';
+                    if (lowerA.includes('atún') || lowerA.includes('atun') || lowerA.includes('pescado')) icon = 'fish';
                     return `<i class="fas fa-${icon}" title="${a}" style="margin-right: 4px; color: var(--primary);"></i>`;
                 }).join('');
 
@@ -2131,7 +2131,7 @@
                     <div class="admin-card-info">
                         <div>
                             <div class="admin-card-label">Precio</div>
-                            <div class="admin-card-value">${parseFloat(p.price).toFixed(2)}â‚¬</div>
+                            <div class="admin-card-value">${parseFloat(p.price).toFixed(2)}€</div>
                         </div>
                         <div>
                             <div class="admin-card-label">Estado</div>
@@ -2152,7 +2152,7 @@
             `).join('');
 
             // Update pagination UI
-            document.getElementById('pagination-info').textContent = `PÃ¡gina ${currentPage} de ${totalPages || 1} (${totalProducts} productos)`;
+            document.getElementById('pagination-info').textContent = `Página ${currentPage} de ${totalPages || 1} (${totalProducts} productos)`;
             document.getElementById('prev-btn').disabled = currentPage <= 1;
             document.getElementById('next-btn').disabled = currentPage >= totalPages;
             document.getElementById('prev-btn').style.opacity = currentPage <= 1 ? '0.5' : '1';
@@ -2208,8 +2208,8 @@
             const pageItems = trashProducts.slice(start, start + itemsPerPage);
 
             if (total === 0) {
-                const emptyMsg = `<div style="text-align:center; padding: 3rem; color: var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>La papelera estÃ¡ vacÃ­a</div>`;
-                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 3rem; color: var(--text-muted);">La papelera estÃ¡ vacÃ­a</td></tr>`;
+                const emptyMsg = `<div style="text-align:center; padding: 3rem; color: var(--text-muted);"><i class="fas fa-check-circle" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>La papelera está vacía</div>`;
+                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 3rem; color: var(--text-muted);">La papelera está vacía</td></tr>`;
                 cardsContainer.innerHTML = emptyMsg;
                 document.getElementById('trash-pagination').style.display = 'none';
                 return;
@@ -2223,11 +2223,11 @@
                             <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; opacity: 0.6;">
                             <div>
                                 <div style="font-weight: 600; color: var(--text-muted);">${p.name}</div>
-                                <div style="font-size: 0.75rem; color: var(--primary); background: #fef2f2; padding: 0.1rem 0.4rem; border-radius: 4px; display: inline-block; margin-top: 2px;">${p.categories?.name || 'Sin categorÃ­a'}</div>
+                                <div style="font-size: 0.75rem; color: var(--primary); background: #fef2f2; padding: 0.1rem 0.4rem; border-radius: 4px; display: inline-block; margin-top: 2px;">${p.categories?.name || 'Sin categoría'}</div>
                             </div>
                         </div>
                     </td>
-                    <td>${parseFloat(p.price || 0).toFixed(2)}â‚¬</td>
+                    <td>${parseFloat(p.price || 0).toFixed(2)}€</td>
                     <td style="font-size: 0.8rem; color: var(--text-muted);">${new Date(p.deleted_at).toLocaleDateString('es-ES')}</td>
                     <td>
                         <div class="action-btns">
@@ -2246,14 +2246,14 @@
                             <img src="${p.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=150'}" style="width: 45px; height: 45px; border-radius: 10px; object-fit: cover; opacity: 0.7; flex-shrink: 0;">
                             <div style="min-width: 0; flex: 1;">
                                 <div class="admin-card-title" style="color: var(--text-muted);">${p.name}</div>
-                                <div style="font-size: 0.75rem; color: var(--primary);">${p.categories?.name || 'Sin categorÃ­a'}</div>
+                                <div style="font-size: 0.75rem; color: var(--primary);">${p.categories?.name || 'Sin categoría'}</div>
                             </div>
                         </div>
                     </div>
                     <div class="admin-card-info">
                         <div>
                             <div class="admin-card-label">Precio</div>
-                            <div class="admin-card-value">${parseFloat(p.price || 0).toFixed(2)}â‚¬</div>
+                            <div class="admin-card-value">${parseFloat(p.price || 0).toFixed(2)}€</div>
                         </div>
                         <div>
                             <div class="admin-card-label">Borrado el</div>
@@ -2271,10 +2271,10 @@
                 </div>
             `).join('');
 
-            // PaginaciÃ³n
+            // Paginación
             const pag = document.getElementById('trash-pagination');
             pag.style.display = total > itemsPerPage ? 'flex' : 'none';
-            document.getElementById('trash-pagination-info').textContent = `PÃ¡gina ${trashCurrentPage} de ${totalPages} (${total} productos)`;
+            document.getElementById('trash-pagination-info').textContent = `Página ${trashCurrentPage} de ${totalPages} (${total} productos)`;
             document.getElementById('trash-prev-btn').disabled = trashCurrentPage <= 1;
             document.getElementById('trash-next-btn').disabled = trashCurrentPage >= totalPages;
             document.getElementById('trash-prev-btn').style.opacity = trashCurrentPage <= 1 ? '0.5' : '1';
@@ -2296,8 +2296,8 @@
         }
 
         async function emptyTrash() {
-            if (trashProducts.length === 0) { showToast('La papelera ya estÃ¡ vacÃ­a.', 'info'); return; }
-            if (!confirm(`Â¿Eliminar DEFINITIVAMENTE los ${trashProducts.length} productos de la papelera? Esta acciÃ³n no se puede deshacer.`)) return;
+            if (trashProducts.length === 0) { showToast('La papelera ya está vacía.', 'info'); return; }
+            if (!confirm(`¿Eliminar DEFINITIVAMENTE los ${trashProducts.length} productos de la papelera? Esta acción no se puede deshacer.`)) return;
             const ids = trashProducts.map(p => p.id);
             const { error } = await supabaseClient.from('products').delete().in('id', ids);
             if (error) { showToast('Error al vaciar la papelera: ' + error.message, 'error'); return; }
@@ -2355,7 +2355,7 @@
                     });
                 }
             } else {
-                title.textContent = 'AÃ±adir Producto';
+                title.textContent = 'Añadir Producto';
                 form.reset();
                 document.getElementById('product-id').value = '';
                 document.getElementById('p-available').checked = true;
@@ -2427,8 +2427,8 @@
         let confirmCallback = null;
 
         function showConfirm({ title, message, btnText, btnClass, icon, callback }) {
-            document.getElementById('confirm-title').textContent = title || 'Â¿EstÃ¡s seguro?';
-            document.getElementById('confirm-msg').textContent = message || 'Esta acciÃ³n no se puede deshacer.';
+            document.getElementById('confirm-title').textContent = title || '¿Estás seguro?';
+            document.getElementById('confirm-msg').textContent = message || 'Esta acción no se puede deshacer.';
             
             const yesBtn = document.getElementById('confirm-yes-btn');
             yesBtn.textContent = btnText || 'Confirmar';
@@ -2473,7 +2473,7 @@
             
             showConfirm({
                 title: 'Mover a Papelera',
-                message: `Â¿Quieres mover "${p.name}" a la papelera? PodrÃ¡s recuperarlo despuÃ©s.`,
+                message: `¿Quieres mover "${p.name}" a la papelera? Podrás recuperarlo después.`,
                 btnText: 'Mover a Papelera',
                 btnClass: 'btn-danger',
                 icon: 'trash-alt',
@@ -2493,7 +2493,7 @@
             
             showConfirm({
                 title: 'Eliminar Permanentemente',
-                message: `Â¿EstÃ¡s seguro de eliminar "${p.name}" para siempre? Esta acciÃ³n es irreversible.`,
+                message: `¿Estás seguro de eliminar "${p.name}" para siempre? Esta acción es irreversible.`,
                 btnText: 'Eliminar Definitivamente',
                 btnClass: 'btn-danger',
                 icon: 'fire-alt',
@@ -2678,7 +2678,7 @@
             
             showConfirm({
                 title: 'Eliminar Anuncio',
-                message: `Â¿EstÃ¡s seguro de que quieres eliminar "${shortText}"?`,
+                message: `¿Estás seguro de que quieres eliminar "${shortText}"?`,
                 btnText: 'Eliminar Anuncio',
                 btnClass: 'btn-danger',
                 icon: 'bullhorn',
@@ -2849,7 +2849,7 @@
             div.style.display = 'flex';
             div.style.gap = '0.5rem';
             div.innerHTML = `
-                <input type="text" class="poll-option-input" value="${text}" placeholder="Nueva opciÃ³n..." style="flex: 1;">
+                <input type="text" class="poll-option-input" value="${text}" placeholder="Nueva opción..." style="flex: 1;">
                 <input type="hidden" class="poll-option-id" value="${id}">
                 <button type="button" onclick="this.parentElement.remove()" class="btn" style="background: #fee2e2; color: #dc2626; padding: 0.5rem 0.8rem; border-radius: 10px;">
                     <i class="fas fa-times"></i>
@@ -2876,7 +2876,7 @@
                 })).filter(opt => opt.option_text.trim() !== '');
 
                 if (options.length < 2) {
-                    showToast('Debes aÃ±adir al menos 2 opciones.', 'error');
+                    showToast('Debes añadir al menos 2 opciones.', 'error');
                     return;
                 }
 
@@ -2948,7 +2948,7 @@
             
             showConfirm({
                 title: 'Eliminar Cuestionario',
-                message: `Â¿Seguro que quieres eliminar "${poll ? poll.question : 'este cuestionario'}"? Se borrarÃ¡n todos los votos y opciones asociadas.`,
+                message: `¿Seguro que quieres eliminar "${poll ? poll.question : 'este cuestionario'}"? Se borrarán todos los votos y opciones asociadas.`,
                 btnText: 'Eliminar Cuestionario',
                 btnClass: 'btn-danger',
                 icon: 'poll',
@@ -2974,9 +2974,9 @@
             if (!file) return;
 
             showConfirm({
-                title: 'Importar CatÃ¡logo',
-                message: 'Â¿EstÃ¡s seguro de que quieres actualizar el catÃ¡logo? Esta acciÃ³n puede modificar o aÃ±adir mÃºltiples productos desde el archivo Excel.',
-                btnText: 'Comenzar ImportaciÃ³n',
+                title: 'Importar Catálogo',
+                message: '¿Estás seguro de que quieres actualizar el catálogo? Esta acción puede modificar o añadir múltiples productos desde el archivo Excel.',
+                btnText: 'Comenzar Importación',
                 btnClass: 'btn-primary',
                 icon: 'file-excel',
                 callback: async () => {
@@ -3004,7 +3004,7 @@
                     if (!row || !Array.isArray(row)) continue;
 
                     const rowStr = row.map(c => String(c || '').toLowerCase().trim());
-                    if (rowStr.some(c => c === 'nombre' || c === 'producto' || c === 'artÃ­culo' || c === 'articulo')) {
+                    if (rowStr.some(c => c === 'nombre' || c === 'producto' || c === 'artículo' || c === 'articulo')) {
                         headerRowIndex = i;
                         headers = row.map((c, idx) => c ? String(c).trim() : `__EMPTY_${idx}`);
                         break;
@@ -3012,7 +3012,7 @@
                 }
 
                 if (headerRowIndex === -1) {
-                    showToast('No se pudo detectar la fila de encabezados. AsegÃºrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".', 'error');
+                    showToast('No se pudo detectar la fila de encabezados. Asegúrate de que haya una columna llamada "NOMBRE" o "PRODUCTO".', 'error');
                     return;
                 }
 
@@ -3029,7 +3029,7 @@
                     jsonData.push(rowObj);
                 }
 
-                // Obtenemos los productos actuales para comparar y preservar imÃ¡genes
+                // Obtenemos los productos actuales para comparar y preservar imágenes
                 const { data: existingProducts } = await supabaseClient.from('products').select('*').is('deleted_at', null);
                 const productsMap = new Map();
                 if (existingProducts) {
@@ -3044,7 +3044,7 @@
 
                 for (const row of jsonData) {
                     try {
-                        // Normalizamos las claves para ignorar mayÃºsculas/minÃºsculas y espacios
+                        // Normalizamos las claves para ignorar mayúsculas/minúsculas y espacios
                         const rowKeys = Object.keys(row);
                         const findVal = (possibleNames) => {
                             // Primero buscamos coincidencia EXACTA
@@ -3062,14 +3062,14 @@
                             return key ? row[key] : null;
                         };
 
-                        const name = findVal(['nombre', 'producto', 'name', 'item', 'articulo', 'artÃ­culo', 'descripciÃ³n', 'descripcion']);
-                        const categoryName = findVal(['familia', 'categoria', 'categorÃ­a', 'category', 'tipo', 'clase']);
+                        const name = findVal(['nombre', 'producto', 'name', 'item', 'articulo', 'artículo', 'descripción', 'descripcion']);
+                        const categoryName = findVal(['familia', 'categoria', 'categoría', 'category', 'tipo', 'clase']);
                         const image = findVal(['imagen', 'image', 'foto', 'url', 'image_url', 'img']) || '';
                         const desc = findVal(['detalle', 'info', 'notas', 'observaciones']) || '';
-                        const allergensStr = findVal(['alergenos', 'alÃ©rgenos', 'allergens', 'contiene', 'alerge']);
+                        const allergensStr = findVal(['alergenos', 'alérgenos', 'allergens', 'contiene', 'alerge']);
 
                         if (!name || String(name).trim().toLowerCase() === 'nombre' || String(name).trim().toLowerCase() === 'producto') {
-                            console.warn('Fila sin nombre vÃ¡lido detectada o es cabecera. Saltando...');
+                            console.warn('Fila sin nombre válido detectada o es cabecera. Saltando...');
                             skipCount++;
                             continue;
                         }
@@ -3092,7 +3092,7 @@
                                 const parsed = parseFloat(pVal);
                                 if (!isNaN(parsed) && parsed > 0) {
                                     price = parsed;
-                                    break; // Encontramos un precio vÃ¡lido
+                                    break; // Encontramos un precio válido
                                 }
                             }
                         }
@@ -3105,8 +3105,8 @@
                             let category = categories.find(c => c.name.toLowerCase() === categoryNameClean.toLowerCase());
 
                             if (!category) {
-                                // Intentamos crear la categorÃ­a si no existe
-                                console.log(`Creando nueva categorÃ­a: ${categoryNameClean}`);
+                                // Intentamos crear la categoría si no existe
+                                console.log(`Creando nueva categoría: ${categoryNameClean}`);
                                 const { data: newCat, error: catErr } = await supabaseClient
                                     .from('categories')
                                     .insert([{ name: categoryNameClean }])
@@ -3117,7 +3117,7 @@
                                     categories.push(newCat); // Actualizamos la lista local
                                     categoryId = newCat.id;
                                 } else {
-                                    console.error('Error creando categorÃ­a:', catErr);
+                                    console.error('Error creando categoría:', catErr);
                                     categoryId = categories[0]?.id; // Fallback
                                 }
                             } else {
@@ -3129,7 +3129,7 @@
 
                         const allergens = allergensStr ? String(allergensStr).split(/[,;]/).map(a => a.trim()) : [];
 
-                        const cleanName = String(name).trim().replace(/\s*\d+([,.]\d+)?\s*â‚¬/gi, '').toUpperCase();
+                        const cleanName = String(name).trim().replace(/\s*\d+([,.]\d+)?\s*€/gi, '').toUpperCase();
 
                         // Si el producto ya existe y el Excel no trae imagen, preservamos la existente
                         let finalImageUrl = String(image || '').trim();
@@ -3165,7 +3165,7 @@
                         console.error('Error procesando fila:', err);
                         errorCount++;
                         if (errorCount === 1) {
-                            showToast(`ðŸš¨ ERROR CRÃTICO DETECTADO ðŸš¨\n\n${err.message || 'Error desconocido'}`, 'error');
+                            showToast(`🚨 ERROR CRÍTICO DETECTADO 🚨\n\n${err.message || 'Error desconocido'}`, 'error');
                             break;
                         }
                     }
@@ -3175,7 +3175,7 @@
                     const detectedHeaders = Object.keys(jsonData[0] || {}).join(', ');
                     showToast(`AVISO: Se detectaron ${jsonData.length} filas pero no se pudo procesar ninguna. Verifica los encabezados.`, 'info');
                 } else {
-                    let msg = `Proceso finalizado:\n- Ã‰xitos: ${successCount}\n- Errores: ${errorCount}\n- Filas omitidas: ${skipCount}`;
+                    let msg = `Proceso finalizado:\n- Éxitos: ${successCount}\n- Errores: ${errorCount}\n- Filas omitidas: ${skipCount}`;
                     showToast(msg, errorCount > 0 ? 'error' : 'success');
                 }
                 loadProducts();
@@ -3211,7 +3211,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                showToast('Copia de seguridad descargada con Ã©xito', 'success');
+                showToast('Copia de seguridad descargada con éxito', 'success');
             } catch (err) {
                 console.error(err);
                 showToast('Error al exportar: ' + err.message, 'error');
@@ -3228,7 +3228,7 @@
                     const data = JSON.parse(e.target.result);
                     const tablesToRestore = ['categories', 'products', 'site_settings', 'announcements', 'polls', 'poll_options', 'web_sections'];
                     
-                    showToast('Iniciando restauraciÃ³n segura...', 'info');
+                    showToast('Iniciando restauración segura...', 'info');
                     
                     for (const table of tablesToRestore) {
                         if (data[table] && data[table].length > 0) {
@@ -3241,7 +3241,7 @@
                         }
                     }
                     
-                    showToast('RestauraciÃ³n completada con Ã©xito. Recargando...', 'success');
+                    showToast('Restauración completada con éxito. Recargando...', 'success');
                     setTimeout(() => window.location.reload(), 2000);
                 } catch (err) {
                     console.error(err);
