@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobre Nosotros | Cafetería Antonio Machado</title>
+    <title>Política de Privacidad | Cafetería Antonio Machado</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
@@ -11,32 +11,44 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <style>
-        .about-section {
+        .privacy-section {
             padding: 150px 10%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
         }
-        .about-image img {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-        }
-        .about-content h2 {
+        .privacy-section h1 {
             font-size: 3rem;
             margin-bottom: 2rem;
             color: var(--primary);
+            text-align: center;
         }
-        .about-content p {
+        .privacy-section h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+        .privacy-section p {
             font-size: 1.1rem;
             color: var(--text-muted);
+            margin-bottom: 1.2rem;
+            line-height: 1.8;
+        }
+        .privacy-section ul {
+            margin-left: 2rem;
             margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+        .privacy-section li {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
         }
         @media (max-width: 968px) {
-            .about-section {
-                grid-template-columns: 1fr;
+            .privacy-section {
                 padding: 120px 5%;
+            }
+            .privacy-section h1 {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -50,7 +62,7 @@
         <a href="index.html" class="logo">ANTONIO MACHADO</a>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
-            <a href="nosotros.html" class="active">Nosotros</a>
+            <a href="nosotros.html">Nosotros</a>
             <a href="menu.html">Menú</a>
         </div>
         <div class="auth-links">
@@ -62,31 +74,38 @@
     <div id="mobile-menu" class="mobile-nav-overlay">
         <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
         <a href="index.html" onclick="toggleMobileMenu()">Inicio</a>
-        <a href="nosotros.html" class="active" onclick="toggleMobileMenu()">Nosotros</a>
+        <a href="nosotros.html" onclick="toggleMobileMenu()">Nosotros</a>
         <a href="menu.html" onclick="toggleMobileMenu()">Menú</a>
         <a href="login.html" onclick="toggleMobileMenu()" style="font-size: 1rem; margin-top: 2rem; color: var(--text-muted);">Staff Login</a>
     </div>
 
-    <section class="about-section">
-        <div class="about-image" data-aos="fade-right">
-            <img src="https://images.unsplash.com/photo-1567521464027-f127ff144326?auto=format&fit=crop&w=800" alt="Cafetería del Instituto" loading="lazy" decoding="async">
-        </div>
-        <div class="about-content" data-aos="fade-left">
-            <h2 id="about-title">El Corazón del Instituto</h2>
-            <p id="about-text-1">Cargando información sobre nosotros...</p>
-            <p id="about-text-2"></p>
-            <div style="margin-top: 2rem;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">¿Por qué venir aquí?</h3>
-                <ul style="list-style: none; color: var(--text-muted);">
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-bread-slice" style="color: var(--primary); margin-right: 10px;"></i> Bocadillos recién hechos cada mañana</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-coins" style="color: var(--primary); margin-right: 10px;"></i> Precios pensados para el estudiante</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-bolt" style="color: var(--primary); margin-right: 10px;"></i> Rapidez: ¡No pierdas ni un minuto de tu recreo!</li>
-                </ul>
+    <section class="privacy-section">
+        <h1 data-aos="fade-up">Política de Privacidad</h1>
+        
+        <div data-aos="fade-up" data-aos-delay="100">
+            <h2>1. Información que recopilamos</h2>
+            <p>En la Cafetería Antonio Machado respetamos tu privacidad. Solo recopilamos los datos estrictamente necesarios para procesar tus encargos y mejorar nuestro servicio. Esto puede incluir tu nombre, curso, y detalles de contacto si utilizas el formulario de pedidos.</p>
+            
+            <h2>2. Uso de la información</h2>
+            <p>La información recopilada se utiliza exclusivamente para:</p>
+            <ul>
+                <li>Preparar y entregar los pedidos de bocadillos y bebidas.</li>
+                <li>Atender tus consultas a través del chat o WhatsApp.</li>
+                <li>Mejorar nuestros servicios mediante encuestas anónimas.</li>
+            </ul>
+            
+            <h2>3. Protección de datos</h2>
+            <p>Tus datos son almacenados de forma segura y no serán compartidos con terceros en ningún caso, salvo requerimiento legal. Solo el personal autorizado de la cafetería tiene acceso a los datos de los pedidos diarios.</p>
+            
+            <h2>4. Uso de Cookies</h2>
+            <p>Nuestra web utiliza cookies técnicas para recordar tus preferencias (como si has votado en la encuesta del día) y mantener tu sesión si eres miembro del staff. No utilizamos cookies de rastreo publicitario de terceros.</p>
+            
+            <h2>5. Tus Derechos</h2>
+            <p>Tienes derecho a acceder, rectificar o solicitar la eliminación de tus datos en cualquier momento. Para ello, puedes ponerte en contacto con nosotros en la cafetería del instituto de forma presencial o enviarnos un mensaje por WhatsApp.</p>
 
-            </div>
+            <p style="margin-top: 3rem; font-size: 0.9rem; text-align: center;">Última actualización: Mayo 2026</p>
         </div>
     </section>
-
 
     <footer class="site-footer">
         <div class="footer-container">
@@ -138,8 +157,8 @@
                     const el = document.getElementById(s.key.replace(/_/g, '-'));
                     if (el) {
                         if (el.tagName === 'IMG') el.src = s.value;
-                        else if (el.tagName === 'A') el.href = s.value;
-                        else el.textContent = s.value;
+                        else if (el.tagName === 'A' && s.value) el.href = s.value;
+                        else if (el.tagName !== 'A') el.textContent = s.value;
                     }
 
                     if (s.key === 'site_favicon') {
