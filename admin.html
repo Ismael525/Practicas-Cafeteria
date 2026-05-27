@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -1114,6 +1114,14 @@
                             <input type="text" id="s-footer-schedule">
                         </div>
                         <div class="form-group">
+                            <label>Ubicación</label>
+                            <input type="text" id="s-footer-location">
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono Footer</label>
+                            <input type="text" id="s-footer-phone">
+                        </div>
+                        <div class="form-group">
                             <label>URL de Aviso Legal y LSSIC</label>
                             <input type="text" id="s-footer-lssic-url" placeholder="Ej: /aviso-legal.html">
                         </div>
@@ -1972,6 +1980,8 @@
                     { key: 'site_logo', value: logoUrl },
                     { key: 'footer_desc', value: document.getElementById('s-footer-desc')?.value || '' },
                     { key: 'footer_schedule', value: document.getElementById('s-footer-schedule')?.value || '' },
+                    { key: 'footer_location', value: document.getElementById('s-footer-location')?.value || '' },
+                    { key: 'footer_phone', value: document.getElementById('s-footer-phone')?.value || '' },
                     { key: 'footer_lssic_url', value: document.getElementById('s-footer-lssic-url')?.value || '' },
                     { key: 'footer_privacy_url', value: document.getElementById('s-footer-privacy-url')?.value || '' }
                 ];
