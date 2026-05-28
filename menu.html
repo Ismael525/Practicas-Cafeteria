@@ -1532,10 +1532,9 @@
             gridContainer.style.display = 'block';
             Object.keys(grouped).sort().forEach(catName => {
                 const upperCat = catName.toUpperCase();
-                const isSpecial = upperCat.includes('DESAYUNO') || upperCat.includes('BONO');
                 const productsHtml = grouped[catName].map(p => {
                     const isAvailable = p.is_available !== false;
-                    const canClick = isAvailable && !isSpecial;
+                    const canClick = isAvailable;
                     
                     return `
                     <div class="product-card ${!isAvailable ? 'unavailable' : ''} ${!canClick ? 'no-click' : ''}" 
@@ -1625,8 +1624,9 @@
             
             const isBebidaProduct = bebidasCatId && String(product.category_id) === String(bebidasCatId);
             const isAperitivo = catName.toUpperCase() === 'APERITIVOS';
+            const isSpecial = catName.toUpperCase().includes('DESAYUNO') || catName.toUpperCase().includes('BONO');
             
-            if (!isBebidaProduct && !isAperitivo && availableExtras.length > 0) {
+            if (!isBebidaProduct && !isAperitivo && !isSpecial && availableExtras.length > 0) {
                 extrasSection.style.display = 'block';
                 
                 const listSalsas = availableExtras.filter(e => {
