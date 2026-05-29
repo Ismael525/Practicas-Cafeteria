@@ -1278,6 +1278,17 @@
             }
         }
 
+        // Image Optimization Helper
+        function getOptimizedImageUrl(url, width = 400) {
+            const defaultImg = 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80';
+            if (!url) return defaultImg;
+            if (url.includes('unsplash.com')) return url; // Unsplash ya está optimizado
+            
+            // Usamos un CDN gratuito (wsrv.nl) para redimensionar y convertir a WebP al vuelo
+            // Esto reduce radicalmente el peso (de 2-5MB a ~30KB) sin tocar la base de datos
+            return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=${width}&output=webp&q=80`;
+        }
+
         async function initCatalog() {
             
             // Carga paralela de datos iniciales
@@ -1542,7 +1553,7 @@
                          ${!canClick ? 'style="cursor: default; transform: none; box-shadow: none;"' : ''}>
                         <div class="product-image">
                             ${!isAvailable ? '<div class="out-of-stock"><span class="out-of-stock-label">Agotado</span></div>' : ''}
-                            <img src="${p.image_url ? p.image_url : 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80'}" alt="${p.name}" loading="lazy" decoding="async">
+                            <img src="${getOptimizedImageUrl(p.image_url, 400)}" alt="${p.name}" loading="lazy" decoding="async">
                         </div>
                         <div class="product-info">
                             <div class="product-header" style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; gap: 1rem;">
@@ -1594,7 +1605,7 @@
             document.body.style.overflow = 'hidden';
 
             // 2. Rellenar los datos básicos
-            document.getElementById('modal-img').src = product.image_url || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80';
+            document.getElementById('modal-img').src = getOptimizedImageUrl(product.image_url, 800);
             document.getElementById('modal-title').textContent = product.name;
             document.getElementById('modal-price').textContent = `${parseFloat(product.price || 0).toFixed(2)}€`;
             const modalDesc = document.getElementById('modal-desc');

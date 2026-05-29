@@ -1515,8 +1515,9 @@
             // Optimization: Resize image if it's too large
             let fileToUpload = file;
             if (file.type.startsWith('image/')) {
-                // For logos and favicons, we can use smaller dimensions, but 1200 is safe for all
-                const maxDim = (bucket === 'images') ? 1200 : 512;
+                // Reducimos el tamaño máximo a 800px para productos (antes 1200px)
+                // 800px es más que suficiente para web y móviles, y ahorra muchísimo espacio y ancho de banda.
+                const maxDim = (bucket === 'images') ? 800 : 512;
                 fileToUpload = await resizeImage(file, maxDim);
             }
 
