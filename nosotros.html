@@ -141,7 +141,7 @@
                     const el = document.getElementById(s.key.replace(/_/g, '-'));
                     if (el) {
                         if (el.tagName === 'IMG') el.src = s.value;
-                        else if (el.tagName === 'A') el.href = s.value;
+                        else if (el.tagName === 'A') { if (s.value) el.href = s.value; }
                         else el.textContent = s.value;
                     }
 
